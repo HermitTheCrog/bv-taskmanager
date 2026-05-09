@@ -305,7 +305,26 @@ const TEAM = [
   {name:'Maya',    email:'maya@bagavagabonds.com'},
 ];
 
-const CATS = [
+const CLIENTS = [
+  'General / Internal',
+  'Stella Rosa',
+  'Spritz Del Conte',
+  'San Simeon',
+  'Riboli Family Wines',
+  '805 Firestone Walker',
+  'Sierra Nevada',
+  'Montucky',
+  'Sunnys',
+  'Tache',
+  'Yumi',
+  'Blue Zones',
+  'Blue Zones Kitchen',
+  'Venmo',
+  'Fishers Island',
+  'Waterbird',
+  'Whistle Pig',
+  'iHeart Media',
+];
   {id:'move',label:'Movement'},{id:'receive',label:'Receiving'},
   {id:'clean',label:'Maintenance'},{id:'build',label:'Setup / Build'},
   {id:'check',label:'Audit / Check'},{id:'other',label:'Other'},
@@ -387,12 +406,12 @@ async function sheetsReq(cfg,method,path,body=null){
 }
 async function ensureHeaders(cfg){
   try{const d=await sheetsReq(cfg,'GET','/values/Tasks!A1:N1');if(d.values?.[0]?.[0]==='Task ID')return;}catch{}
-  await sheetsReq(cfg,'PUT','/values/Tasks!A1:N1?valueInputOption=RAW',{values:[['Task ID','Title','Description','Category','Priority','Deadline','Requested By','Assigned To','Created At','Accepted At','Completed At','Duration','Points','Month']]});
+  await sheetsReq(cfg,'PUT','/values/Tasks!A1:O1?valueInputOption=RAW',{values:[['Task ID','Title','Description','Category','Priority','Client','Deadline','Requested By','Assigned To','Created At','Accepted At','Completed At','Duration','Points','Month']]});
 }
 async function sheetAppend(cfg,task){
   await ensureHeaders(cfg);
-  const r=[task.id,task.title,task.desc||'',task.category,task.priority,task.deadline||'',task.createdBy,task.assignedTo||'',fmtTime(task.createdAt),fmtTime(task.acceptedAt),fmtTime(task.completedAt),task.duration?fmtDur(task.duration):'',task.points||'',currentMonth()];
-  await sheetsReq(cfg,'POST','/values/Tasks!A:N:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS',{values:[r]});
+  const r=[task.id,task.title,task.desc||'',task.category,task.priority,task.client||'',task.deadline||'',task.createdBy,task.assignedTo||'',fmtTime(task.createdAt),fmtTime(task.acceptedAt),fmtTime(task.completedAt),task.duration?fmtDur(task.duration):'',task.points||'',currentMonth()];
+  await sheetsReq(cfg,'POST','/values/Tasks!A:O:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS',{values:[r]});
 }
 async function sheetUpdate(cfg,task){
   try{
@@ -401,8 +420,8 @@ async function sheetUpdate(cfg,task){
     const i=d.values.findIndex(r=>r[0]===task.id);
     if(i<1){await sheetAppend(cfg,task);return;}
     const row=i+1;
-    const v=[task.id,task.title,task.desc||'',task.category,task.priority,task.deadline||'',task.createdBy,task.assignedTo||'',fmtTime(task.createdAt),fmtTime(task.acceptedAt),fmtTime(task.completedAt),task.duration?fmtDur(task.duration):'',task.points||'',currentMonth()];
-    await sheetsReq(cfg,'PUT',`/values/Tasks!A${row}:N${row}?valueInputOption=RAW`,{values:[v]});
+    const v=[task.id,task.title,task.desc||'',task.category,task.priority,task.client||'',task.deadline||'',task.createdBy,task.assignedTo||'',fmtTime(task.createdAt),fmtTime(task.acceptedAt),fmtTime(task.completedAt),task.duration?fmtDur(task.duration):'',task.points||'',currentMonth()];
+    await sheetsReq(cfg,'PUT',`/values/Tasks!A${row}:O${row}?valueInputOption=RAW`,{values:[v]});
   }catch(e){console.warn('sheet update',e);}
 }
 async function sendEmail(cfg,task){
@@ -476,7 +495,7 @@ function EmailField({value,onChange}){
 
 /* ── NEW TASK MODAL ── */
 function NewTaskModal({currentUser,onClose,onSave}){
-  const [form,setForm]=useState({title:'',desc:'',category:'other',priority:'med',deadline:'',assignedToEmail:''});
+  const [form,setForm]=useState({title:'',desc:'',category:'other',priority:'med',deadline:'',assignedToEmail:'',client:'General / Internal'});
   const set=(k,v)=>setForm(f=>({...f,[k]:v}));
   const member=TEAM.find(t=>t.email===form.assignedToEmail);
   const save=()=>{
@@ -492,9 +511,14 @@ function NewTaskModal({currentUser,onClose,onSave}){
         <div className="modal-title">Post a <span>task</span></div>
         <div className="field"><label>Title *</label><input value={form.title} onChange={e=>set('title',e.target.value)} placeholder="e.g. Move pallet 3 to bay 4" autoFocus/></div>
         <div className="field"><label>Details / instructions</label><textarea value={form.desc} onChange={e=>set('desc',e.target.value)} placeholder="Notes for the crew..."/></div>
+        <div className="field"><label>Client / Project</label>
+          <select value={form.client} onChange={e=>set('client',e.target.value)}>
+            {CLIENTS.map(c=><option key={c} value={c}>{c}</option>)}
+          </select>
+        </div>
         <div className="field-row">
           <div className="field"><label>Category</label><select value={form.category} onChange={e=>set('category',e.target.value)}>{CATS.map(c=><option key={c.id} value={c.id}>{c.label}</option>)}</select></div>
-          <div className="field"><label>Priority</label><select value={form.priority} onChange={e=>set('priority',e.target.value)}><option value="high">High — 3 pts</option><option value="med">Medium — 2 pts</option><option value="low">Low — 1 pt</option></select></div>
+          <div className="field"><label>Priority</label><select value={form.priority} onChange={e=>set('priority',e.target.value)}><option value="high">High</option><option value="med">Medium</option><option value="low">Low</option></select></div>
         </div>
         <div className="field"><label>Deadline (optional)</label><input type="date" value={form.deadline} onChange={e=>set('deadline',e.target.value)}/></div>
         <EmailField value={form.assignedToEmail} onChange={v=>set('assignedToEmail',v)}/>
@@ -522,7 +546,7 @@ function TaskCard({task,onAccept,onComplete,onPause,onResume,onDelete,tick,fontS
     <div className={`note ${col} ${rot}${isDone?' is-done':''}`} style={{fontSize:fs+'px'}}
       draggable={!isDone}
       onDragStart={e=>{e.dataTransfer.setData('taskId',task.id);e.dataTransfer.effectAllowed='move';}}>
-      <div className="ncat" style={{fontSize:(fs*0.57)+'px'}}>{CATS.find(c=>c.id===task.category)?.label||task.category}</div>
+      <div className="ncat" style={{fontSize:(fs*0.57)+'px'}}>{CATS.find(c=>c.id===task.category)?.label||task.category}{task.client&&task.client!=='General / Internal'?` · ${task.client}`:''}</div>
       <span className={`nprio-badge ${task.priority==='high'?'nph':task.priority==='med'?'npm':'npl'}`} style={{fontSize:(fs*0.57)+'px'}}>{task.priority}</span>
       <div className="ntitle" style={{fontSize:(fs*1)+'px'}}>{task.title}</div>
       {task.desc&&<div className="ndesc" style={{fontSize:(fs*0.82)+'px'}}>{task.desc}</div>}
@@ -597,11 +621,12 @@ function LogView({tasks,config}){
       <div className="log-wrap">
         {done.length===0?<div className="no-tasks-msg">no completed tasks yet</div>:(
           <table className="log-table">
-            <thead><tr><th>Task</th><th>Category</th><th>Priority</th><th>Deadline</th><th>Requested by</th><th>Completed by</th><th>Completed at</th><th>Duration</th><th>Pts</th></tr></thead>
+            <thead><tr><th>Task</th><th>Client</th><th>Category</th><th>Priority</th><th>Deadline</th><th>Requested by</th><th>Completed by</th><th>Completed at</th><th>Duration</th><th>Pts</th></tr></thead>
             <tbody>
               {[...done].sort((a,b)=>b.completedAt-a.completedAt).map(t=>(
                 <tr key={t.id}>
                   <td className="tname">{t.title}</td>
+                  <td className="tmono">{t.client||'—'}</td>
                   <td className="tmono">{t.category}</td>
                   <td><span className={`nprio-badge ${t.priority==='high'?'nph':t.priority==='med'?'npm':'npl'}`} style={{position:'static',display:'inline-block',fontSize:'9px'}}>{t.priority}</span></td>
                   <td className="tmono">{t.deadline||'—'}</td>
@@ -621,14 +646,19 @@ function LogView({tasks,config}){
 }
 
 /* ── SCORES VIEW ── */
-function ScoresView({tasks,manualBadges}){
+function ScoresView({tasks,manualBadges,demerits}){
   const mo=currentMonth();
   const moLabel=new Date().toLocaleString('en-US',{month:'long',year:'numeric'});
   const members=TEAM.map(member=>{
     const done=tasks.filter(t=>t.completedAt&&t.assignedTo===member.name);
     const moDone=done.filter(t=>{const d=new Date(t.completedAt);return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`===mo;});
-    const totalPts=done.reduce((a,t)=>a+(t.points||0),0);
-    const moPts=moDone.reduce((a,t)=>a+(t.points||0),0);
+    const demeritTotal=demerits.filter(d=>d.member===member.name).reduce((a,d)=>a+d.pts,0);
+    const demeritMo=demerits.filter(d=>{
+      const dm=new Date(d.issuedAt);
+      return d.member===member.name&&`${dm.getFullYear()}-${String(dm.getMonth()+1).padStart(2,'0')}`===mo;
+    }).reduce((a,d)=>a+d.pts,0);
+    const totalPts=Math.max(0,done.reduce((a,t)=>a+(t.points||0),0)-demeritTotal);
+    const moPts=Math.max(0,moDone.reduce((a,t)=>a+(t.points||0),0)-demeritMo);
     const badges=[...new Set([...calcBadges(member.name,tasks),...(manualBadges[member.name]||[])])];
     return{...member,done:done.length,moDone:moDone.length,totalPts,moPts,badges};
   }).filter(m=>m.done>0).sort((a,b)=>b.moPts-a.moPts);
@@ -687,33 +717,46 @@ function ScoresView({tasks,manualBadges}){
 }
 
 /* ── SETTINGS VIEW ── */
-function SettingsView({settings,onSettings,onSave,onClearTasks,manualBadges,onManualBadges,showToast}){
+function SettingsView({settings,onSettings,onSave,onClearTasks,manualBadges,onManualBadges,demerits,onDemerits,showToast,tasks}){
   const [draft,setDraft]=useState(settings);
   const [confirmClear,setConfirmClear]=useState(false);
-  const [badgeMember,setBadgeMember]=useState(TEAM[0].name);
   const [saved,setSaved]=useState(false);
+  // Admin / dev options state
+  const [devOpen,setDevOpen]=useState(false);
+  const [devPin,setDevPin]=useState('');
+  const [devError,setDevError]=useState(false);
+  const [adminUnlocked,setAdminUnlocked]=useState(false);
+  // Admin panel state
+  const [badgeMember,setBadgeMember]=useState(TEAM[0].name);
+  const [demeritMember,setDemeritMember]=useState(TEAM[0].name);
+  const [demeritPts,setDemeritPts]=useState(1);
+  const [demeritReason,setDemeritReason]=useState('');
 
-  // Live preview: font size updates immediately, theme stays as draft until Save
-  const handleFontSize=e=>{
-    const fs=parseInt(e.target.value);
-    setDraft(d=>({...d,fontSize:fs}));
-    onSettings({...settings,...draft,fontSize:fs}); // live font update only
-  };
-  const handleTheme=id=>{
-    setDraft(d=>({...d,theme:id}));
-    onSettings({...settings,...draft,theme:id}); // live theme update too
-  };
-  const handleSave=()=>{
-    onSave(draft);setSaved(true);
-    setTimeout(()=>setSaved(false),2000);
+  const handleFontSize=e=>{const fs=parseInt(e.target.value);setDraft(d=>({...d,fontSize:fs}));onSettings({...settings,...draft,fontSize:fs});};
+  const handleTheme=id=>{setDraft(d=>({...d,theme:id}));onSettings({...settings,...draft,theme:id});};
+  const handleSave=()=>{onSave(draft);setSaved(true);setTimeout(()=>setSaved(false),2000);};
+
+  const tryUnlock=()=>{
+    const stored=localStorage.getItem(ADMIN_PIN_KEY)||DEFAULT_PIN;
+    if(devPin===stored){setAdminUnlocked(true);setDevPin('');setDevError(false);}
+    else{setDevError(true);setDevPin('');setTimeout(()=>setDevError(false),1200);}
   };
 
   const memberBadges=manualBadges[badgeMember]||[];
   const toggleBadge=bid=>{
-    const current=manualBadges[badgeMember]||[];
-    const updated=current.includes(bid)?current.filter(b=>b!==bid):[...current,bid];
-    onManualBadges({...manualBadges,[badgeMember]:updated});
+    const cur=manualBadges[badgeMember]||[];
+    const upd=cur.includes(bid)?cur.filter(b=>b!==bid):[...cur,bid];
+    onManualBadges({...manualBadges,[badgeMember]:upd});
   };
+
+  const issueDemerit=()=>{
+    if(!demeritReason.trim())return;
+    const entry={id:'dm_'+Date.now(),member:demeritMember,pts:demeritPts,reason:demeritReason.trim(),issuedAt:Date.now()};
+    onDemerits([...demerits,entry]);
+    setDemeritReason('');
+    showToast(`Demerit issued to ${demeritMember} (-${demeritPts} pts)`,'');
+  };
+  const removeDemerit=id=>onDemerits(demerits.filter(d=>d.id!==id));
 
   return(
     <div className="settings-view">
@@ -724,6 +767,7 @@ function SettingsView({settings,onSettings,onSave,onClearTasks,manualBadges,onMa
         </button>
       </div>
 
+      {/* ── PUBLIC: THEME ── */}
       <div className="settings-section">
         <h3>Color Theme</h3>
         <div className="theme-grid">
@@ -737,6 +781,7 @@ function SettingsView({settings,onSettings,onSave,onClearTasks,manualBadges,onMa
         </div>
       </div>
 
+      {/* ── PUBLIC: FONT SIZE ── */}
       <div className="settings-section">
         <h3>Card Font Size <span style={{fontWeight:400,color:'var(--text3)',fontSize:'10px',fontFamily:'DM Mono,monospace',marginLeft:'8px'}}>updates live</span></h3>
         <div className="font-row">
@@ -750,36 +795,7 @@ function SettingsView({settings,onSettings,onSave,onClearTasks,manualBadges,onMa
         </div>
       </div>
 
-      <div className="settings-section">
-        <h3>Award Badges 🏅</h3>
-        <p style={{fontSize:'12px',color:'var(--text2)',fontFamily:'DM Mono,monospace',marginBottom:'14px'}}>Manually award or revoke badges for any team member. Toggled badges persist alongside automatic ones.</p>
-        <div style={{marginBottom:'12px'}}>
-          <label style={{fontSize:'9px',fontWeight:'700',letterSpacing:'0.12em',textTransform:'uppercase',color:'var(--text2)',fontFamily:'DM Mono,monospace',display:'block',marginBottom:'6px'}}>Team member</label>
-          <select value={badgeMember} onChange={e=>setBadgeMember(e.target.value)}
-            style={{background:'var(--bg3)',border:'1px solid var(--border2)',borderRadius:'6px',color:'var(--text)',fontFamily:'Syne,sans-serif',fontSize:'13px',padding:'9px 14px',outline:'none',width:'200px'}}>
-            {TEAM.map(m=><option key={m.email} value={m.name}>{m.name}</option>)}
-          </select>
-        </div>
-        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(200px,1fr))',gap:'8px'}}>
-          {BADGES_DEF.map(b=>{
-            const active=memberBadges.includes(b.id);
-            return(
-              <div key={b.id} onClick={()=>toggleBadge(b.id)}
-                style={{display:'flex',alignItems:'center',gap:'10px',padding:'10px 13px',borderRadius:'7px',cursor:'pointer',
-                  background:active?'var(--amber-dim)':'var(--bg3)',
-                  border:`1px solid ${active?'var(--amber)':'var(--border)'}`,
-                  transition:'all 0.15s'}}>
-                <span style={{fontSize:'20px'}}>{b.emoji}</span>
-                <div>
-                  <div style={{fontSize:'11px',fontWeight:'700',color:active?'var(--amber)':'var(--text)',fontFamily:'Syne,sans-serif'}}>{b.label}</div>
-                  <div style={{fontSize:'9px',color:'var(--text3)',fontFamily:'DM Mono,monospace',marginTop:'1px'}}>{active?'awarded ✓':'click to award'}</div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
+      {/* ── PUBLIC: DATA ── */}
       <div className="settings-section">
         <h3>Data</h3>
         <p style={{fontSize:'12px',color:'var(--text2)',fontFamily:'DM Mono,monospace',marginBottom:'12px'}}>Clear all local task data. This does not affect your Google Sheet.</p>
@@ -792,12 +808,190 @@ function SettingsView({settings,onSettings,onSave,onClearTasks,manualBadges,onMa
           </div>
         }
       </div>
+
+      {/* ── DEVELOPER OPTIONS ── */}
+      <div className="settings-section" style={{borderColor:adminUnlocked?'rgba(122,28,28,0.4)':'var(--border)',marginTop:'32px'}}>
+        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',cursor:'pointer'}}
+          onClick={()=>!adminUnlocked&&setDevOpen(o=>!o)}>
+          <h3 style={{color:adminUnlocked?'var(--amber)':'var(--text2)'}}>
+            {adminUnlocked?'🔓 Developer Options — Admin Unlocked':'🔒 Developer Options'}
+          </h3>
+          {!adminUnlocked&&<span style={{fontSize:'11px',color:'var(--text3)',fontFamily:'DM Mono,monospace'}}>{devOpen?'▲':'▼'}</span>}
+        </div>
+
+        {/* PIN entry */}
+        {!adminUnlocked&&devOpen&&(
+          <div style={{marginTop:'16px'}}>
+            <p style={{fontSize:'12px',color:'var(--text2)',fontFamily:'DM Mono,monospace',marginBottom:'12px'}}>Enter admin password to unlock privileged controls.</p>
+            <div style={{display:'flex',gap:'10px',alignItems:'flex-start'}}>
+              <div className="field" style={{margin:0,flex:1}}>
+                <input type="password" value={devPin} onChange={e=>setDevPin(e.target.value)}
+                  onKeyDown={e=>e.key==='Enter'&&tryUnlock()}
+                  placeholder="Admin password"
+                  style={{borderColor:devError?'#f08080':'var(--border2)'}}/>
+                {devError&&<div style={{color:'#f08080',fontSize:'11px',fontFamily:'DM Mono,monospace',marginTop:'5px'}}>Incorrect password</div>}
+              </div>
+              <button className="btn-post" style={{padding:'9px 16px',fontSize:'12px'}} onClick={tryUnlock}>Unlock</button>
+            </div>
+          </div>
+        )}
+
+        {/* ── ADMIN PANEL ── */}
+        {adminUnlocked&&(
+          <div style={{marginTop:'20px',display:'flex',flexDirection:'column',gap:'20px'}}>
+
+            {/* BADGE MANAGEMENT */}
+            <div>
+              <div style={{fontSize:'11px',fontWeight:'800',letterSpacing:'0.12em',textTransform:'uppercase',color:'var(--text3)',fontFamily:'DM Mono,monospace',marginBottom:'12px'}}>Award / Revoke Badges</div>
+              <div style={{marginBottom:'12px'}}>
+                <select value={badgeMember} onChange={e=>setBadgeMember(e.target.value)}
+                  style={{background:'var(--bg3)',border:'1px solid var(--border2)',borderRadius:'6px',color:'var(--text)',fontFamily:'Syne,sans-serif',fontSize:'13px',padding:'9px 14px',outline:'none'}}>
+                  {TEAM.map(m=><option key={m.email} value={m.name}>{m.name}</option>)}
+                </select>
+              </div>
+              <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(190px,1fr))',gap:'7px'}}>
+                {BADGES_DEF.map(b=>{
+                  const active=memberBadges.includes(b.id);
+                  return(
+                    <div key={b.id} onClick={()=>toggleBadge(b.id)}
+                      style={{display:'flex',alignItems:'center',gap:'9px',padding:'9px 12px',borderRadius:'7px',cursor:'pointer',
+                        background:active?'var(--amber-dim)':'var(--bg3)',
+                        border:`1px solid ${active?'var(--amber)':'var(--border)'}`,transition:'all 0.15s'}}>
+                      <span style={{fontSize:'18px'}}>{b.emoji}</span>
+                      <div>
+                        <div style={{fontSize:'11px',fontWeight:'700',color:active?'var(--amber)':'var(--text)',fontFamily:'Syne,sans-serif'}}>{b.label}</div>
+                        <div style={{fontSize:'9px',color:'var(--text3)',fontFamily:'DM Mono,monospace',marginTop:'1px'}}>{active?'awarded ✓':'click to award'}</div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* DEMERIT SYSTEM */}
+            <div>
+              <div style={{fontSize:'11px',fontWeight:'800',letterSpacing:'0.12em',textTransform:'uppercase',color:'var(--text3)',fontFamily:'DM Mono,monospace',marginBottom:'12px'}}>Issue Demerit</div>
+              <div style={{display:'flex',gap:'10px',flexWrap:'wrap',alignItems:'flex-end',marginBottom:'14px'}}>
+                <div className="field" style={{margin:0}}>
+                  <label>Member</label>
+                  <select value={demeritMember} onChange={e=>setDemeritMember(e.target.value)}
+                    style={{background:'var(--bg3)',border:'1px solid var(--border2)',borderRadius:'6px',color:'var(--text)',fontFamily:'Syne,sans-serif',fontSize:'13px',padding:'9px 14px',outline:'none'}}>
+                    {TEAM.map(m=><option key={m.email} value={m.name}>{m.name}</option>)}
+                  </select>
+                </div>
+                <div className="field" style={{margin:0,width:'80px'}}>
+                  <label>Pts</label>
+                  <select value={demeritPts} onChange={e=>setDemeritPts(parseInt(e.target.value))}
+                    style={{background:'var(--bg3)',border:'1px solid var(--border2)',borderRadius:'6px',color:'var(--text)',fontFamily:'Syne,sans-serif',fontSize:'13px',padding:'9px 14px',outline:'none'}}>
+                    {[1,2,3,5,10].map(n=><option key={n} value={n}>-{n}</option>)}
+                  </select>
+                </div>
+                <div className="field" style={{margin:0,flex:1,minWidth:'160px'}}>
+                  <label>Reason</label>
+                  <input value={demeritReason} onChange={e=>setDemeritReason(e.target.value)}
+                    onKeyDown={e=>e.key==='Enter'&&issueDemerit()}
+                    placeholder="e.g. Late task, missed deadline..."/>
+                </div>
+                <button className="clear-btn" style={{padding:'9px 14px',fontSize:'12px'}} onClick={issueDemerit}>Issue</button>
+              </div>
+              {demerits.length>0&&(
+                <div style={{background:'var(--bg3)',borderRadius:'7px',overflow:'hidden',border:'1px solid var(--border)'}}>
+                  {[...demerits].sort((a,b)=>b.issuedAt-a.issuedAt).map(d=>(
+                    <div key={d.id} style={{display:'flex',alignItems:'center',gap:'10px',padding:'9px 14px',borderBottom:'1px solid var(--border)'}}>
+                      <span style={{fontSize:'12px',fontWeight:'700',color:'#f08080',fontFamily:'DM Mono,monospace'}}>-{d.pts}</span>
+                      <span style={{fontSize:'12px',color:'var(--text)',fontWeight:'600'}}>{d.member}</span>
+                      <span style={{fontSize:'11px',color:'var(--text2)',flex:1,fontFamily:'DM Mono,monospace'}}>{d.reason}</span>
+                      <span style={{fontSize:'10px',color:'var(--text3)',fontFamily:'DM Mono,monospace'}}>{fmtTime(d.issuedAt)}</span>
+                      <button onClick={()=>removeDemerit(d.id)} style={{background:'none',border:'none',color:'var(--text3)',cursor:'pointer',fontSize:'12px'}}>✕</button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {demerits.length===0&&<div style={{fontSize:'11px',color:'var(--text3)',fontFamily:'DM Mono,monospace',fontStyle:'italic'}}>No demerits issued</div>}
+            </div>
+
+            {/* PIN CHANGE */}
+            <div>
+              <div style={{fontSize:'11px',fontWeight:'800',letterSpacing:'0.12em',textTransform:'uppercase',color:'var(--text3)',fontFamily:'DM Mono,monospace',marginBottom:'12px'}}>Change Admin Password</div>
+              <PinChanger/>
+            </div>
+
+            {/* LOCK ADMIN */}
+            <div>
+              <button className="btn-cancel" onClick={()=>setAdminUnlocked(false)} style={{fontSize:'12px'}}>🔒 Lock admin panel</button>
+            </div>
+
+          </div>
+        )}
+      </div>
     </div>
   );
 }
 
-/* ── SETUP ── */
-function SetupScreen({onSave}){
+const ADMIN_EMAIL = 'cam@bagavagabonds.com';
+const ADMIN_PIN_KEY = 'bvb_admin_pin';
+const DEFAULT_PIN = '1234';
+
+function PinChanger(){
+  const [cur,setCur]=useState('');
+  const [next,setNext]=useState('');
+  const [msg,setMsg]=useState('');
+  const save=()=>{
+    const stored=localStorage.getItem(ADMIN_PIN_KEY)||DEFAULT_PIN;
+    if(cur!==stored){setMsg('Current PIN incorrect');return;}
+    if(next.length<4){setMsg('New PIN must be at least 4 digits');return;}
+    localStorage.setItem(ADMIN_PIN_KEY,next);
+    setCur('');setNext('');setMsg('✓ PIN updated!');
+    setTimeout(()=>setMsg(''),2500);
+  };
+  return(
+    <div style={{display:'flex',gap:'10px',alignItems:'flex-end',flexWrap:'wrap'}}>
+      <div className="field" style={{margin:0,flex:'1',minWidth:'120px'}}>
+        <label>Current PIN</label>
+        <input type="password" value={cur} onChange={e=>setCur(e.target.value)} placeholder="Current PIN" maxLength={8}/>
+      </div>
+      <div className="field" style={{margin:0,flex:'1',minWidth:'120px'}}>
+        <label>New PIN</label>
+        <input type="password" value={next} onChange={e=>setNext(e.target.value)} placeholder="Min 4 digits" maxLength={8}/>
+      </div>
+      <button className="btn-post" style={{padding:'9px 16px',fontSize:'12px',marginBottom:'0'}} onClick={save}>Update</button>
+      {msg&&<span style={{fontSize:'11px',fontFamily:'DM Mono,monospace',color:msg.startsWith('✓')?'#8fce8f':'#f08080',alignSelf:'center'}}>{msg}</span>}
+    </div>
+  );
+}
+
+function PinModal({onSuccess,onClose}){
+  const [pin,setPin]=useState('');
+  const [error,setError]=useState(false);
+  const stored=localStorage.getItem(ADMIN_PIN_KEY)||DEFAULT_PIN;
+  const submit=()=>{
+    if(pin===stored){onSuccess();}
+    else{setError(true);setPin('');setTimeout(()=>setError(false),1200);}
+  };
+  return(
+    <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&onClose()}>
+      <div className="modal" style={{maxWidth:'340px',textAlign:'center'}}>
+        <div style={{fontSize:'32px',marginBottom:'12px'}}>🔐</div>
+        <div className="modal-title" style={{textAlign:'center'}}>Admin Access</div>
+        <p style={{fontSize:'12px',color:'var(--text2)',fontFamily:'DM Mono,monospace',marginBottom:'20px'}}>Enter your PIN to access settings and badge management.</p>
+        <div className="field">
+          <input type="password" value={pin} onChange={e=>setPin(e.target.value)}
+            onKeyDown={e=>e.key==='Enter'&&submit()}
+            placeholder="Enter PIN" maxLength={8} autoFocus
+            style={{textAlign:'center',letterSpacing:'0.3em',fontSize:'18px',
+              borderColor:error?'#f08080':'var(--border2)'}}/>
+          {error&&<div style={{color:'#f08080',fontSize:'11px',fontFamily:'DM Mono,monospace',marginTop:'6px'}}>Incorrect PIN</div>}
+        </div>
+        <div className="modal-actions" style={{justifyContent:'center'}}>
+          <button className="btn-cancel" onClick={onClose}>Cancel</button>
+          <button className="btn-post" onClick={submit}>Unlock</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── SETUP SCREEN ── */
   const [clientId,setClientId]=useState('');const [sheetId,setSheetId]=useState('');
   const save=()=>{
     if(!clientId.trim()||!sheetId.trim())return;
@@ -839,6 +1033,9 @@ function App(){
   const [tasks,setTasks]=useState(()=>{try{return JSON.parse(localStorage.getItem(TASKS_KEY))||[];}catch{return [];}});
   const [settings,setSettings]=useState(()=>{try{return JSON.parse(localStorage.getItem(SETTINGS_KEY))||{theme:'theme-e',fontSize:14};}catch{return{theme:'theme-e',fontSize:14};}});
   const [manualBadges,setManualBadges]=useState(()=>{try{return JSON.parse(localStorage.getItem('bvb_badges_v3'))||{};}catch{return{};}});
+  const [demerits,setDemerits]=useState(()=>{try{return JSON.parse(localStorage.getItem('bvb_demerits_v3'))||[];}catch{return[];}});
+  const [adminUnlocked,setAdminUnlocked]=useState(false);
+  const [showPin,setShowPin]=useState(false);
   const [view,setView]=useState('board');
   const [showNew,setShowNew]=useState(false);
   const [toast,setToast]=useState(null);
@@ -853,6 +1050,7 @@ function App(){
   useEffect(()=>{localStorage.setItem(TASKS_KEY,JSON.stringify(tasks));},[tasks]);
   useEffect(()=>{localStorage.setItem(SETTINGS_KEY,JSON.stringify(settings));},[settings]);
   useEffect(()=>{localStorage.setItem('bvb_badges_v3',JSON.stringify(manualBadges));},[manualBadges]);
+  useEffect(()=>{localStorage.setItem('bvb_demerits_v3',JSON.stringify(demerits));},[demerits]);
   useEffect(()=>{const h=document.documentElement;THEMES.forEach(t=>h.classList.remove(t.id));h.classList.add(settings.theme||'theme-e');},[settings.theme]);
 
   useEffect(()=>{
@@ -952,11 +1150,12 @@ function App(){
         <div className="tb-right">
           {syncing?<div className="sync-row"><div className="spinner"/><span>syncing</span></div>
             :config?.sheetId?<div className="sync-row"><div className="sync-dot"/><span>synced</span></div>:null}
-          {['board','log','scores','settings'].map(v=>(
+          {['board','log','scores'].map(v=>(
             <button key={v} className={`tb-tab${view===v?' active':''}`} onClick={()=>setView(v)}>
-              {v==='board'?'Board':v==='log'?'History':v==='scores'?'Scores 🏆':'Settings'}
+              {v==='board'?'Board':v==='log'?'History':'Scores 🏆'}
             </button>
           ))}
+          <button className={`tb-tab${view==='settings'?' active':''}`} onClick={()=>setView('settings')}>⚙️ Settings</button>
           <button className="new-btn" onClick={()=>setShowNew(true)}>+ New task</button>
           <div className="tb-av" onClick={e=>{e.stopPropagation();setShowMenu(!showMenu);}}>
             {initials(user.name)}
@@ -999,8 +1198,8 @@ function App(){
         </div>
       )}
       {view==='log'&&<LogView tasks={tasks} config={config}/>}
-      {view==='scores'&&<ScoresView tasks={tasks} manualBadges={manualBadges}/>}
-      {view==='settings'&&<SettingsView settings={settings} onSettings={setSettings} onSave={s=>{setSettings(s);showToast('Settings saved ✓','success');}} onClearTasks={handleClearTasks} manualBadges={manualBadges} onManualBadges={setManualBadges} showToast={showToast}/>}
+      {view==='scores'&&<ScoresView tasks={tasks} manualBadges={manualBadges} demerits={demerits}/>}
+      {view==='settings'&&<SettingsView settings={settings} onSettings={setSettings} onSave={s=>{setSettings(s);showToast('Settings saved ✓','success');}} onClearTasks={handleClearTasks} manualBadges={manualBadges} onManualBadges={setManualBadges} demerits={demerits} onDemerits={setDemerits} showToast={showToast} tasks={tasks}/>}
 
       {showNew&&<NewTaskModal currentUser={user} onClose={()=>setShowNew(false)} onSave={handleNewTask}/>}
       {toast&&<Toast msg={toast.msg} type={toast.type} onDone={()=>setToast(null)}/>}
