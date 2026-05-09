@@ -795,20 +795,6 @@ function SettingsView({settings,onSettings,onSave,onClearTasks,manualBadges,onMa
         </div>
       </div>
 
-      {/* ── PUBLIC: DATA ── */}
-      <div className="settings-section">
-        <h3>Data</h3>
-        <p style={{fontSize:'12px',color:'var(--text2)',fontFamily:'DM Mono,monospace',marginBottom:'12px'}}>Clear all local task data. This does not affect your Google Sheet.</p>
-        {!confirmClear
-          ?<button className="clear-btn" onClick={()=>setConfirmClear(true)}>Clear all tasks</button>
-          :<div style={{display:'flex',gap:'10px',alignItems:'center'}}>
-            <span style={{fontSize:'12px',color:'var(--text2)',fontFamily:'DM Mono,monospace'}}>Are you sure?</span>
-            <button className="clear-btn" onClick={()=>{onClearTasks();setConfirmClear(false);}}>Yes, clear</button>
-            <button className="btn-cancel" onClick={()=>setConfirmClear(false)}>Cancel</button>
-          </div>
-        }
-      </div>
-
       {/* ── DEVELOPER OPTIONS ── */}
       <div className="settings-section" style={{borderColor:adminUnlocked?'rgba(122,28,28,0.4)':'var(--border)',marginTop:'32px'}}>
         <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',cursor:'pointer'}}
@@ -914,6 +900,20 @@ function SettingsView({settings,onSettings,onSave,onClearTasks,manualBadges,onMa
             <div>
               <div style={{fontSize:'11px',fontWeight:'800',letterSpacing:'0.12em',textTransform:'uppercase',color:'var(--text3)',fontFamily:'DM Mono,monospace',marginBottom:'12px'}}>Change Admin Password</div>
               <PinChanger/>
+            </div>
+
+            {/* DATA / CLEAR */}
+            <div>
+              <div style={{fontSize:'11px',fontWeight:'800',letterSpacing:'0.12em',textTransform:'uppercase',color:'var(--text3)',fontFamily:'DM Mono,monospace',marginBottom:'12px'}}>Data</div>
+              <p style={{fontSize:'12px',color:'var(--text2)',fontFamily:'DM Mono,monospace',marginBottom:'12px'}}>Clear all local task data. This does not affect your Google Sheet.</p>
+              {!confirmClear
+                ?<button className="clear-btn" onClick={()=>setConfirmClear(true)}>Clear all tasks</button>
+                :<div style={{display:'flex',gap:'10px',alignItems:'center'}}>
+                  <span style={{fontSize:'12px',color:'var(--text2)',fontFamily:'DM Mono,monospace'}}>Are you sure?</span>
+                  <button className="clear-btn" onClick={()=>{onClearTasks();setConfirmClear(false);}}>Yes, clear</button>
+                  <button className="btn-cancel" onClick={()=>setConfirmClear(false)}>Cancel</button>
+                </div>
+              }
             </div>
 
             {/* LOCK ADMIN */}
