@@ -946,7 +946,12 @@ function SetupScreen({ user, onSave }) {
 
   const save = () => {
     if (!clientId.trim() || !sheetId.trim()) return;
-    onSave({ clientId: clientId.trim(), sheetId: sheetId.trim() });
+    // Clean the sheet ID in case user pasted the full URL or extra fragments
+    let cleanSheetId = sheetId.trim();
+    const match = cleanSheetId.match(/\/d\/([a-zA-Z0-9_-]+)/);
+    if (match) cleanSheetId = match[1];
+    cleanSheetId = cleanSheetId.split('/')[0].split('#')[0].split('?')[0];
+    onSave({ clientId: clientId.trim(), sheetId: cleanSheetId });
   };
 
   return (
