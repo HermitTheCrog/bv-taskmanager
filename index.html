@@ -49,7 +49,8 @@
   --board-size:20px 20px;
 }
 
-body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;line-height:1.5;overflow-x:hidden;transition:background 0.3s,color 0.3s;}
+html,body{background:var(--bg);transition:background 0.3s;}
+body{color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;line-height:1.5;overflow-x:hidden;transition:color 0.3s;}
 ::-webkit-scrollbar{width:4px;height:4px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:2px;}
@@ -620,7 +621,7 @@ function LogView({tasks,config}){
 }
 
 /* ── SCORES VIEW ── */
-function ScoresView({tasks}){
+function ScoresView({tasks,manualBadges}){
   const mo=currentMonth();
   const moLabel=new Date().toLocaleString('en-US',{month:'long',year:'numeric'});
   const members=TEAM.map(member=>{
@@ -628,7 +629,7 @@ function ScoresView({tasks}){
     const moDone=done.filter(t=>{const d=new Date(t.completedAt);return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`===mo;});
     const totalPts=done.reduce((a,t)=>a+(t.points||0),0);
     const moPts=moDone.reduce((a,t)=>a+(t.points||0),0);
-    const badges=calcBadges(member.name,tasks);
+    const badges=[...new Set([...calcBadges(member.name,tasks),...(manualBadges[member.name]||[])])];
     return{...member,done:done.length,moDone:moDone.length,totalPts,moPts,badges};
   }).filter(m=>m.done>0).sort((a,b)=>b.moPts-a.moPts);
 
@@ -686,33 +687,99 @@ function ScoresView({tasks}){
 }
 
 /* ── SETTINGS VIEW ── */
-function SettingsView({settings,onSettings,onClearTasks}){
+function SettingsView({settings,onSettings,onSave,onClearTasks,manualBadges,onManualBadges,showToast}){
+  const [draft,setDraft]=useState(settings);
   const [confirmClear,setConfirmClear]=useState(false);
+  const [badgeMember,setBadgeMember]=useState(TEAM[0].name);
+  const [saved,setSaved]=useState(false);
+
+  // Live preview: font size updates immediately, theme stays as draft until Save
+  const handleFontSize=e=>{
+    const fs=parseInt(e.target.value);
+    setDraft(d=>({...d,fontSize:fs}));
+    onSettings({...settings,...draft,fontSize:fs}); // live font update only
+  };
+  const handleTheme=id=>{
+    setDraft(d=>({...d,theme:id}));
+    onSettings({...settings,...draft,theme:id}); // live theme update too
+  };
+  const handleSave=()=>{
+    onSave(draft);setSaved(true);
+    setTimeout(()=>setSaved(false),2000);
+  };
+
+  const memberBadges=manualBadges[badgeMember]||[];
+  const toggleBadge=bid=>{
+    const current=manualBadges[badgeMember]||[];
+    const updated=current.includes(bid)?current.filter(b=>b!==bid):[...current,bid];
+    onManualBadges({...manualBadges,[badgeMember]:updated});
+  };
+
   return(
     <div className="settings-view">
-      <h2>Settings ⚙️</h2>
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:'22px'}}>
+        <h2>Settings ⚙️</h2>
+        <button className="btn-post" style={{padding:'8px 20px',fontSize:'12px'}} onClick={handleSave}>
+          {saved?'✓ Saved!':'Save changes'}
+        </button>
+      </div>
+
       <div className="settings-section">
         <h3>Color Theme</h3>
         <div className="theme-grid">
           {THEMES.map(t=>(
-            <div key={t.id} className={`theme-btn${settings.theme===t.id?' active':''}`}
-              style={{background:t.bg}} onClick={()=>onSettings({...settings,theme:t.id})}>
+            <div key={t.id} className={`theme-btn${draft.theme===t.id?' active':''}`}
+              style={{background:t.bg}} onClick={()=>handleTheme(t.id)}>
               <div className="theme-preview" style={{background:`linear-gradient(135deg,${t.bg},${t.accent})`}}/>
               <div className="theme-btn-label" style={{color:t.accent}}>{t.label}</div>
             </div>
           ))}
         </div>
       </div>
+
       <div className="settings-section">
-        <h3>Card Font Size</h3>
+        <h3>Card Font Size <span style={{fontWeight:400,color:'var(--text3)',fontSize:'10px',fontFamily:'DM Mono,monospace',marginLeft:'8px'}}>updates live</span></h3>
         <div className="font-row">
           <label>Small</label>
-          <input type="range" className="font-slider" min="11" max="18" value={settings.fontSize||14}
-            onChange={e=>onSettings({...settings,fontSize:parseInt(e.target.value)})}/>
+          <input type="range" className="font-slider" min="11" max="20" value={draft.fontSize||14} onChange={handleFontSize}/>
           <label>Large</label>
-          <span className="font-preview">{settings.fontSize||14}px</span>
+          <span className="font-preview">{draft.fontSize||14}px</span>
+        </div>
+        <div style={{marginTop:'12px',background:'var(--bg3)',borderRadius:'6px',padding:'10px 14px',fontSize:(draft.fontSize||14)+'px',color:'var(--text2)',fontFamily:'Syne,sans-serif'}}>
+          Preview: Move pallet 3 to bay 4
         </div>
       </div>
+
+      <div className="settings-section">
+        <h3>Award Badges 🏅</h3>
+        <p style={{fontSize:'12px',color:'var(--text2)',fontFamily:'DM Mono,monospace',marginBottom:'14px'}}>Manually award or revoke badges for any team member. Toggled badges persist alongside automatic ones.</p>
+        <div style={{marginBottom:'12px'}}>
+          <label style={{fontSize:'9px',fontWeight:'700',letterSpacing:'0.12em',textTransform:'uppercase',color:'var(--text2)',fontFamily:'DM Mono,monospace',display:'block',marginBottom:'6px'}}>Team member</label>
+          <select value={badgeMember} onChange={e=>setBadgeMember(e.target.value)}
+            style={{background:'var(--bg3)',border:'1px solid var(--border2)',borderRadius:'6px',color:'var(--text)',fontFamily:'Syne,sans-serif',fontSize:'13px',padding:'9px 14px',outline:'none',width:'200px'}}>
+            {TEAM.map(m=><option key={m.email} value={m.name}>{m.name}</option>)}
+          </select>
+        </div>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(200px,1fr))',gap:'8px'}}>
+          {BADGES_DEF.map(b=>{
+            const active=memberBadges.includes(b.id);
+            return(
+              <div key={b.id} onClick={()=>toggleBadge(b.id)}
+                style={{display:'flex',alignItems:'center',gap:'10px',padding:'10px 13px',borderRadius:'7px',cursor:'pointer',
+                  background:active?'var(--amber-dim)':'var(--bg3)',
+                  border:`1px solid ${active?'var(--amber)':'var(--border)'}`,
+                  transition:'all 0.15s'}}>
+                <span style={{fontSize:'20px'}}>{b.emoji}</span>
+                <div>
+                  <div style={{fontSize:'11px',fontWeight:'700',color:active?'var(--amber)':'var(--text)',fontFamily:'Syne,sans-serif'}}>{b.label}</div>
+                  <div style={{fontSize:'9px',color:'var(--text3)',fontFamily:'DM Mono,monospace',marginTop:'1px'}}>{active?'awarded ✓':'click to award'}</div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
       <div className="settings-section">
         <h3>Data</h3>
         <p style={{fontSize:'12px',color:'var(--text2)',fontFamily:'DM Mono,monospace',marginBottom:'12px'}}>Clear all local task data. This does not affect your Google Sheet.</p>
@@ -771,6 +838,7 @@ function App(){
   const [user,setUser]=useState(null);
   const [tasks,setTasks]=useState(()=>{try{return JSON.parse(localStorage.getItem(TASKS_KEY))||[];}catch{return [];}});
   const [settings,setSettings]=useState(()=>{try{return JSON.parse(localStorage.getItem(SETTINGS_KEY))||{theme:'theme-e',fontSize:14};}catch{return{theme:'theme-e',fontSize:14};}});
+  const [manualBadges,setManualBadges]=useState(()=>{try{return JSON.parse(localStorage.getItem('bvb_badges_v3'))||{};}catch{return{};}});
   const [view,setView]=useState('board');
   const [showNew,setShowNew]=useState(false);
   const [toast,setToast]=useState(null);
@@ -784,6 +852,8 @@ function App(){
   useEffect(()=>{const id=setInterval(()=>setTick(t=>t+1),1000);return()=>clearInterval(id);},[]);
   useEffect(()=>{localStorage.setItem(TASKS_KEY,JSON.stringify(tasks));},[tasks]);
   useEffect(()=>{localStorage.setItem(SETTINGS_KEY,JSON.stringify(settings));},[settings]);
+  useEffect(()=>{localStorage.setItem('bvb_badges_v3',JSON.stringify(manualBadges));},[manualBadges]);
+  useEffect(()=>{const h=document.documentElement;THEMES.forEach(t=>h.classList.remove(t.id));h.classList.add(settings.theme||'theme-e');},[settings.theme]);
 
   useEffect(()=>{
     if(!config)return;
@@ -929,8 +999,8 @@ function App(){
         </div>
       )}
       {view==='log'&&<LogView tasks={tasks} config={config}/>}
-      {view==='scores'&&<ScoresView tasks={tasks}/>}
-      {view==='settings'&&<SettingsView settings={settings} onSettings={setSettings} onClearTasks={handleClearTasks}/>}
+      {view==='scores'&&<ScoresView tasks={tasks} manualBadges={manualBadges}/>}
+      {view==='settings'&&<SettingsView settings={settings} onSettings={setSettings} onSave={s=>{setSettings(s);showToast('Settings saved ✓','success');}} onClearTasks={handleClearTasks} manualBadges={manualBadges} onManualBadges={setManualBadges} showToast={showToast}/>}
 
       {showNew&&<NewTaskModal currentUser={user} onClose={()=>setShowNew(false)} onSave={handleNewTask}/>}
       {toast&&<Toast msg={toast.msg} type={toast.type} onDone={()=>setToast(null)}/>}
