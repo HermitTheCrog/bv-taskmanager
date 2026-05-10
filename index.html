@@ -394,13 +394,13 @@ async function sheetsReq(cfg, method, path, body=null) {
   return r.json();
 }
 async function ensureHeaders(cfg) {
-  try { const d=await sheetsReq(cfg,'GET','/values/Tasks!A1:O1'); if(d.values?.[0]?.[0]==='Task ID') return; } catch(e) {}
-  await sheetsReq(cfg,'PUT','/values/Tasks!A1:O1?valueInputOption=RAW',{values:[['Task ID','Title','Description','Category','Priority','Client','Deadline','Requested By','Assigned To','Created At','Accepted At','Completed At','Duration','Points','Month']]});
+  try { const d=await sheetsReq(cfg,'GET','/values/Tasks!A1:P1'); if(d.values?.[0]?.[0]==='Task ID') return; } catch(e) {}
+  await sheetsReq(cfg,'PUT','/values/Tasks!A1:P1?valueInputOption=RAW',{values:[['Task ID','Title','Description','Category','Priority','Client','Deadline','Requested By','Assigned To','Created At','Accepted At','Completed At','Duration','Points','Month','_json']]});
 }
 async function sheetAppend(cfg, task) {
   await ensureHeaders(cfg);
-  const r=[task.id,task.title,task.desc||'',task.category,task.priority,task.client||'',task.deadline||'',task.createdBy,task.assignedTo||'',fmtTime(task.createdAt),fmtTime(task.acceptedAt),fmtTime(task.completedAt),task.duration?fmtDur(task.duration):'',task.points||'',currentMonth()];
-  await sheetsReq(cfg,'POST','/values/Tasks!A:O:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS',{values:[r]});
+  const r=[task.id,task.title,task.desc||'',task.category,task.priority,task.client||'',task.deadline||'',task.createdBy,task.assignedTo||'',fmtTime(task.createdAt),fmtTime(task.acceptedAt),fmtTime(task.completedAt),task.duration?fmtDur(task.duration):'',task.points||'',currentMonth(),JSON.stringify(task)];
+  await sheetsReq(cfg,'POST','/values/Tasks!A:P:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS',{values:[r]});
 }
 async function sheetUpdate(cfg, task) {
   try {
@@ -409,9 +409,37 @@ async function sheetUpdate(cfg, task) {
     const i = d.values.findIndex(r=>r[0]===task.id);
     if (i<1) { await sheetAppend(cfg,task); return; }
     const row = i+1;
-    const v=[task.id,task.title,task.desc||'',task.category,task.priority,task.client||'',task.deadline||'',task.createdBy,task.assignedTo||'',fmtTime(task.createdAt),fmtTime(task.acceptedAt),fmtTime(task.completedAt),task.duration?fmtDur(task.duration):'',task.points||'',currentMonth()];
-    await sheetsReq(cfg,'PUT',`/values/Tasks!A${row}:O${row}?valueInputOption=RAW`,{values:[v]});
+    const v=[task.id,task.title,task.desc||'',task.category,task.priority,task.client||'',task.deadline||'',task.createdBy,task.assignedTo||'',fmtTime(task.createdAt),fmtTime(task.acceptedAt),fmtTime(task.completedAt),task.duration?fmtDur(task.duration):'',task.points||'',currentMonth(),JSON.stringify(task)];
+    await sheetsReq(cfg,'PUT',`/values/Tasks!A${row}:P${row}?valueInputOption=RAW`,{values:[v]});
   } catch(e) { console.warn('sheet update',e); }
+}
+async function sheetLoad(cfg) {
+  try {
+    const d = await sheetsReq(cfg,'GET','/values/Tasks!A:P');
+    if (!d.values||d.values.length<2) return [];
+    const rows = d.values.slice(1); // skip header
+    const tasks = [];
+    for (const row of rows) {
+      // column P (index 15) has the full JSON
+      if (row[15]) {
+        try { tasks.push(JSON.parse(row[15])); continue; } catch(e) {}
+      }
+      // fallback: reconstruct from columns if JSON missing (old rows)
+      if (row[0]) {
+        tasks.push({
+          id:row[0], title:row[1]||'', desc:row[2]||'', category:row[3]||'other',
+          priority:row[4]||'med', client:row[5]||'', deadline:row[6]||'',
+          createdBy:row[7]||'', assignedTo:row[8]||'',
+          createdAt:row[9]?new Date(row[9]).getTime()||Date.now():Date.now(),
+          acceptedAt:row[10]?new Date(row[10]).getTime()||null:null,
+          completedAt:row[11]?new Date(row[11]).getTime()||null:null,
+          duration:null, pausedAt:null, accumulatedMs:0,
+          points:row[13]?parseInt(row[13])||null:null,
+        });
+      }
+    }
+    return tasks.filter(t=>t.id);
+  } catch(e) { console.warn('sheet load error',e); return []; }
 }
 async function sendEmail(cfg, task) {
   if (!cfg.accessToken||!task.assignedToEmail) return;
@@ -999,6 +1027,7 @@ function App() {
   const [showNew,setShowNew]     = useState(false);
   const [toast,setToast]         = useState(null);
   const [syncing,setSyncing]     = useState(false);
+  const [loading,setLoading]     = useState(false);
   const [showMenu,setShowMenu]   = useState(false);
   const [chaChing,setChaChing]   = useState(false);
   const [dragOver,setDragOver]   = useState(null);
@@ -1032,7 +1061,22 @@ function App() {
             const p=await pr.json();
             const member=TEAM.find(t=>t.email===p.email);
             setUser({name:member?.name||p.name,email:p.email});
-            showToast('Signed in as '+(member?.name||p.name),'success');
+            showToast('Signed in — loading tasks...','success');
+            // Load tasks from Google Sheets so all devices stay in sync
+            setLoading(true);
+            try {
+              const sheetTasks = await sheetLoad(c);
+              if (sheetTasks.length>0) {
+                setTasks(sheetTasks);
+                localStorage.setItem(TASKS_KEY,JSON.stringify(sheetTasks));
+                showToast(`Signed in as ${member?.name||p.name} · ${sheetTasks.length} tasks loaded`,'success');
+              } else {
+                showToast('Signed in as '+(member?.name||p.name),'success');
+              }
+            } catch(e) {
+              showToast('Signed in — using local data','success');
+            }
+            setLoading(false);
           }
         }
       });
@@ -1108,6 +1152,12 @@ function App() {
   const done   = [...tasks.filter(t=>t.completedAt)].sort((a,b)=>b.completedAt-a.completedAt).slice(0,20);
 
   if (!user)   return <div className={settings.theme||'theme-e'}><AuthScreen onSignIn={handleSignIn}/></div>;
+  if (loading) return (
+    <div className={settings.theme||'theme-e'} style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',background:'var(--bg)',flexDirection:'column',gap:'16px'}}>
+      <div className="spinner" style={{width:'28px',height:'28px',borderWidth:'3px'}}/>
+      <div style={{fontSize:'13px',fontFamily:'DM Mono,monospace',color:'var(--text2)'}}>Loading tasks from Sheets...</div>
+    </div>
+  );
 
   return (
     <div className={`app ${settings.theme||'theme-e'}`} onClick={()=>showMenu&&setShowMenu(false)}>
