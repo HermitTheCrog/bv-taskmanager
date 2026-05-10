@@ -269,6 +269,11 @@ const ADMIN_PIN_KEY= 'bvb_admin_pin';
 const DEFAULT_PIN  = '1234';
 const ADMIN_EMAIL  = 'cam@bagavagabonds.com';
 
+const HARDCODED_CONFIG = {
+  clientId: '630423801494-aetvklr9sjscvscpe4tlcrlpuh5j7ccm.apps.googleusercontent.com',
+  sheetId:  '1g4z73WCjXA2vC-YIh-GVA94S49cm40rqmQFJaQI_l-M',
+};
+
 const TEAM = [
   {name:'Cam',     email:'cam@bagavagabonds.com'},
   {name:'Matt',    email:'matt@bagavagabonds.com'},
@@ -980,7 +985,11 @@ function AuthScreen({onSignIn}) {
 
 // ── MAIN APP ──────────────────────────────────────────────────────────────────
 function App() {
-  const [config,setConfig]       = useState(()=>{ try{return JSON.parse(localStorage.getItem(CONFIG_KEY));}catch{return null;} });
+  const [config,setConfig] = useState(()=>{
+    // Always use hardcoded credentials — no setup screen needed
+    const saved = (() => { try{return JSON.parse(localStorage.getItem(CONFIG_KEY));}catch{return null;} })();
+    return { ...HARDCODED_CONFIG, accessToken: saved?.accessToken || null };
+  });
   const [user,setUser]           = useState(null);
   const [tasks,setTasks]         = useState(()=>{ try{return JSON.parse(localStorage.getItem(TASKS_KEY))||[];}catch{return [];} });
   const [settings,setSettings]   = useState(()=>{ try{return JSON.parse(localStorage.getItem(SETTINGS_KEY))||{theme:'theme-e',fontSize:14};}catch{return{theme:'theme-e',fontSize:14};} });
@@ -1017,7 +1026,8 @@ function App() {
         scope:'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/gmail.send email profile',
         callback:async resp=>{
           if (resp.access_token) {
-            const c={...config,accessToken:resp.access_token}; setConfig(c); localStorage.setItem(CONFIG_KEY,JSON.stringify(c));
+            const c={...HARDCODED_CONFIG, accessToken:resp.access_token};
+            setConfig(c); localStorage.setItem(CONFIG_KEY,JSON.stringify(c));
             const pr=await fetch('https://www.googleapis.com/oauth2/v2/userinfo',{headers:{Authorization:`Bearer ${resp.access_token}`}});
             const p=await pr.json();
             const member=TEAM.find(t=>t.email===p.email);
@@ -1032,7 +1042,6 @@ function App() {
   },[config?.clientId]);
 
   const handleSignIn   = () => tokenRef.current ? tokenRef.current.requestAccessToken() : showToast('Google API loading — try again','error');
-  const handleSaveConfig = cfg => { const c={...cfg,accessToken:null}; localStorage.setItem(CONFIG_KEY,JSON.stringify(c)); setConfig(c); };
   const showToast      = (msg,type='') => setToast({msg,type});
 
   const syncTask = async (task, isNew=false) => {
@@ -1098,7 +1107,6 @@ function App() {
   const inProg = tasks.filter(t=>t.acceptedAt&&!t.completedAt);
   const done   = [...tasks.filter(t=>t.completedAt)].sort((a,b)=>b.completedAt-a.completedAt).slice(0,20);
 
-  if (!config) return <div className={settings.theme||'theme-e'}><SetupScreen onSave={handleSaveConfig}/></div>;
   if (!user)   return <div className={settings.theme||'theme-e'}><AuthScreen onSignIn={handleSignIn}/></div>;
 
   return (
