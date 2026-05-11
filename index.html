@@ -250,7 +250,30 @@ body{color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;line-heigh
 .demerit-del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:12px;}
 .demerit-del:hover{color:#f08080;}
 
-/* TOAST */
+/* BOARD TOOLBAR */
+.board-toolbar{display:flex;align-items:center;gap:10px;padding:9px 18px;border-bottom:1px solid var(--border);background:var(--bg2);flex-shrink:0;}
+.view-toggle{display:flex;background:var(--bg3);border-radius:5px;overflow:hidden;border:1px solid var(--border2);}
+.vt-btn{font-size:9px;font-family:'DM Mono',monospace;padding:5px 11px;background:transparent;border:none;color:var(--text3);cursor:pointer;font-weight:700;letter-spacing:0.06em;transition:all 0.1s;}
+.vt-btn.active{background:var(--bg4);color:var(--text);}
+.board-list{flex:1;padding:14px 18px;overflow-y:auto;}
+.list-col{margin-bottom:22px;}
+.list-col-head{display:flex;align-items:center;gap:6px;margin-bottom:8px;}
+.list-row{display:flex;align-items:center;gap:10px;padding:9px 13px;border-radius:6px;background:var(--bg2);border:1px solid var(--border);margin-bottom:5px;transition:border-color 0.1s;}
+.list-row:hover{border-color:var(--border2);}
+.list-row.is-done .lr-title{text-decoration:line-through;opacity:0.5;}
+.lr-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.lr-title{font-size:13px;font-weight:700;color:var(--text);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.lr-meta{font-size:10px;font-family:'DM Mono',monospace;color:var(--text3);white-space:nowrap;display:flex;gap:10px;}
+.lr-btns{display:flex;gap:4px;flex-shrink:0;}
+.lr-btn{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;background:rgba(255,255,255,0.06);border:1px solid var(--border2);border-radius:3px;padding:3px 8px;cursor:pointer;font-family:'Syne',sans-serif;color:var(--text2);white-space:nowrap;}
+.lr-btn:hover{background:rgba(255,255,255,0.1);color:var(--text);}
+.lr-btn.danger{color:rgba(200,80,80,0.8);}
+.lr-btn.danger:hover{background:rgba(200,60,60,0.15);}
+/* DELETE CONFIRM */
+.del-modal{background:var(--bg2);border:1px solid var(--border2);border-radius:12px;padding:28px 32px;width:100%;max-width:340px;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,0.6);}
+.del-icon{font-size:28px;margin-bottom:12px;}
+.del-title{font-size:16px;font-weight:800;margin-bottom:8px;}
+.del-name{font-size:12px;color:var(--text2);font-family:'DM Mono',monospace;margin-bottom:22px;line-height:1.5;}
 .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:11px 20px;font-size:13px;color:var(--text);z-index:600;animation:slideUp 0.2s ease;white-space:nowrap;box-shadow:0 5px 20px rgba(0,0,0,0.4);}
 .toast.success{border-color:rgba(74,138,74,0.4);color:#8fce8f;}
 .toast.error{border-color:rgba(200,60,60,0.4);color:#f08080;}
@@ -401,6 +424,26 @@ function playSound(type) {
     }
   } catch(e) {}
 }
+function playDelete() {
+  try {
+    const ctx=new (window.AudioContext||window.webkitAudioContext)();
+    const o=ctx.createOscillator(), g=ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.frequency.setValueAtTime(420,ctx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(55,ctx.currentTime+0.42);
+    g.gain.setValueAtTime(0.28,ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.44);
+    o.start(); o.stop(ctx.currentTime+0.48);
+  } catch(e) {}
+}
+function fmtAgo(ms) {
+  if (!ms) return '';
+  const d=Date.now()-ms, m=Math.floor(d/60000), h=Math.floor(d/3600000);
+  if (h>23) return `${Math.floor(h/24)}d ago`;
+  if (h>0) return `${h}h ago`;
+  if (m>0) return `${m}m ago`;
+  return 'just now';
+}
 
 // ── SHEETS ─────────────────────────────────────────────────────────────────
 async function sheetsReq(cfg, method, path, body=null) {
@@ -529,26 +572,31 @@ function EmailField({value, onChange}) {
   );
 }
 
-// ── NEW TASK MODAL ──────────────────────────────────────────────────────────
-function NewTaskModal({currentUser, onClose, onSave}) {
-  const [form,setForm] = useState({title:'',desc:'',category:'other',priority:'med',deadline:'',assignedToEmail:'',client:'General / Internal'});
+// ── NEW / EDIT TASK MODAL ───────────────────────────────────────────────────
+function NewTaskModal({currentUser, onClose, onSave, editTask}) {
+  const isEdit = !!editTask;
+  const [form,setForm] = useState(isEdit ? {
+    title: editTask.title||'', desc: editTask.desc||'', category: editTask.category||'other',
+    priority: editTask.priority||'med', deadline: editTask.deadline||'',
+    assignedToEmail: editTask.assignedToEmail||editTask.assignedTo||'',
+    client: editTask.client||'General / Internal',
+  } : {title:'',desc:'',category:'other',priority:'med',deadline:'',assignedToEmail:'',client:'General / Internal'});
   const set = (k,v) => setForm(f=>({...f,[k]:v}));
   const member = TEAM.find(t=>t.email===form.assignedToEmail);
   const save = () => {
     if (!form.title.trim()) return;
+    const base = isEdit ? {...editTask} : {id:'task_'+Date.now(), createdBy:currentUser.name, createdByEmail:currentUser.email, createdAt:Date.now(), acceptedAt:null, completedAt:null, duration:null, pausedAt:null, accumulatedMs:0, points:null};
     onSave({
-      id:'task_'+Date.now(), ...form,
+      ...base, ...form,
       title:form.title.trim(), desc:form.desc.trim(),
       assignedTo: member?.name || (form.assignedToEmail ? form.assignedToEmail.split('@')[0] : ''),
-      createdBy:currentUser.name, createdByEmail:currentUser.email,
-      createdAt:Date.now(), acceptedAt:null, completedAt:null,
-      duration:null, pausedAt:null, accumulatedMs:0, points:null,
+      ...(isEdit ? {editedAt: Date.now()} : {}),
     });
   };
   return (
     <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&onClose()}>
       <div className="modal">
-        <div className="modal-title">Post a <span>task</span></div>
+        <div className="modal-title">{isEdit ? 'Edit ' : 'Post a '}<span>{isEdit ? 'task' : 'task'}</span></div>
         <div className="field">
           <label>Title *</label>
           <input value={form.title} onChange={e=>set('title',e.target.value)} placeholder="e.g. Move pallet 3 to bay 4" autoFocus/>
@@ -586,15 +634,32 @@ function NewTaskModal({currentUser, onClose, onSave}) {
         <EmailField value={form.assignedToEmail} onChange={v=>set('assignedToEmail',v)}/>
         <div className="modal-actions">
           <button className="btn-cancel" onClick={onClose}>Cancel</button>
-          <button className="btn-post" onClick={save} disabled={!form.title.trim()}>Post task</button>
+          <button className="btn-post" onClick={save} disabled={!form.title.trim()}>{isEdit ? 'Save changes' : 'Post task'}</button>
         </div>
       </div>
     </div>
   );
 }
 
-// ── TASK CARD ───────────────────────────────────────────────────────────────
-function TaskCard({task, onAccept, onComplete, onPause, onResume, onDelete, tick, fontSize}) {
+// ── DELETE CONFIRM MODAL ────────────────────────────────────────────────────
+function DeleteConfirmModal({task, onConfirm, onCancel}) {
+  return (
+    <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&onCancel()}>
+      <div className="del-modal">
+        <div className="del-icon">🗑️</div>
+        <div className="del-title">Delete task?</div>
+        <div className="del-name">"{task.title}"</div>
+        <div style={{display:'flex',gap:'10px',justifyContent:'center'}}>
+          <button className="btn-cancel" onClick={onCancel}>Cancel</button>
+          <button className="btn-post" style={{background:'rgba(180,50,50,0.85)'}} onClick={onConfirm}>Delete</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+function TaskCard({task, onAccept, onComplete, onPause, onResume, onDelete, onEdit, tick, fontSize}) {
   const {col,rot} = noteStyle(task.id);
   const isDone = !!task.completedAt;
   const isActive = task.acceptedAt && !task.completedAt && !task.pausedAt;
@@ -625,9 +690,14 @@ function TaskCard({task, onAccept, onComplete, onPause, onResume, onDelete, tick
         {isActive && <button className="nbtn" style={{fontSize:(fs*0.64)+'px'}} onClick={()=>onPause(task)}>⏸ Pause</button>}
         {isPaused && <button className="nbtn" style={{fontSize:(fs*0.64)+'px'}} onClick={()=>onResume(task)}>▶ Resume</button>}
         {(isActive||isPaused) && <button className="nbtn" style={{fontSize:(fs*0.64)+'px'}} onClick={()=>onComplete(task)}>✓ Done</button>}
+        {!isDone && <button className="nbtn" style={{fontSize:(fs*0.64)+'px'}} onClick={()=>onEdit(task)}>✏️</button>}
         <button className="nbtn danger" style={{fontSize:(fs*0.64)+'px'}} onClick={()=>onDelete(task.id)}>✕</button>
       </div>
-      <div className="by-line" style={{fontSize:(fs*0.64)+'px'}}>{task.assignedTo&&!isDone?`${task.assignedTo} · `:''}{task.createdBy} · {fmtTime(task.createdAt)}</div>
+      <div className="by-line" style={{fontSize:(fs*0.64)+'px'}}>
+        {task.assignedTo&&!isDone?`${task.assignedTo} · `:''}
+        {task.createdBy} · {fmtTime(task.createdAt)}
+        {task.editedAt?<span style={{opacity:0.6}}> · ✏️ {fmtAgo(task.editedAt)}</span>:null}
+      </div>
     </div>
   );
 }
@@ -1055,6 +1125,10 @@ function App() {
   const [dragOver,setDragOver]   = useState(null);
   const [tick,setTick]           = useState(0);
   const [adminUnlocked,setAdminUnlocked] = useState(false);
+  const [pendingDelete,setPendingDelete] = useState(null);
+  const [editTask,setEditTask]   = useState(null);
+  const [confirmClearDone,setConfirmClearDone] = useState(false);
+  const [listView,setListView]   = useState(false);
   const tokenRef = useRef(null);
 
   useEffect(()=>{ const id=setInterval(()=>setTick(t=>t+1),1000); return()=>clearInterval(id); },[]);
@@ -1156,7 +1230,10 @@ function App() {
     await syncTask(updated.find(t=>t.id===task.id));
   };
 
-  const handleDelete     = id => setTasks(tasks.filter(t=>t.id!==id));
+  const handleDelete     = id => { const t=tasks.find(x=>x.id===id); if(t) setPendingDelete(t); };
+  const confirmDelete    = () => { if(!pendingDelete) return; playDelete(); setTasks(tasks.filter(t=>t.id!==pendingDelete.id)); setPendingDelete(null); };
+  const handleEditSave   = async updated => { setEditTask(null); setTasks(prev=>prev.map(t=>t.id===updated.id?updated:t)); showToast('Task updated ✓','success'); await syncTask(updated); };
+  const handleClearDone  = () => { setTasks(prev=>prev.filter(t=>!t.completedAt)); setConfirmClearDone(false); showToast('Done column cleared 🗑️',''); };
   const handleClearTasks = () => { setTasks([]); showToast('All tasks cleared',''); };
   const handleSignOut    = () => { setUser(null); setShowMenu(false); if(window.google) window.google.accounts.oauth2.revoke(config?.accessToken||''); setConfig(p=>p?{...p,accessToken:null}:null); };
 
@@ -1219,34 +1296,110 @@ function App() {
       </div>
 
       {view==='board' && (
-        <div className="body-layout">
-          <Sidebar tasks={tasks}/>
-          <div className="board">
-            {[
-              {k:'open',   label:'Open',        color:'#7a1c1c', items:open},
-              {k:'inprog', label:'In Progress',  color:'#9a6200', items:inProg},
-              {k:'done',   label:'Done',         color:'#285014', items:done},
-            ].map(col=>(
-              <div key={col.k}
-                className={`col-wrap${dragOver===col.k?' drag-over':''}`}
-                onDragOver={e=>{ e.preventDefault(); setDragOver(col.k); }}
-                onDragLeave={()=>setDragOver(null)}
-                onDrop={e=>handleDrop(e,col.k)}>
-                <div className="col-head">
-                  <div className="cdot" style={{background:col.color}}/>
-                  <span className="clabel">{col.label}</span>
-                  <span className="ccount">{col.items.length}</span>
-                </div>
-                <div className="col-body">
-                  {col.items.length===0 && <div className="col-empty">{col.k==='done'?'nothing done yet':col.k==='inprog'?'nothing active':'all clear'}</div>}
-                  {col.items.map(t=>(
-                    <TaskCard key={t.id} task={t} tick={tick} fontSize={settings.fontSize||14}
-                      onAccept={handleAccept} onComplete={handleComplete}
-                      onPause={handlePause} onResume={handleResume} onDelete={handleDelete}/>
-                  ))}
+        <div className="body-layout" style={{flexDirection:'column'}}>
+          <div style={{display:'flex',flex:1,overflow:'hidden'}}>
+            <Sidebar tasks={tasks}/>
+            <div style={{flex:1,display:'flex',flexDirection:'column',overflow:'hidden'}}>
+              <div className="board-toolbar">
+                <div className="view-toggle">
+                  <button className={`vt-btn${!listView?' active':''}`} onClick={()=>setListView(false)}>⊞ Cards</button>
+                  <button className={`vt-btn${listView?' active':''}`} onClick={()=>setListView(true)}>≡ List</button>
                 </div>
               </div>
-            ))}
+              {!listView ? (
+                <div className="board">
+                  {[
+                    {k:'open',   label:'Open',       color:'#7a1c1c', items:open},
+                    {k:'inprog', label:'In Progress', color:'#9a6200', items:inProg},
+                    {k:'done',   label:'Done',        color:'#285014', items:done},
+                  ].map(col=>(
+                    <div key={col.k}
+                      className={`col-wrap${dragOver===col.k?' drag-over':''}`}
+                      onDragOver={e=>{ e.preventDefault(); setDragOver(col.k); }}
+                      onDragLeave={()=>setDragOver(null)}
+                      onDrop={e=>handleDrop(e,col.k)}>
+                      <div className="col-head">
+                        <div className="cdot" style={{background:col.color}}/>
+                        <span className="clabel">{col.label}</span>
+                        <span className="ccount">{col.items.length}</span>
+                        {col.k==='done'&&done.length>0&&(
+                          confirmClearDone
+                            ? <span style={{marginLeft:'auto',display:'flex',gap:'5px',alignItems:'center'}}>
+                                <span style={{fontSize:'9px',color:'var(--text3)',fontFamily:'DM Mono,monospace'}}>Clear all?</span>
+                                <button className="nbtn danger" style={{fontSize:'9px'}} onClick={handleClearDone}>Yes</button>
+                                <button className="nbtn" style={{fontSize:'9px'}} onClick={()=>setConfirmClearDone(false)}>No</button>
+                              </span>
+                            : <button className="nbtn danger" style={{marginLeft:'auto',fontSize:'9px'}} onClick={()=>setConfirmClearDone(true)}>🗑️ Clear</button>
+                        )}
+                      </div>
+                      <div className="col-body">
+                        {col.items.length===0 && <div className="col-empty">{col.k==='done'?'nothing done yet':col.k==='inprog'?'nothing active':'all clear'}</div>}
+                        {col.items.map(t=>(
+                          <TaskCard key={t.id} task={t} tick={tick} fontSize={settings.fontSize||14}
+                            onAccept={handleAccept} onComplete={handleComplete}
+                            onPause={handlePause} onResume={handleResume}
+                            onDelete={handleDelete} onEdit={setEditTask}/>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="board-list">
+                  {[
+                    {k:'open',   label:'Open',       color:'#7a1c1c', items:open},
+                    {k:'inprog', label:'In Progress', color:'#9a6200', items:inProg},
+                    {k:'done',   label:'Done',        color:'#285014', items:done},
+                  ].map(col=>(
+                    <div key={col.k} className="list-col">
+                      <div className="list-col-head">
+                        <div className="cdot" style={{background:col.color}}/>
+                        <span className="clabel">{col.label}</span>
+                        <span className="ccount">{col.items.length}</span>
+                        {col.k==='done'&&done.length>0&&(
+                          confirmClearDone
+                            ? <span style={{marginLeft:'auto',display:'flex',gap:'5px',alignItems:'center'}}>
+                                <span style={{fontSize:'9px',color:'var(--text3)',fontFamily:'DM Mono,monospace'}}>Clear all?</span>
+                                <button className="lr-btn danger" onClick={handleClearDone}>Yes</button>
+                                <button className="lr-btn" onClick={()=>setConfirmClearDone(false)}>No</button>
+                              </span>
+                            : <button className="lr-btn danger" style={{marginLeft:'auto'}} onClick={()=>setConfirmClearDone(true)}>🗑️ Clear</button>
+                        )}
+                      </div>
+                      {col.items.length===0 && <div className="col-empty">{col.k==='done'?'nothing done yet':col.k==='inprog'?'nothing active':'all clear'}</div>}
+                      {col.items.map(t=>{
+                        const isActive=t.acceptedAt&&!t.completedAt&&!t.pausedAt;
+                        const isPaused=t.acceptedAt&&!t.completedAt&&!!t.pausedAt;
+                        const prio=t.priority==='high'?'#c43030':t.priority==='med'?'#c48830':'#508050';
+                        return (
+                          <div key={t.id} className={`list-row${t.completedAt?' is-done':''}`}>
+                            <div className="lr-dot" style={{background:prio}}/>
+                            <span className="lr-title">{t.title}</span>
+                            <span className="lr-meta">
+                              {t.client&&t.client!=='General / Internal'&&<span>{t.client}</span>}
+                              <span>{CATS.find(c=>c.id===t.category)?.label||t.category}</span>
+                              {t.assignedTo&&<span>{t.assignedTo}</span>}
+                              {t.deadline&&<span>📅 {t.deadline}</span>}
+                              {isActive&&<span style={{color:'var(--amber)'}}>▶ active</span>}
+                              {isPaused&&<span>⏸ paused</span>}
+                              {t.editedAt&&<span style={{opacity:0.6}}>✏️ {fmtAgo(t.editedAt)}</span>}
+                            </span>
+                            <div className="lr-btns">
+                              {!t.acceptedAt&&!t.completedAt&&<button className="lr-btn" onClick={()=>handleAccept(t)}>▶</button>}
+                              {isActive&&<button className="lr-btn" onClick={()=>handlePause(t)}>⏸</button>}
+                              {isPaused&&<button className="lr-btn" onClick={()=>handleResume(t)}>▶</button>}
+                              {(isActive||isPaused)&&<button className="lr-btn" onClick={()=>handleComplete(t)}>✓</button>}
+                              {!t.completedAt&&<button className="lr-btn" onClick={()=>setEditTask(t)}>✏️</button>}
+                              <button className="lr-btn danger" onClick={()=>handleDelete(t.id)}>✕</button>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}
@@ -1265,6 +1418,8 @@ function App() {
         onAdminLock={()=>{ setAdminUnlocked(false); if(view==='scores') setView('board'); }}/>}
 
       {showNew && <NewTaskModal currentUser={user} onClose={()=>setShowNew(false)} onSave={handleNewTask}/>}
+      {editTask && <NewTaskModal currentUser={user} editTask={editTask} onClose={()=>setEditTask(null)} onSave={handleEditSave}/>}
+      {pendingDelete && <DeleteConfirmModal task={pendingDelete} onConfirm={confirmDelete} onCancel={()=>setPendingDelete(null)}/>}
       {toast && <Toast msg={toast.msg} type={toast.type} onDone={()=>setToast(null)}/>}
       {chaChing && <ChaChing onDone={()=>setChaChing(false)}/>}
     </div>
