@@ -525,12 +525,14 @@ async function sheetLoad(cfg) {
   } catch(e) { console.warn('sheet load error',e); return []; }
 }
 async function sendEmail(cfg, task) {
-  if (!cfg.accessToken||!task.assignedToEmail) return;
+  if (!cfg.accessToken||!task.assignedToEmail||task.notify===false) return;
   try {
     const sub=`[BV Tasks] New task: ${task.title}`;
     const body=`Hi ${task.assignedTo||'there'},\n\nNew task on the Bagavagabonds board:\n\nTitle: ${task.title}\nClient: ${task.client||'General'}\nCategory: ${task.category}\nPriority: ${task.priority.toUpperCase()}${task.deadline?`\nDeadline: ${task.deadline}`:''}\n${task.desc?`\nDetails: ${task.desc}\n`:''}\nRequested by: ${task.createdBy}\n\nAccept it and start the timer here:\nhttps://hermitthecrog.github.io/bv-taskmanager/\n\n— Bagavagabonds Task Board`;
-    const raw=[`To: ${task.assignedToEmail}`,`Subject: ${sub}`,'Content-Type: text/plain; charset=utf-8','',body].join('\n');
-    const enc=btoa(unescape(encodeURIComponent(raw))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+    const raw=[`To: ${task.assignedToEmail}`,`Subject: =?UTF-8?B?${btoa(unescape(encodeURIComponent(sub)))}?=`,'Content-Type: text/plain; charset=utf-8','MIME-Version: 1.0','',body].join('\n');
+    const bytes=new TextEncoder().encode(raw);
+    const binary=Array.from(bytes).map(b=>String.fromCharCode(b)).join('');
+    const enc=btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
     await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send',{method:'POST',headers:{'Authorization':`Bearer ${cfg.accessToken}`,'Content-Type':'application/json'},body:JSON.stringify({raw:enc})});
   } catch(e) { console.warn('email',e); }
 }
@@ -600,8 +602,8 @@ function NewTaskModal({currentUser, onClose, onSave, editTask}) {
     title: editTask.title||'', desc: editTask.desc||'', category: editTask.category||'other',
     priority: editTask.priority||'med', deadline: editTask.deadline||'',
     assignedToEmail: editTask.assignedToEmail||editTask.assignedTo||'',
-    client: editTask.client||'General / Internal',
-  } : {title:'',desc:'',category:'other',priority:'med',deadline:'',assignedToEmail:'',client:'General / Internal'});
+    client: editTask.client||'General / Internal', notify: editTask.notify!==false,
+  } : {title:'',desc:'',category:'other',priority:'med',deadline:'',assignedToEmail:'',client:'General / Internal',notify:true});
   const set = (k,v) => setForm(f=>({...f,[k]:v}));
   const member = TEAM.find(t=>t.email===form.assignedToEmail);
   const save = () => {
@@ -653,6 +655,12 @@ function NewTaskModal({currentUser, onClose, onSave, editTask}) {
           <input type="date" value={form.deadline} onChange={e=>set('deadline',e.target.value)}/>
         </div>
         <EmailField value={form.assignedToEmail} onChange={v=>set('assignedToEmail',v)}/>
+        {form.assignedToEmail && (
+          <div style={{display:'flex',alignItems:'center',gap:'10px',marginBottom:'4px'}}>
+            <input type="checkbox" id="notify-chk" checked={form.notify} onChange={e=>set('notify',e.target.checked)} style={{accentColor:'var(--amber)',width:'14px',height:'14px',cursor:'pointer'}}/>
+            <label htmlFor="notify-chk" style={{fontSize:'12px',color:'var(--text2)',fontFamily:'DM Mono,monospace',cursor:'pointer'}}>Send email notification to assignee</label>
+          </div>
+        )}
         <div className="modal-actions">
           <button className="btn-cancel" onClick={onClose}>Cancel</button>
           <button className="btn-post" onClick={save} disabled={!form.title.trim()}>{isEdit ? 'Save changes' : 'Post task'}</button>
@@ -1359,7 +1367,7 @@ function App() {
                     <div key={col.k}
                       className={`col-wrap${dragOver===col.k?' drag-over':''}`}
                       onDragOver={e=>{ e.preventDefault(); setDragOver(col.k); }}
-                      onDragLeave={()=>setDragOver(null)}
+                      onDragLeave={e=>{ if(!e.currentTarget.contains(e.relatedTarget)){setDragOver(null);setDropTarget(null);} }}
                       onDrop={e=>handleDrop(e,col.k)}>
                       <div className="col-head">
                         <div className="cdot" style={{background:col.color}}/>
@@ -1380,8 +1388,7 @@ function App() {
                         {col.items.map(t=>(
                           <div key={t.id}
                             className={dropTarget?.taskId===t.id?`drop-${dropTarget.pos}`:''}
-                            onDragOver={e=>{ e.preventDefault(); e.stopPropagation(); const r=e.currentTarget.getBoundingClientRect(); setDropTarget({taskId:t.id,pos:e.clientY<r.top+r.height/2?'before':'after'}); }}
-                            onDragLeave={()=>setDropTarget(null)}>
+                            onDragOver={e=>{ e.preventDefault(); e.stopPropagation(); const r=e.currentTarget.getBoundingClientRect(); setDropTarget({taskId:t.id,pos:e.clientY<r.top+r.height/2?'before':'after'}); }}>
                             <TaskCard key={t.id} task={t} tick={tick} fontSize={settings.fontSize||14}
                               onAccept={handleAccept} onComplete={handleComplete}
                               onPause={handlePause} onResume={handleResume}
