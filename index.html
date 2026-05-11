@@ -258,9 +258,12 @@ body{color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;line-heigh
 .board-list{flex:1;padding:14px 18px;overflow-y:auto;}
 .list-col{margin-bottom:22px;}
 .list-col-head{display:flex;align-items:center;gap:6px;margin-bottom:8px;}
-.list-row{display:flex;align-items:center;gap:10px;padding:9px 13px;border-radius:6px;background:var(--bg2);border:1px solid var(--border);margin-bottom:5px;transition:border-color 0.1s;}
+.list-row{display:flex;align-items:center;gap:10px;padding:9px 13px;border-radius:6px;background:var(--bg2);border:1px solid var(--border);margin-bottom:5px;transition:border-color 0.1s;cursor:pointer;}
 .list-row:hover{border-color:var(--border2);}
 .list-row.is-done .lr-title{text-decoration:line-through;opacity:0.5;}
+.list-row.drop-before{box-shadow:0 -3px 0 var(--amber);}
+.list-row.drop-after{box-shadow:0 3px 0 var(--amber);}
+.lr-expanded{border-radius:0 0 6px 6px;padding:10px 13px 12px;margin-top:-5px;margin-bottom:5px;border:1px solid var(--border);border-top:none;}
 .lr-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
 .lr-title{font-size:13px;font-weight:700;color:var(--text);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .lr-meta{font-size:10px;font-family:'DM Mono',monospace;color:var(--text3);white-space:nowrap;display:flex;gap:10px;}
@@ -299,6 +302,8 @@ const SETTINGS_KEY = 'bvb_settings_v3';
 const BADGES_KEY   = 'bvb_badges_v3';
 const DEMERITS_KEY = 'bvb_demerits_v3';
 const ADMIN_PIN_KEY= 'bvb_admin_pin';
+const TASK_ORDER_KEY='bvb_task_order_v1';
+const USER_PREFS_KEY='bvb_user_prefs_v1';
 const DEFAULT_PIN  = '1234';
 const ADMIN_EMAIL  = 'cam@bagavagabonds.com';
 
@@ -401,6 +406,22 @@ function calcAutoBadges(name, tasks) {
   if (done.filter(t=>t.category==='build').length>=5) badges.push('builder');
   if (done.filter(t=>t.category==='check').length>=5) badges.push('auditor');
   return badges;
+}
+
+function reorderIds(order, allIds, draggingId, targetId, pos) {
+  let full = [...order];
+  allIds.forEach(id=>{ if(!full.includes(id)) full.push(id); });
+  full = full.filter(id=>id!==draggingId);
+  const ti = full.indexOf(targetId);
+  if (ti===-1) { full.push(draggingId); return full; }
+  full.splice(pos==='before'?ti:ti+1, 0, draggingId);
+  return full;
+}
+function applyUserOrder(items, email, taskOrder) {
+  const order = taskOrder[email]||[];
+  if (!order.length) return [...items].sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+  const map = new Map(order.map((id,i)=>[id,i]));
+  return [...items].sort((a,b)=>(map.has(a.id)?map.get(a.id):Infinity)-(map.has(b.id)?map.get(b.id):Infinity));
 }
 
 // ── SOUND ──────────────────────────────────────────────────────────────────
@@ -1129,6 +1150,11 @@ function App() {
   const [editTask,setEditTask]   = useState(null);
   const [confirmClearDone,setConfirmClearDone] = useState(false);
   const [listView,setListView]   = useState(false);
+  const [taskOrder,setTaskOrder] = useState(()=>{ try{return JSON.parse(localStorage.getItem(TASK_ORDER_KEY))||{};}catch{return {};} });
+  const [showMine,setShowMine]   = useState(()=>{ try{return JSON.parse(localStorage.getItem(USER_PREFS_KEY))?.showMine||false;}catch{return false;} });
+  const [expandedId,setExpandedId] = useState(null);
+  const [dropTarget,setDropTarget] = useState(null); // {taskId, pos:'before'|'after'}
+  const [dragId,setDragId]       = useState(null);
   const tokenRef = useRef(null);
 
   useEffect(()=>{ const id=setInterval(()=>setTick(t=>t+1),1000); return()=>clearInterval(id); },[]);
@@ -1136,6 +1162,8 @@ function App() {
   useEffect(()=>{ localStorage.setItem(SETTINGS_KEY,JSON.stringify(settings)); },[settings]);
   useEffect(()=>{ localStorage.setItem(BADGES_KEY,JSON.stringify(manualBadges)); },[manualBadges]);
   useEffect(()=>{ localStorage.setItem(DEMERITS_KEY,JSON.stringify(demerits)); },[demerits]);
+  useEffect(()=>{ localStorage.setItem(TASK_ORDER_KEY,JSON.stringify(taskOrder)); },[taskOrder]);
+  useEffect(()=>{ if(user) localStorage.setItem(USER_PREFS_KEY,JSON.stringify({showMine})); },[showMine,user]);
   useEffect(()=>{
     const h=document.documentElement;
     THEMES.forEach(t=>h.classList.remove(t.id));
@@ -1195,6 +1223,7 @@ function App() {
 
   const handleNewTask = async task => {
     setShowNew(false); setTasks(prev=>[task,...prev]);
+    if(user) setTaskOrder(prev=>({...prev,[user.email]:[task.id,...(prev[user.email]||[])]}));
     playSound('post'); showToast('Task posted! 🎯','success');
     await syncTask(task,true);
     if (task.assignedToEmail&&config?.accessToken) await sendEmail(config,task);
@@ -1242,14 +1271,24 @@ function App() {
     const id=e.dataTransfer.getData('taskId'); if(!id) return;
     const task=tasks.find(t=>t.id===id); if(!task) return;
     const now=Date.now(); let updated=tasks;
+    if (dropTarget&&dropTarget.taskId!==id) {
+      const colItems = col==='open'?openRaw:col==='inprog'?inProgRaw:[];
+      const allIds = colItems.map(t=>t.id);
+      const newOrder = reorderIds(taskOrder[email]||[], allIds, id, dropTarget.taskId, dropTarget.pos);
+      setTaskOrder(prev=>({...prev,[email]:newOrder}));
+    }
     if (col==='open') updated=tasks.map(t=>t.id===id?{...t,acceptedAt:null,completedAt:null,pausedAt:null,accumulatedMs:0,points:null}:t);
     else if (col==='inprog'&&!task.acceptedAt) updated=tasks.map(t=>t.id===id?{...t,acceptedAt:now,accumulatedMs:0,pausedAt:null,assignedTo:t.assignedTo||user?.name||'Unknown'}:t);
-    setTasks(updated); setDragOver(null);
+    setTasks(updated); setDragOver(null); setDropTarget(null); setDragId(null);
   };
 
-  const open   = tasks.filter(t=>!t.acceptedAt&&!t.completedAt);
-  const inProg = tasks.filter(t=>t.acceptedAt&&!t.completedAt);
-  const done   = [...tasks.filter(t=>t.completedAt)].sort((a,b)=>b.completedAt-a.completedAt).slice(0,20);
+  const email = user?.email||'';
+  const mineFilter = t => !showMine || !t.assignedTo || t.assignedTo===user?.name;
+  const openRaw  = tasks.filter(t=>!t.acceptedAt&&!t.completedAt&&mineFilter(t));
+  const inProgRaw= tasks.filter(t=>t.acceptedAt&&!t.completedAt&&mineFilter(t));
+  const open     = applyUserOrder(openRaw, email, taskOrder);
+  const inProg   = applyUserOrder(inProgRaw, email, taskOrder);
+  const done     = [...tasks.filter(t=>t.completedAt)].sort((a,b)=>b.completedAt-a.completedAt).slice(0,20);
 
   if (!user)   return <div className={settings.theme||'theme-e'}><AuthScreen onSignIn={handleSignIn}/></div>;
   if (loading) return (
@@ -1305,6 +1344,10 @@ function App() {
                   <button className={`vt-btn${!listView?' active':''}`} onClick={()=>setListView(false)}>⊞ Cards</button>
                   <button className={`vt-btn${listView?' active':''}`} onClick={()=>setListView(true)}>≡ List</button>
                 </div>
+                <div className="view-toggle" style={{marginLeft:'auto'}}>
+                  <button className={`vt-btn${!showMine?' active':''}`} onClick={()=>setShowMine(false)}>All</button>
+                  <button className={`vt-btn${showMine?' active':''}`} onClick={()=>setShowMine(true)}>Mine</button>
+                </div>
               </div>
               {!listView ? (
                 <div className="board">
@@ -1335,10 +1378,15 @@ function App() {
                       <div className="col-body">
                         {col.items.length===0 && <div className="col-empty">{col.k==='done'?'nothing done yet':col.k==='inprog'?'nothing active':'all clear'}</div>}
                         {col.items.map(t=>(
-                          <TaskCard key={t.id} task={t} tick={tick} fontSize={settings.fontSize||14}
-                            onAccept={handleAccept} onComplete={handleComplete}
-                            onPause={handlePause} onResume={handleResume}
-                            onDelete={handleDelete} onEdit={setEditTask}/>
+                          <div key={t.id}
+                            className={dropTarget?.taskId===t.id?`drop-${dropTarget.pos}`:''}
+                            onDragOver={e=>{ e.preventDefault(); e.stopPropagation(); const r=e.currentTarget.getBoundingClientRect(); setDropTarget({taskId:t.id,pos:e.clientY<r.top+r.height/2?'before':'after'}); }}
+                            onDragLeave={()=>setDropTarget(null)}>
+                            <TaskCard key={t.id} task={t} tick={tick} fontSize={settings.fontSize||14}
+                              onAccept={handleAccept} onComplete={handleComplete}
+                              onPause={handlePause} onResume={handleResume}
+                              onDelete={handleDelete} onEdit={setEditTask}/>
+                          </div>
                         ))}
                       </div>
                     </div>
@@ -1347,9 +1395,9 @@ function App() {
               ) : (
                 <div className="board-list">
                   {[
-                    {k:'open',   label:'Open',       color:'#7a1c1c', items:open},
-                    {k:'inprog', label:'In Progress', color:'#9a6200', items:inProg},
-                    {k:'done',   label:'Done',        color:'#285014', items:done},
+                    {k:'open',   label:'Open',       color:'#c43030', bg:'rgba(196,48,48,0.08)',  items:open},
+                    {k:'inprog', label:'In Progress', color:'#c48830', bg:'rgba(196,136,48,0.08)', items:inProg},
+                    {k:'done',   label:'Done',        color:'#408050', bg:'rgba(64,128,80,0.08)',  items:done},
                   ].map(col=>(
                     <div key={col.k} className="list-col">
                       <div className="list-col-head">
@@ -1371,27 +1419,42 @@ function App() {
                         const isActive=t.acceptedAt&&!t.completedAt&&!t.pausedAt;
                         const isPaused=t.acceptedAt&&!t.completedAt&&!!t.pausedAt;
                         const prio=t.priority==='high'?'#c43030':t.priority==='med'?'#c48830':'#508050';
+                        const isOpen=expandedId===t.id;
                         return (
-                          <div key={t.id} className={`list-row${t.completedAt?' is-done':''}`}>
-                            <div className="lr-dot" style={{background:prio}}/>
-                            <span className="lr-title">{t.title}</span>
-                            <span className="lr-meta">
-                              {t.client&&t.client!=='General / Internal'&&<span>{t.client}</span>}
-                              <span>{CATS.find(c=>c.id===t.category)?.label||t.category}</span>
-                              {t.assignedTo&&<span>{t.assignedTo}</span>}
-                              {t.deadline&&<span>📅 {t.deadline}</span>}
-                              {isActive&&<span style={{color:'var(--amber)'}}>▶ active</span>}
-                              {isPaused&&<span>⏸ paused</span>}
-                              {t.editedAt&&<span style={{opacity:0.6}}>✏️ {fmtAgo(t.editedAt)}</span>}
-                            </span>
-                            <div className="lr-btns">
-                              {!t.acceptedAt&&!t.completedAt&&<button className="lr-btn" onClick={()=>handleAccept(t)}>▶</button>}
-                              {isActive&&<button className="lr-btn" onClick={()=>handlePause(t)}>⏸</button>}
-                              {isPaused&&<button className="lr-btn" onClick={()=>handleResume(t)}>▶</button>}
-                              {(isActive||isPaused)&&<button className="lr-btn" onClick={()=>handleComplete(t)}>✓</button>}
-                              {!t.completedAt&&<button className="lr-btn" onClick={()=>setEditTask(t)}>✏️</button>}
-                              <button className="lr-btn danger" onClick={()=>handleDelete(t.id)}>✕</button>
+                          <div key={t.id}>
+                            <div className={`list-row${t.completedAt?' is-done':''}`}
+                              style={{borderRadius:isOpen?'6px 6px 0 0':'6px', borderBottomColor:isOpen?'transparent':'var(--border)'}}
+                              onClick={()=>setExpandedId(isOpen?null:t.id)}>
+                              <div className="lr-dot" style={{background:prio}}/>
+                              <span className="lr-title" style={{flex:1}}>{t.title}</span>
+                              <span className="lr-meta">
+                                {t.client&&t.client!=='General / Internal'&&<span>{t.client}</span>}
+                                {t.assignedTo&&<span>{t.assignedTo}</span>}
+                                {t.deadline&&<span>📅 {t.deadline}</span>}
+                                {isActive&&<span style={{color:'var(--amber)'}}>▶</span>}
+                                {isPaused&&<span>⏸</span>}
+                              </span>
+                              <span style={{fontSize:'9px',color:'var(--text3)',marginLeft:'4px'}}>{isOpen?'▲':'▼'}</span>
                             </div>
+                            {isOpen&&(
+                              <div className="lr-expanded" style={{background:col.bg, borderColor:'var(--border)'}}>
+                                {t.desc&&<div style={{fontSize:'12px',color:'var(--text2)',marginBottom:'8px',lineHeight:'1.5'}}>{t.desc}</div>}
+                                <div style={{fontSize:'10px',fontFamily:'DM Mono,monospace',color:'var(--text3)',marginBottom:'10px',display:'flex',gap:'14px',flexWrap:'wrap'}}>
+                                  <span>{CATS.find(c=>c.id===t.category)?.label||t.category}</span>
+                                  <span style={{textTransform:'capitalize'}}>{t.priority} priority</span>
+                                  {t.editedAt&&<span>✏️ {fmtAgo(t.editedAt)}</span>}
+                                  {t.completedAt&&t.duration&&<span>✓ {fmtDur(t.duration)} · +{t.points||0} pts</span>}
+                                </div>
+                                <div style={{display:'flex',gap:'5px',flexWrap:'wrap'}}>
+                                  {!t.acceptedAt&&!t.completedAt&&<button className="lr-btn" onClick={e=>{e.stopPropagation();handleAccept(t);}}>▶ Accept</button>}
+                                  {isActive&&<button className="lr-btn" onClick={e=>{e.stopPropagation();handlePause(t);}}>⏸ Pause</button>}
+                                  {isPaused&&<button className="lr-btn" onClick={e=>{e.stopPropagation();handleResume(t);}}>▶ Resume</button>}
+                                  {(isActive||isPaused)&&<button className="lr-btn" onClick={e=>{e.stopPropagation();handleComplete(t);}}>✓ Done</button>}
+                                  {!t.completedAt&&<button className="lr-btn" onClick={e=>{e.stopPropagation();setEditTask(t);}}>✏️ Edit</button>}
+                                  <button className="lr-btn danger" onClick={e=>{e.stopPropagation();handleDelete(t.id);}}>✕ Delete</button>
+                                </div>
+                              </div>
+                            )}
                           </div>
                         );
                       })}
