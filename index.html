@@ -1117,7 +1117,7 @@ function SetupScreen({onSave}) {
 }
 
 // ── AUTH SCREEN ───────────────────────────────────────────────────────────────
-function AuthScreen({onSignIn}) {
+function AuthScreen({onSignIn, gsiReady, gsiError, onRetry}) {
   return (
     <div className="auth-screen">
       <div className="auth-dots"/>
@@ -1125,8 +1125,27 @@ function AuthScreen({onSignIn}) {
         <div className="auth-badge">BV</div>
         <div className="auth-title">Bagavagabonds<br/>Task Board</div>
         <div className="auth-sub">Assign tasks from anywhere.<br/>Warehouse crew gets notified instantly.</div>
-        <button className="auth-btn" onClick={onSignIn}>Sign in with Google</button>
-        <div className="auth-note">use your @bagavagabonds.com account</div>
+        {gsiError ? (
+          <>
+            <div style={{fontSize:'12px',color:'#f08080',fontFamily:'DM Mono,monospace',marginBottom:'14px',lineHeight:'1.6',background:'rgba(200,60,60,0.1)',border:'1px solid rgba(200,60,60,0.2)',borderRadius:'7px',padding:'10px 14px'}}>
+              Google sign-in failed to load.<br/>
+              This is usually caused by an ad blocker or network filter blocking <code>accounts.google.com</code>.<br/><br/>
+              Try disabling extensions, or use a different browser.
+            </div>
+            <button className="auth-btn" onClick={onRetry}>↺ Retry</button>
+          </>
+        ) : !gsiReady ? (
+          <>
+            <button className="auth-btn" style={{opacity:0.6,cursor:'default',gap:'10px'}} disabled>
+              <span className="spinner" style={{borderTopColor:'#f5c5a3'}}/>
+              Loading Google API…
+            </button>
+            <div className="auth-note">if this takes more than 5 seconds, try disabling ad blockers</div>
+          </>
+        ) : (
+          <button className="auth-btn" onClick={onSignIn}>Sign in with Google</button>
+        )}
+        {gsiReady && <div className="auth-note">use your @bagavagabonds.com account</div>}
       </div>
     </div>
   );
@@ -1164,6 +1183,8 @@ function App() {
   const [dropTarget,setDropTarget] = useState(null); // {taskId, pos:'before'|'after'}
   const [dragId,setDragId]       = useState(null);
   const tokenRef = useRef(null);
+  const [gsiReady,setGsiReady]   = useState(false);
+  const [gsiError,setGsiError]   = useState(false);
 
   useEffect(()=>{ const id=setInterval(()=>setTick(t=>t+1),1000); return()=>clearInterval(id); },[]);
   useEffect(()=>{ localStorage.setItem(TASKS_KEY,JSON.stringify(tasks)); },[tasks]);
@@ -1180,9 +1201,13 @@ function App() {
 
   useEffect(()=>{
     if (!config) return;
+    setGsiReady(false); setGsiError(false);
     const s=document.createElement('script'); s.src='https://accounts.google.com/gsi/client'; s.async=true; s.defer=true;
+    const timeout=setTimeout(()=>{ if(!tokenRef.current) setGsiError(true); }, 8000);
+    s.onerror=()=>{ clearTimeout(timeout); setGsiError(true); };
     s.onload=()=>{
-      if (!window.google||!config) return;
+      clearTimeout(timeout);
+      if (!window.google||!config) { setGsiError(true); return; }
       tokenRef.current=window.google.accounts.oauth2.initTokenClient({
         client_id:config.clientId,
         scope:'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/gmail.send email profile',
@@ -1195,7 +1220,6 @@ function App() {
             const member=TEAM.find(t=>t.email===p.email);
             setUser({name:member?.name||p.name,email:p.email});
             showToast('Signed in — loading tasks...','success');
-            // Load tasks from Google Sheets so all devices stay in sync
             setLoading(true);
             try {
               const sheetTasks = await sheetLoad(c);
@@ -1213,12 +1237,14 @@ function App() {
           }
         }
       });
+      setGsiReady(true);
     };
     document.head.appendChild(s);
-    return()=>{ try{document.head.removeChild(s);}catch{} };
+    return()=>{ clearTimeout(timeout); try{document.head.removeChild(s);}catch{} };
   },[config?.clientId]);
 
-  const handleSignIn   = () => tokenRef.current ? tokenRef.current.requestAccessToken() : showToast('Google API loading — try again','error');
+  const handleSignIn   = () => { if(tokenRef.current) tokenRef.current.requestAccessToken(); else showToast('Google API not ready — try again','error'); };
+  const handleGsiRetry = () => { setGsiError(false); setGsiReady(false); tokenRef.current=null; setConfig(c=>({...c})); };
   const showToast      = (msg,type='') => setToast({msg,type});
 
   const syncTask = async (task, isNew=false) => {
@@ -1298,7 +1324,7 @@ function App() {
   const inProg   = applyUserOrder(inProgRaw, email, taskOrder);
   const done     = [...tasks.filter(t=>t.completedAt)].sort((a,b)=>b.completedAt-a.completedAt).slice(0,20);
 
-  if (!user)   return <div className={settings.theme||'theme-e'}><AuthScreen onSignIn={handleSignIn}/></div>;
+  if (!user)   return <div className={settings.theme||'theme-e'}><AuthScreen onSignIn={handleSignIn} gsiReady={gsiReady} gsiError={gsiError} onRetry={handleGsiRetry}/></div>;
   if (loading) return (
     <div className={settings.theme||'theme-e'} style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',background:'var(--bg)',flexDirection:'column',gap:'16px'}}>
       <div className="spinner" style={{width:'28px',height:'28px',borderWidth:'3px'}}/>
