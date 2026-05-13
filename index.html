@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
 <title>Bagavagabonds · Task Board</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -11,19 +11,11 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 
-.theme-e{--bg:#1c1410;--bg2:#141010;--bg3:#201810;--bg4:#2a1e16;--border:rgba(255,255,255,0.05);--border2:rgba(255,255,255,0.09);--text:#e8ddd0;--text2:rgba(232,221,208,0.5);--text3:rgba(232,221,208,0.22);--crimson:#7a1c1c;--crimson2:#5e1515;--crimson-dim:rgba(122,28,28,0.35);--amber:#c4682a;--amber-dim:rgba(196,104,42,0.2);--board-bg:radial-gradient(rgba(255,255,255,0.018) 1px,transparent 1px);--board-size:20px 20px;}
-.theme-c{--bg:#0e0e0e;--bg2:#161616;--bg3:#1e1e1e;--bg4:#252525;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);--text:#f0ede8;--text2:rgba(240,237,232,0.5);--text3:rgba(240,237,232,0.22);--crimson:#1D9E75;--crimson2:#158060;--crimson-dim:rgba(29,158,117,0.2);--amber:#d4f060;--amber-dim:rgba(212,240,96,0.1);--board-bg:radial-gradient(rgba(255,255,255,0.02) 1px,transparent 1px);--board-size:20px 20px;}
-.theme-cork{--bg:#c8a870;--bg2:#1a1210;--bg3:#251a12;--bg4:#30221a;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.1);--text:#e8ddd0;--text2:rgba(232,221,208,0.5);--text3:rgba(232,221,208,0.22);--crimson:#8b2020;--crimson2:#6a1818;--crimson-dim:rgba(139,32,32,0.35);--amber:#e8833a;--amber-dim:rgba(232,131,58,0.2);--board-bg:repeating-linear-gradient(0deg,rgba(0,0,0,0.03) 0,rgba(0,0,0,0.03) 1px,transparent 1px,transparent 28px),repeating-linear-gradient(90deg,rgba(0,0,0,0.03) 0,rgba(0,0,0,0.03) 1px,transparent 1px,transparent 28px);--board-size:28px 28px;}
-.theme-cream{--bg:#f0ebe0;--bg2:#ffffff;--bg3:#f5f0e8;--bg4:#ece7dc;--border:rgba(26,10,10,0.08);--border2:rgba(26,10,10,0.13);--text:#1a0e0e;--text2:rgba(26,14,14,0.5);--text3:rgba(26,14,14,0.25);--crimson:#8b2020;--crimson2:#6a1818;--crimson-dim:rgba(139,32,32,0.1);--amber:#c4682a;--amber-dim:rgba(196,104,42,0.12);--board-bg:radial-gradient(rgba(0,0,0,0.04) 1px,transparent 1px);--board-size:20px 20px;}
-.theme-slate{--bg:#141820;--bg2:#1a2030;--bg3:#1e2438;--bg4:#242c44;--border:rgba(255,255,255,0.05);--border2:rgba(255,255,255,0.1);--text:#d8e4f0;--text2:rgba(216,228,240,0.5);--text3:rgba(216,228,240,0.22);--crimson:#2a5a7c;--crimson2:#1e4460;--crimson-dim:rgba(42,90,124,0.3);--amber:#7eb8d4;--amber-dim:rgba(126,184,212,0.15);--board-bg:radial-gradient(rgba(255,255,255,0.018) 1px,transparent 1px);--board-size:20px 20px;}
-.theme-midnight{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2128;--bg4:#22272e;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.1);--text:#e6d9c4;--text2:rgba(230,217,196,0.5);--text3:rgba(230,217,196,0.22);--crimson:#4a3820;--crimson2:#362a18;--crimson-dim:rgba(74,56,32,0.5);--amber:#d4a853;--amber-dim:rgba(212,168,83,0.15);--board-bg:radial-gradient(rgba(255,255,255,0.015) 1px,transparent 1px);--board-size:24px 24px;}
-.theme-ash{--bg:#111111;--bg2:#181818;--bg3:#1e1e1e;--bg4:#252525;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.1);--text:#d8d4e0;--text2:rgba(216,212,224,0.5);--text3:rgba(216,212,224,0.22);--crimson:#3a3050;--crimson2:#2e2640;--crimson-dim:rgba(58,48,80,0.4);--amber:#9b8fbf;--amber-dim:rgba(155,143,191,0.15);--board-bg:radial-gradient(rgba(255,255,255,0.02) 1px,transparent 1px);--board-size:20px 20px;}
-.theme-clay{--bg:#1e1008;--bg2:#261410;--bg3:#2e1a12;--bg4:#38221a;--border:rgba(255,255,255,0.05);--border2:rgba(255,255,255,0.09);--text:#f0dcc8;--text2:rgba(240,220,200,0.5);--text3:rgba(240,220,200,0.22);--crimson:#8b3820;--crimson2:#6e2c18;--crimson-dim:rgba(139,56,32,0.35);--amber:#d4724a;--amber-dim:rgba(212,114,74,0.2);--board-bg:radial-gradient(rgba(255,200,150,0.025) 1px,transparent 1px);--board-size:20px 20px;}
-.theme-bark{--bg:#160e06;--bg2:#1e1408;--bg3:#261c0e;--bg4:#302414;--border:rgba(255,255,255,0.05);--border2:rgba(255,255,255,0.09);--text:#e8d4a8;--text2:rgba(232,212,168,0.5);--text3:rgba(232,212,168,0.22);--crimson:#6e4a18;--crimson2:#543810;--crimson-dim:rgba(110,74,24,0.4);--amber:#c8922a;--amber-dim:rgba(200,146,42,0.2);--board-bg:repeating-linear-gradient(0deg,rgba(0,0,0,0.03) 0,rgba(0,0,0,0.03) 1px,transparent 1px,transparent 32px),repeating-linear-gradient(90deg,rgba(0,0,0,0.03) 0,rgba(0,0,0,0.03) 1px,transparent 1px,transparent 32px);--board-size:32px 32px;}
-.theme-moss{--bg:#0a100a;--bg2:#101610;--bg3:#141e14;--bg4:#1a261a;--border:rgba(255,255,255,0.05);--border2:rgba(255,255,255,0.09);--text:#c8d8b8;--text2:rgba(200,216,184,0.5);--text3:rgba(200,216,184,0.22);--crimson:#2a4a2a;--crimson2:#1e381e;--crimson-dim:rgba(42,74,42,0.5);--amber:#8aaa72;--amber-dim:rgba(138,170,114,0.18);--board-bg:radial-gradient(rgba(100,200,100,0.018) 1px,transparent 1px);--board-size:20px 20px;}
-.theme-fern{--bg:#081410;--bg2:#0e1c18;--bg3:#122018;--bg4:#182e22;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.1);--text:#dde8d0;--text2:rgba(221,232,208,0.5);--text3:rgba(221,232,208,0.22);--crimson:#1a4830;--crimson2:#123820;--crimson-dim:rgba(26,72,48,0.5);--amber:#a4c840;--amber-dim:rgba(164,200,64,0.15);--board-bg:radial-gradient(rgba(100,220,140,0.018) 1px,transparent 1px);--board-size:20px 20px;}
-.theme-dust{--bg:#f5ede8;--bg2:#fff8f5;--bg3:#ede4df;--bg4:#e4d8d2;--border:rgba(60,20,15,0.08);--border2:rgba(60,20,15,0.13);--text:#2a1818;--text2:rgba(42,24,24,0.5);--text3:rgba(42,24,24,0.25);--crimson:#8a4840;--crimson2:#6e3832;--crimson-dim:rgba(138,72,64,0.12);--amber:#b8726a;--amber-dim:rgba(184,114,106,0.14);--board-bg:radial-gradient(rgba(0,0,0,0.04) 1px,transparent 1px);--board-size:20px 20px;}
-.theme-fog{--bg:#edf0f4;--bg2:#ffffff;--bg3:#e4e8ee;--bg4:#d8dde6;--border:rgba(30,40,80,0.08);--border2:rgba(30,40,80,0.14);--text:#1c2438;--text2:rgba(28,36,56,0.5);--text3:rgba(28,36,56,0.25);--crimson:#3a5a8a;--crimson2:#2c4870;--crimson-dim:rgba(58,90,138,0.1);--amber:#6a84a8;--amber-dim:rgba(106,132,168,0.15);--board-bg:radial-gradient(rgba(0,0,0,0.04) 1px,transparent 1px);--board-size:20px 20px;}
+/* ── THEMES — bumped text2/text3 opacity for better mobile readability ── */
+.theme-e{--bg:#1c1410;--bg2:#141010;--bg3:#201810;--bg4:#2a1e16;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);--text:#e8ddd0;--text2:rgba(232,221,208,0.72);--text3:rgba(232,221,208,0.42);--crimson:#7a1c1c;--crimson2:#5e1515;--crimson-dim:rgba(122,28,28,0.35);--amber:#c4682a;--amber-dim:rgba(196,104,42,0.2);--board-bg:radial-gradient(rgba(255,255,255,0.018) 1px,transparent 1px);--board-size:20px 20px;}
+.theme-c{--bg:#0e0e0e;--bg2:#161616;--bg3:#1e1e1e;--bg4:#252525;--border:rgba(255,255,255,0.09);--border2:rgba(255,255,255,0.15);--text:#f0ede8;--text2:rgba(240,237,232,0.72);--text3:rgba(240,237,232,0.42);--crimson:#1D9E75;--crimson2:#158060;--crimson-dim:rgba(29,158,117,0.2);--amber:#d4f060;--amber-dim:rgba(212,240,96,0.1);--board-bg:radial-gradient(rgba(255,255,255,0.02) 1px,transparent 1px);--board-size:20px 20px;}
+.theme-cork{--bg:#c8a870;--bg2:#1a1210;--bg3:#251a12;--bg4:#30221a;--border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.13);--text:#e8ddd0;--text2:rgba(232,221,208,0.72);--text3:rgba(232,221,208,0.42);--crimson:#8b2020;--crimson2:#6a1818;--crimson-dim:rgba(139,32,32,0.35);--amber:#e8833a;--amber-dim:rgba(232,131,58,0.2);--board-bg:repeating-linear-gradient(0deg,rgba(0,0,0,0.03) 0,rgba(0,0,0,0.03) 1px,transparent 1px,transparent 28px),repeating-linear-gradient(90deg,rgba(0,0,0,0.03) 0,rgba(0,0,0,0.03) 1px,transparent 1px,transparent 28px);--board-size:28px 28px;}
+.theme-cream{--bg:#f0ebe0;--bg2:#ffffff;--bg3:#f5f0e8;--bg4:#ece7dc;--border:rgba(26,10,10,0.08);--border2:rgba(26,10,10,0.15);--text:#1a0e0e;--text2:rgba(26,14,14,0.65);--text3:rgba(26,14,14,0.38);--crimson:#8b2020;--crimson2:#6a1818;--crimson-dim:rgba(139,32,32,0.1);--amber:#c4682a;--amber-dim:rgba(196,104,42,0.12);--board-bg:radial-gradient(rgba(0,0,0,0.04) 1px,transparent 1px);--board-size:20px 20px;}
 
 html,body{background:var(--bg);transition:background 0.3s;}
 body{color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;line-height:1.5;overflow-x:hidden;}
@@ -31,10 +23,10 @@ body{color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;line-heigh
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:2px;}
 
-/* AUTH */
+/* ── AUTH ── */
 .auth-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg);position:relative;overflow:hidden;}
 .auth-dots{position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,0.04) 1px,transparent 1px);background-size:22px 22px;pointer-events:none;}
-.auth-card{position:relative;background:var(--bg2);border:1px solid var(--border2);border-radius:14px;padding:48px 52px;width:420px;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,0.5);}
+.auth-card{position:relative;background:var(--bg2);border:1px solid var(--border2);border-radius:14px;padding:48px 52px;width:min(420px,90vw);text-align:center;box-shadow:0 8px 40px rgba(0,0,0,0.5);}
 .auth-badge{width:44px;height:44px;border-radius:50%;background:var(--crimson);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#f5c5a3;margin:0 auto 22px;box-shadow:0 2px 10px rgba(0,0,0,0.4);}
 .auth-title{font-size:24px;font-weight:800;margin-bottom:10px;}
 .auth-sub{font-size:13px;color:var(--text2);margin-bottom:34px;line-height:1.6;font-family:'DM Mono',monospace;}
@@ -42,25 +34,10 @@ body{color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;line-heigh
 .auth-btn:hover{background:var(--crimson2);}
 .auth-note{margin-top:16px;font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;}
 
-/* SETUP */
-.setup-screen{max-width:620px;margin:60px auto;padding:0 28px;}
-.setup-header{margin-bottom:28px;}
-.setup-header h1{font-size:22px;font-weight:800;margin-bottom:6px;}
-.setup-header p{font-size:13px;color:var(--text2);font-family:'DM Mono',monospace;}
-.setup-step{background:var(--bg2);border:1px solid var(--border2);border-radius:8px;padding:20px 24px;margin-bottom:10px;}
-.setup-num{font-family:'DM Mono',monospace;font-size:10px;color:var(--amber);font-weight:500;margin-bottom:6px;letter-spacing:0.1em;}
-.setup-step h3{font-size:14px;font-weight:700;margin-bottom:7px;}
-.setup-step p{font-size:12px;color:var(--text2);line-height:1.6;font-family:'DM Mono',monospace;}
-.setup-step a{color:var(--amber);text-decoration:none;}
-.setup-step input{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-family:'DM Mono',monospace;font-size:13px;padding:10px 14px;margin-top:9px;outline:none;}
-.setup-step input:focus{border-color:var(--amber);}
-.setup-save-btn{margin-top:22px;background:var(--amber);color:#1a0e0e;font-family:'Syne',sans-serif;font-weight:800;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;border:none;border-radius:8px;padding:12px 28px;cursor:pointer;}
-.setup-save-btn:disabled{opacity:0.4;cursor:default;}
-
-/* APP */
+/* ── APP ── */
 .app{display:flex;flex-direction:column;min-height:100vh;}
 
-/* TOPBAR */
+/* ── TOPBAR ── */
 .topbar{display:flex;align-items:center;gap:10px;padding:0 20px;height:52px;border-bottom:1px solid var(--border);background:var(--bg2);position:sticky;top:0;z-index:100;}
 .tb-badge{width:26px;height:26px;border-radius:50%;background:var(--crimson);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#f5c5a3;flex-shrink:0;box-shadow:0 1px 5px rgba(0,0,0,0.4);}
 .tb-logo{font-size:11px;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:var(--text);}
@@ -86,10 +63,10 @@ body{color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;line-heigh
 .menu-item:hover{background:var(--bg3);color:var(--text);}
 .menu-item.danger:hover{color:#f08080;}
 
-/* BODY */
-.body-layout{display:flex;flex:1;overflow:hidden;}
+/* ── BODY LAYOUT ── */
+.body-layout{display:flex;flex:1;overflow:hidden;min-height:0;}
 
-/* SIDEBAR */
+/* ── SIDEBAR ── */
 .sidebar{width:130px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);padding:16px 12px;overflow-y:auto;}
 .cal-mo{font-size:9px;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:var(--amber);margin-bottom:10px;font-family:'DM Mono',monospace;}
 .cgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;}
@@ -106,8 +83,17 @@ body{color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;line-heigh
 .sstat{font-size:22px;font-weight:800;line-height:1.1;margin-top:12px;color:var(--text);}
 .ssub{font-size:8px;font-family:'DM Mono',monospace;color:var(--text3);margin-bottom:5px;}
 
-/* BOARD */
-.board{flex:1;padding:16px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:start;overflow-y:auto;background-image:var(--board-bg);background-size:var(--board-size);}
+/* ── VIEW CONTROLS BAR ── */
+.view-controls{display:flex;align-items:center;gap:8px;padding:10px 16px 6px;flex-shrink:0;}
+.toggle-group{display:flex;background:var(--bg3);border-radius:6px;border:1px solid var(--border2);overflow:hidden;}
+.toggle-btn{font-size:9px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:6px 12px;border:none;background:transparent;color:var(--text3);cursor:pointer;font-family:'Syne',sans-serif;transition:all 0.12s;white-space:nowrap;}
+.toggle-btn.active{background:var(--crimson);color:#f5c5a3;}
+.toggle-btn.active.mine{background:var(--amber);color:#1a0e0e;}
+.vc-sep{width:1px;height:20px;background:var(--border2);}
+
+/* ── BOARD ── */
+.board-wrap{flex:1;overflow-y:auto;overflow-x:hidden;}
+.board{padding:10px 16px 80px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:start;background-image:var(--board-bg);background-size:var(--board-size);min-height:100%;}
 .col-wrap{min-height:80px;border-radius:8px;transition:background 0.15s;padding:3px;}
 .col-wrap.drag-over{background:var(--amber-dim);}
 .col-head{display:flex;align-items:center;gap:6px;padding-bottom:10px;margin-bottom:5px;border-bottom:1px solid var(--border);}
@@ -117,7 +103,7 @@ body{color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;line-heigh
 .col-body{display:flex;flex-direction:column;gap:9px;}
 .col-empty{border:1px dashed var(--border2);border-radius:8px;padding:24px 14px;text-align:center;font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;}
 
-/* TASK CARD */
+/* ── TASK CARD ── */
 .note{border-radius:3px;padding:13px 14px 11px;position:relative;cursor:grab;box-shadow:1px 2px 9px rgba(0,0,0,0.42),0 1px 3px rgba(0,0,0,0.28);transition:box-shadow 0.15s,transform 0.15s;}
 .note:hover{box-shadow:3px 6px 20px rgba(0,0,0,0.52),0 2px 6px rgba(0,0,0,0.32);transform:scale(1.016) rotate(0deg) !important;}
 .note:active{cursor:grabbing;}
@@ -128,25 +114,84 @@ body{color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;line-heigh
 .note.is-done .ntitle{text-decoration:line-through;}
 .nprio-badge{position:absolute;top:9px;right:11px;font-size:8px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:2px 6px;border-radius:3px;}
 .nph{background:rgba(122,28,28,0.14);color:#7a1c1c;}.npm{background:rgba(160,100,0,0.14);color:#6e4600;}.npl{background:rgba(40,80,15,0.14);color:#285014;}
-.ncat{font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(20,10,10,0.4);margin-bottom:5px;font-family:'DM Mono',monospace;}
-.ntitle{font-size:14px;font-weight:700;color:#1a0e0e;line-height:1.3;margin-bottom:4px;padding-right:40px;}
-.ndesc{font-size:11.5px;color:rgba(20,10,10,0.55);line-height:1.45;margin-bottom:7px;}
+.ncat{font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(20,10,10,0.45);margin-bottom:5px;font-family:'DM Mono',monospace;}
+.ntitle{font-size:14px;font-weight:700;color:#1a0e0e;line-height:1.3;margin-bottom:4px;padding-right:44px;}
+.ndesc{font-size:11.5px;color:rgba(20,10,10,0.6);line-height:1.45;margin-bottom:7px;}
 .ndl{font-size:9px;font-family:'DM Mono',monospace;color:#7a1c1c;margin-bottom:6px;}
 .ndl.overdue{color:#cc0000;font-weight:700;}
 .ntimer{display:flex;align-items:center;gap:5px;font-family:'DM Mono',monospace;font-size:10px;color:#7a1c1c;margin-top:6px;font-weight:500;}
 .npulse{width:5px;height:5px;border-radius:50%;background:#7a1c1c;animation:pp 1.2s infinite;}
 @keyframes pp{0%,100%{opacity:1;}50%{opacity:0.2;}}
-.npaused{display:flex;align-items:center;gap:5px;font-family:'DM Mono',monospace;font-size:10px;color:rgba(20,10,10,0.45);margin-top:6px;}
-.done-log{font-size:9px;font-family:'DM Mono',monospace;color:rgba(20,10,10,0.45);margin-top:6px;}
+.npaused{display:flex;align-items:center;gap:5px;font-family:'DM Mono',monospace;font-size:10px;color:rgba(20,10,10,0.5);margin-top:6px;}
+.done-log{font-size:9px;font-family:'DM Mono',monospace;color:rgba(20,10,10,0.5);margin-top:6px;}
 .nbtns{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap;}
 .nbtn{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;background:rgba(20,10,10,0.1);border:1px solid rgba(20,10,10,0.12);border-radius:3px;padding:4px 9px;cursor:pointer;font-family:'Syne',sans-serif;color:#1a0e0e;transition:background 0.1s;}
 .nbtn:hover{background:rgba(20,10,10,0.18);}
 .nbtn.danger{background:rgba(122,28,28,0.1);color:#7a1c1c;border-color:rgba(122,28,28,0.15);}
 .nbtn.danger:hover{background:rgba(122,28,28,0.2);}
-.by-line{font-size:9px;color:rgba(20,10,10,0.3);font-family:'DM Mono',monospace;margin-top:7px;}
-.pts-badge{display:inline-flex;align-items:center;font-size:9px;font-family:'DM Mono',monospace;background:rgba(20,10,10,0.08);border-radius:3px;padding:2px 6px;color:rgba(20,10,10,0.45);margin-top:4px;}
+.nbtn.comment{background:rgba(20,10,10,0.07);color:rgba(20,10,10,0.55);}
+.by-line{font-size:9px;color:rgba(20,10,10,0.38);font-family:'DM Mono',monospace;margin-top:7px;}
+.pts-badge{display:inline-flex;align-items:center;font-size:9px;font-family:'DM Mono',monospace;background:rgba(20,10,10,0.08);border-radius:3px;padding:2px 6px;color:rgba(20,10,10,0.5);margin-top:4px;}
 
-/* MODAL */
+/* ── LIST VIEW ── */
+.list-view{padding:4px 16px 80px;display:flex;flex-direction:column;gap:0;}
+.list-section-head{display:flex;align-items:center;gap:8px;padding:14px 4px 8px;position:sticky;top:0;background:var(--bg);z-index:10;}
+.list-section-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.list-section-label{font-size:10px;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;font-family:'DM Mono',monospace;color:var(--text2);}
+.list-section-count{font-size:9px;font-family:'DM Mono',monospace;background:rgba(255,255,255,0.06);border-radius:10px;padding:1px 8px;color:var(--text3);}
+.list-row{background:var(--bg2);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;overflow:hidden;transition:border-color 0.15s;}
+.list-row:hover{border-color:var(--border2);}
+.list-row-main{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;min-height:48px;}
+.lr-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.lr-title{font-size:13px;font-weight:700;color:var(--text);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.lr-title.is-done{text-decoration:line-through;opacity:0.5;}
+.lr-assignee{font-size:10px;font-family:'DM Mono',monospace;color:var(--text3);flex-shrink:0;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.lr-comment-badge{display:flex;align-items:center;gap:3px;font-size:10px;font-family:'DM Mono',monospace;color:var(--text3);flex-shrink:0;}
+.lr-expand{font-size:10px;color:var(--text3);flex-shrink:0;transition:transform 0.15s;}
+.lr-expand.open{transform:rotate(180deg);}
+.list-row-detail{padding:0 14px 12px;border-top:1px solid var(--border);background:var(--bg3);}
+.lrd-desc{font-size:12px;color:var(--text2);line-height:1.5;padding:10px 0 8px;font-family:'DM Mono',monospace;}
+.lrd-meta{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px;}
+.lrd-tag{font-size:10px;font-family:'DM Mono',monospace;color:var(--text3);background:var(--bg4);border-radius:4px;padding:2px 8px;}
+.lrd-btns{display:flex;gap:6px;flex-wrap:wrap;}
+.lrd-btn{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;background:var(--crimson-dim);border:1px solid rgba(255,255,255,0.06);border-radius:5px;padding:6px 12px;cursor:pointer;font-family:'Syne',sans-serif;color:var(--text);transition:background 0.1s;}
+.lrd-btn:hover{background:var(--bg4);}
+.lrd-btn.primary{background:var(--amber);color:#1a0e0e;border-color:transparent;}
+.lrd-btn.primary:hover{opacity:0.88;}
+.lrd-btn.danger{background:rgba(200,60,60,0.1);color:#f08080;border-color:rgba(200,60,60,0.15);}
+.lrd-btn.danger:hover{background:rgba(200,60,60,0.2);}
+.lrd-timer{display:flex;align-items:center;gap:5px;font-family:'DM Mono',monospace;font-size:11px;color:var(--amber);margin-bottom:8px;font-weight:600;}
+
+/* ── COMMENT DRAWER ── */
+.comment-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.72);z-index:500;display:flex;align-items:flex-end;justify-content:center;}
+.comment-drawer{background:var(--bg2);border:1px solid var(--border2);border-radius:16px 16px 0 0;width:100%;max-width:640px;max-height:80vh;display:flex;flex-direction:column;box-shadow:0 -8px 30px rgba(0,0,0,0.5);}
+.comment-header{padding:16px 20px 14px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.comment-task-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px;}
+.comment-sub{font-size:10px;font-family:'DM Mono',monospace;color:var(--text3);}
+.comment-close{float:right;background:none;border:none;color:var(--text3);cursor:pointer;font-size:18px;line-height:1;padding:0 0 0 10px;}
+.comment-list{flex:1;overflow-y:auto;padding:14px 20px;display:flex;flex-direction:column;gap:12px;}
+.comment-empty{text-align:center;padding:32px;font-size:12px;color:var(--text3);font-family:'DM Mono',monospace;font-style:italic;}
+.comment-item{display:flex;flex-direction:column;gap:3px;}
+.comment-meta{display:flex;align-items:center;gap:8px;}
+.comment-av{width:22px;height:22px;border-radius:50%;background:var(--crimson-dim);border:1px solid var(--amber-dim);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:800;color:var(--amber);font-family:'DM Mono',monospace;flex-shrink:0;}
+.comment-author{font-size:11px;font-weight:700;color:var(--text);}
+.comment-time{font-size:10px;font-family:'DM Mono',monospace;color:var(--text3);}
+.comment-text{font-size:12px;color:var(--text2);line-height:1.5;padding-left:30px;font-family:'DM Mono',monospace;}
+.comment-input-row{padding:12px 20px 20px;border-top:1px solid var(--border);flex-shrink:0;display:flex;gap:10px;align-items:flex-end;}
+.comment-input{flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-family:'DM Mono',monospace;font-size:13px;padding:10px 14px;outline:none;resize:none;min-height:42px;max-height:100px;}
+.comment-input:focus{border-color:var(--amber);}
+.comment-post-btn{background:var(--amber);color:#1a0e0e;font-family:'Syne',sans-serif;font-size:11px;font-weight:800;border:none;border-radius:7px;padding:10px 16px;cursor:pointer;white-space:nowrap;flex-shrink:0;}
+.comment-post-btn:disabled{opacity:0.4;cursor:default;}
+
+/* ── MOBILE NAV ── */
+.mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:62px;background:var(--bg2);border-top:1px solid var(--border2);z-index:200;align-items:stretch;}
+.mobile-nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:transparent;border:none;cursor:pointer;color:var(--text3);transition:color 0.12s;padding:0;-webkit-tap-highlight-color:transparent;}
+.mobile-nav-btn.active{color:var(--amber);}
+.mobile-nav-icon{font-size:18px;line-height:1;}
+.mobile-nav-label{font-size:8px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;font-family:'DM Mono',monospace;}
+.mobile-fab{display:none;position:fixed;bottom:76px;right:18px;width:52px;height:52px;border-radius:50%;background:var(--amber);color:#1a0e0e;border:none;font-size:24px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,0.4);z-index:200;align-items:center;justify-content:center;font-weight:300;-webkit-tap-highlight-color:transparent;}
+
+/* ── MODAL ── */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.78);display:flex;align-items:center;justify-content:center;z-index:400;padding:24px;}
 .modal{background:var(--bg2);border:1px solid var(--border2);border-radius:14px;padding:28px 32px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;box-shadow:0 10px 40px rgba(0,0,0,0.6);}
 .modal-title{font-size:18px;font-weight:800;margin-bottom:24px;}
@@ -165,24 +210,24 @@ body{color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;line-heigh
 .btn-post:hover{opacity:0.88;}
 .btn-post:disabled{opacity:0.4;cursor:default;}
 
-/* AUTOCOMPLETE */
+/* ── AUTOCOMPLETE ── */
 .ac-list{position:absolute;top:100%;left:0;right:0;background:var(--bg2);border:1px solid var(--border2);border-radius:6px;z-index:50;box-shadow:0 6px 16px rgba(0,0,0,0.5);overflow:hidden;margin-top:2px;}
 .ac-item{padding:9px 14px;cursor:pointer;transition:background 0.1s;}
 .ac-item:hover,.ac-item.sel{background:var(--bg3);}
 .ac-name{font-size:12px;font-weight:600;color:var(--text);}
 .ac-email{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;}
 
-/* LOG */
-.log-view{padding:24px 28px;max-width:1100px;margin:0 auto;width:100%;}
-.log-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;}
+/* ── LOG ── */
+.log-view{padding:24px 28px;max-width:1100px;margin:0 auto;width:100%;padding-bottom:80px;}
+.log-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;}
 .log-header h2{font-size:20px;font-weight:800;}
 .log-header p{font-size:12px;color:var(--text2);margin-top:2px;font-family:'DM Mono',monospace;}
 .log-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;}
 .stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:15px 17px;box-shadow:0 2px 8px rgba(0,0,0,0.15);}
 .stat-label{font-size:9px;font-family:'DM Mono',monospace;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px;}
 .stat-val{font-size:22px;font-weight:800;color:var(--text);}
-.log-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.15);}
-.log-table{width:100%;border-collapse:collapse;}
+.log-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.15);overflow-x:auto;}
+.log-table{width:100%;border-collapse:collapse;min-width:600px;}
 .log-table th{text-align:left;padding:10px 16px;font-size:9px;font-family:'DM Mono',monospace;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);border-bottom:1px solid var(--border);background:var(--bg3);}
 .log-table td{padding:11px 16px;font-size:12px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:middle;}
 .log-table tr:last-child td{border-bottom:none;}
@@ -192,13 +237,13 @@ body{color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;line-heigh
 .sheets-btn{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--amber);font-family:'DM Mono',monospace;background:var(--amber-dim);border:1px solid var(--amber-dim);border-radius:6px;padding:6px 13px;cursor:pointer;text-decoration:none;}
 .no-tasks-msg{text-align:center;padding:52px 24px;font-size:12px;color:var(--text3);font-family:'DM Mono',monospace;}
 
-/* SCORES */
-.scores-view{padding:24px 28px;max-width:1100px;margin:0 auto;width:100%;}
-.scores-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+/* ── SCORES ── */
+.scores-view{padding:24px 28px;max-width:1100px;margin:0 auto;width:100%;padding-bottom:80px;}
+.scores-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;}
 .scores-header h2{font-size:20px;font-weight:800;}
 .month-label{font-size:11px;font-family:'DM Mono',monospace;color:var(--text2);background:var(--bg2);border:1px solid var(--border2);border-radius:6px;padding:5px 12px;}
-.leaderboard{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:24px;}
-.player-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:18px 20px;box-shadow:0 2px 10px rgba(0,0,0,0.2);position:relative;transition:border-color 0.15s;}
+.leaderboard{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-bottom:24px;}
+.player-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:18px 20px;box-shadow:0 2px 10px rgba(0,0,0,0.2);position:relative;}
 .player-card.rank-1{border-color:rgba(245,200,48,0.4);background:linear-gradient(135deg,var(--bg2),rgba(245,200,48,0.04));}
 .player-card.rank-2{border-color:rgba(192,192,192,0.3);}
 .player-card.rank-3{border-color:rgba(205,127,50,0.3);}
@@ -215,17 +260,16 @@ body{color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;line-heigh
 .badge-tip{display:none;position:absolute;bottom:120%;left:50%;transform:translateX(-50%);background:var(--bg4);border:1px solid var(--border2);border-radius:5px;padding:4px 8px;font-size:10px;white-space:nowrap;color:var(--text);font-family:'DM Mono',monospace;z-index:10;}
 .badge:hover .badge-tip{display:block;}
 
-/* SETTINGS */
-.settings-view{padding:24px 28px;max-width:700px;margin:0 auto;}
+/* ── SETTINGS ── */
+.settings-view{padding:24px 28px;max-width:700px;margin:0 auto;padding-bottom:80px;}
 .settings-view h2{font-size:20px;font-weight:800;}
 .settings-section{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px 24px;margin-bottom:14px;}
 .settings-section h3{font-size:12px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--text2);font-family:'DM Mono',monospace;margin-bottom:14px;}
-.theme-group-label{font-size:9px;font-family:'DM Mono',monospace;color:var(--text3);font-weight:700;letter-spacing:0.12em;text-transform:uppercase;margin:14px 0 7px;}
-.theme-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;}
-.theme-btn{border-radius:6px;padding:10px 6px;cursor:pointer;border:2px solid transparent;transition:all 0.15s;text-align:center;}
+.theme-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.theme-btn{border-radius:8px;padding:14px 10px;cursor:pointer;border:2px solid transparent;transition:all 0.15s;text-align:center;}
 .theme-btn.active{border-color:var(--amber);}
-.theme-preview{width:100%;height:28px;border-radius:4px;margin-bottom:6px;}
-.theme-btn-label{font-size:9px;font-family:'DM Mono',monospace;color:var(--text2);}
+.theme-preview{width:100%;height:36px;border-radius:5px;margin-bottom:8px;}
+.theme-btn-label{font-size:10px;font-family:'DM Mono',monospace;color:var(--text2);}
 .font-row{display:flex;align-items:center;gap:14px;}
 .font-row label{font-size:12px;color:var(--text2);font-family:'DM Mono',monospace;white-space:nowrap;}
 .font-slider{flex:1;accent-color:var(--amber);}
@@ -250,51 +294,48 @@ body{color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;line-heigh
 .demerit-del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:12px;}
 .demerit-del:hover{color:#f08080;}
 
-/* BOARD TOOLBAR */
-.board-toolbar{display:flex;align-items:center;gap:10px;padding:9px 18px;border-bottom:1px solid var(--border);background:var(--bg2);flex-shrink:0;}
-.view-toggle{display:flex;background:var(--bg3);border-radius:5px;overflow:hidden;border:1px solid var(--border2);}
-.vt-btn{font-size:9px;font-family:'DM Mono',monospace;padding:5px 11px;background:transparent;border:none;color:var(--text3);cursor:pointer;font-weight:700;letter-spacing:0.06em;transition:all 0.1s;}
-.vt-btn.active{background:var(--bg4);color:var(--text);}
-.board-list{flex:1;padding:14px 18px;overflow-y:auto;}
-.list-col{margin-bottom:22px;}
-.list-col-head{display:flex;align-items:center;gap:6px;margin-bottom:8px;}
-.list-row{display:flex;align-items:center;gap:10px;padding:9px 13px;border-radius:6px;background:var(--bg2);border:1px solid var(--border);margin-bottom:5px;transition:border-color 0.1s;cursor:pointer;}
-.list-row:hover{border-color:var(--border2);}
-.list-row.is-done .lr-title{text-decoration:line-through;opacity:0.5;}
-.list-row.drop-before{box-shadow:0 -3px 0 var(--amber);}
-.list-row.drop-after{box-shadow:0 3px 0 var(--amber);}
-.lr-expanded{border-radius:0 0 6px 6px;padding:10px 13px 12px;margin-top:-5px;margin-bottom:5px;border:1px solid var(--border);border-top:none;}
-.lr-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
-.lr-title{font-size:13px;font-weight:700;color:var(--text);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.lr-meta{font-size:10px;font-family:'DM Mono',monospace;color:var(--text3);white-space:nowrap;display:flex;gap:10px;}
-.lr-btns{display:flex;gap:4px;flex-shrink:0;}
-.lr-btn{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;background:rgba(255,255,255,0.06);border:1px solid var(--border2);border-radius:3px;padding:3px 8px;cursor:pointer;font-family:'Syne',sans-serif;color:var(--text2);white-space:nowrap;}
-.lr-btn:hover{background:rgba(255,255,255,0.1);color:var(--text);}
-.lr-btn.danger{color:rgba(200,80,80,0.8);}
-.lr-btn.danger:hover{background:rgba(200,60,60,0.15);}
-/* DELETE CONFIRM */
-.del-modal{background:var(--bg2);border:1px solid var(--border2);border-radius:12px;padding:28px 32px;width:100%;max-width:340px;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,0.6);}
-.del-icon{font-size:28px;margin-bottom:12px;}
-.del-title{font-size:16px;font-weight:800;margin-bottom:8px;}
-.del-name{font-size:12px;color:var(--text2);font-family:'DM Mono',monospace;margin-bottom:22px;line-height:1.5;}
-.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:11px 20px;font-size:13px;color:var(--text);z-index:600;animation:slideUp 0.2s ease;white-space:nowrap;box-shadow:0 5px 20px rgba(0,0,0,0.4);}
+/* ── TOAST ── */
+.toast{position:fixed;bottom:76px;left:50%;transform:translateX(-50%);background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:11px 20px;font-size:13px;color:var(--text);z-index:600;animation:slideUp 0.2s ease;white-space:nowrap;box-shadow:0 5px 20px rgba(0,0,0,0.4);}
 .toast.success{border-color:rgba(74,138,74,0.4);color:#8fce8f;}
 .toast.error{border-color:rgba(200,60,60,0.4);color:#f08080;}
 @keyframes slideUp{from{opacity:0;transform:translateX(-50%) translateY(8px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
 
-/* CHA-CHING */
+/* ── CHA-CHING ── */
 .chaching-overlay{position:fixed;inset:0;pointer-events:none;z-index:700;overflow:hidden;}
 .coin{position:absolute;font-size:26px;animation:fly 1.6s ease-out forwards;}
 .bill{position:absolute;font-size:20px;animation:fly 1.8s ease-out forwards;}
 .chaching-text{position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);font-family:'Syne',sans-serif;font-size:42px;font-weight:800;color:#f5c830;text-shadow:0 2px 20px rgba(0,0,0,0.6);animation:chaText 2.2s ease-out forwards;white-space:nowrap;}
 @keyframes fly{0%{opacity:1;transform:translate(0,0) rotate(0deg);}100%{opacity:0;transform:translate(var(--tx),var(--ty)) rotate(var(--rot));}}
 @keyframes chaText{0%{opacity:0;transform:translate(-50%,-50%) scale(0.3);}15%{opacity:1;transform:translate(-50%,-50%) scale(1.25);}30%{transform:translate(-50%,-50%) scale(1);}75%{opacity:1;}100%{opacity:0;transform:translate(-50%,-68%) scale(0.88);}}
+
+/* ── MOBILE RESPONSIVE ── */
+@media (max-width: 767px) {
+  .sidebar{display:none;}
+  .tb-tab{display:none;}
+  .new-btn{display:none;}
+  .tb-sub{display:none;}
+  .tb-sep{display:none;}
+  .board{grid-template-columns:1fr;padding:8px 12px 80px;}
+  .mobile-nav{display:flex;}
+  .mobile-fab{display:flex;}
+  .topbar{padding:0 14px;height:48px;}
+  .tb-logo{font-size:10px;}
+  .modal-overlay{padding:0;align-items:flex-end;}
+  .modal{border-radius:20px 20px 0 0;max-height:88vh;padding:22px 20px;}
+  .log-stats{grid-template-columns:repeat(2,1fr);}
+  .theme-grid{grid-template-columns:repeat(2,1fr);}
+  .view-controls{padding:8px 12px 4px;}
+  .list-view{padding:4px 12px 80px;}
+}
+@media (min-width:768px){
+  .toast{bottom:22px;}
+}
 </style>
 </head>
 <body>
 <div id="root"></div>
 <script type="text/babel">
-const { useState, useEffect, useRef } = React;
+const { useState, useEffect, useRef, useCallback } = React;
 
 const CONFIG_KEY   = 'bvb_config_v3';
 const TASKS_KEY    = 'bvb_tasks_v3';
@@ -302,10 +343,7 @@ const SETTINGS_KEY = 'bvb_settings_v3';
 const BADGES_KEY   = 'bvb_badges_v3';
 const DEMERITS_KEY = 'bvb_demerits_v3';
 const ADMIN_PIN_KEY= 'bvb_admin_pin';
-const TASK_ORDER_KEY='bvb_task_order_v1';
-const USER_PREFS_KEY='bvb_user_prefs_v1';
 const DEFAULT_PIN  = '1234';
-const ADMIN_EMAIL  = 'cam@bagavagabonds.com';
 
 const HARDCODED_CONFIG = {
   clientId: '630423801494-aetvklr9sjscvscpe4tlcrlpuh5j7ccm.apps.googleusercontent.com',
@@ -342,19 +380,10 @@ const CATS = [
 ];
 
 const THEMES = [
-  {id:'theme-e',       label:'Espresso', bg:'#1c1410', accent:'#c4682a', group:'Dark'},
-  {id:'theme-c',       label:'Neon',     bg:'#0e0e0e', accent:'#d4f060', group:'Dark'},
-  {id:'theme-slate',   label:'Slate',    bg:'#141820', accent:'#7eb8d4', group:'Dark'},
-  {id:'theme-midnight',label:'Midnight', bg:'#0d1117', accent:'#d4a853', group:'Dark'},
-  {id:'theme-ash',     label:'Ash',      bg:'#111111', accent:'#9b8fbf', group:'Dark'},
-  {id:'theme-clay',    label:'Clay',     bg:'#1e1008', accent:'#d4724a', group:'Earth'},
-  {id:'theme-bark',    label:'Bark',     bg:'#160e06', accent:'#c8922a', group:'Earth'},
-  {id:'theme-cork',    label:'Cork',     bg:'#c8a870', accent:'#e8833a', group:'Earth'},
-  {id:'theme-moss',    label:'Moss',     bg:'#0a100a', accent:'#8aaa72', group:'Forest'},
-  {id:'theme-fern',    label:'Fern',     bg:'#081410', accent:'#a4c840', group:'Forest'},
-  {id:'theme-cream',   label:'Cream',    bg:'#f0ebe0', accent:'#c4682a', group:'Light'},
-  {id:'theme-dust',    label:'Dust',     bg:'#f5ede8', accent:'#b8726a', group:'Light'},
-  {id:'theme-fog',     label:'Fog',      bg:'#edf0f4', accent:'#6a84a8', group:'Light'},
+  {id:'theme-e',    label:'Espresso', bg:'#1c1410', accent:'#c4682a'},
+  {id:'theme-c',    label:'Neon',     bg:'#0e0e0e', accent:'#d4f060'},
+  {id:'theme-cork', label:'Cork',     bg:'#c8a870', accent:'#e8833a'},
+  {id:'theme-cream',label:'Cream',    bg:'#f0ebe0', accent:'#c4682a'},
 ];
 
 const BADGES_DEF = [
@@ -374,376 +403,317 @@ const NOTE_COLS = ['n-y','n-o','n-g','n-b','n-pk','n-pu'];
 const ROTS = ['r1','r2','r3','r4','r2','r3'];
 
 function noteStyle(id) {
-  const h = (id||'').split('').reduce((a,c)=>a+c.charCodeAt(0),0);
-  return { col: NOTE_COLS[h % NOTE_COLS.length], rot: ROTS[h % ROTS.length] };
+  const h=(id||'').split('').reduce((a,c)=>a+c.charCodeAt(0),0);
+  return {col:NOTE_COLS[h%NOTE_COLS.length],rot:ROTS[h%ROTS.length]};
 }
-function initials(n) { return (n||'?').split(' ').map(p=>p[0]).join('').slice(0,2).toUpperCase(); }
-function fmtDur(ms) {
-  if (!ms||ms<0) return '—';
-  const s=Math.floor(ms/1000), h=Math.floor(s/3600), m=Math.floor((s%3600)/60), sec=s%60;
-  if (h>0) return `${h}h ${m}m`; if (m>0) return `${m}m ${sec}s`; return `${sec}s`;
-}
-function fmtTime(ms) {
-  if (!ms) return '—';
-  return new Date(ms).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit',hour12:true});
-}
-function isOverdue(dl) { return dl && new Date(dl+'T23:59:59') < new Date(); }
-function taskPts(task) { return ({high:3,med:2,low:1}[task.priority]||1) + (task.duration&&task.duration<600000?1:0); }
-function currentMonth() { const n=new Date(); return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}`; }
+function initials(n){return(n||'?').split(' ').map(p=>p[0]).join('').slice(0,2).toUpperCase();}
+function fmtDur(ms){if(!ms||ms<0)return'—';const s=Math.floor(ms/1000),h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60;if(h>0)return`${h}h ${m}m`;if(m>0)return`${m}m ${sec}s`;return`${sec}s`;}
+function fmtTime(ms){if(!ms)return'—';return new Date(ms).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit',hour12:true});}
+function fmtShort(ms){if(!ms)return'';return new Date(ms).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit',hour12:true});}
+function isOverdue(dl){return dl&&new Date(dl+'T23:59:59')<new Date();}
+function taskPts(task){return({high:3,med:2,low:1}[task.priority]||1)+(task.duration&&task.duration<600000?1:0);}
+function currentMonth(){const n=new Date();return`${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}`;}
+function isMobileWidth(){return window.innerWidth<768;}
 
-function calcAutoBadges(name, tasks) {
-  const done = tasks.filter(t=>t.completedAt&&t.assignedTo===name);
-  const badges = [];
-  if (done.length>=1) badges.push('first');
-  if (done.some(t=>t.duration&&t.duration<600000)) badges.push('speed');
-  const byDay = {}; done.forEach(t=>{ const d=new Date(t.completedAt).toDateString(); byDay[d]=(byDay[d]||0)+1; });
-  if (Object.values(byDay).some(c=>c>=5)) badges.push('five_day');
-  const pts = done.reduce((a,t)=>a+(t.points||0),0);
-  if (pts>=100) badges.push('century');
-  if (done.filter(t=>t.category==='move').length>=5) badges.push('mover');
-  if (done.filter(t=>t.category==='clean').length>=5) badges.push('cleaner');
-  if (done.filter(t=>t.category==='receive').length>=5) badges.push('receiver');
-  if (done.filter(t=>t.category==='build').length>=5) badges.push('builder');
-  if (done.filter(t=>t.category==='check').length>=5) badges.push('auditor');
+function calcAutoBadges(name,tasks){
+  const done=tasks.filter(t=>t.completedAt&&t.assignedTo===name);
+  const badges=[];
+  if(done.length>=1)badges.push('first');
+  if(done.some(t=>t.duration&&t.duration<600000))badges.push('speed');
+  const byDay={};done.forEach(t=>{const d=new Date(t.completedAt).toDateString();byDay[d]=(byDay[d]||0)+1;});
+  if(Object.values(byDay).some(c=>c>=5))badges.push('five_day');
+  const pts=done.reduce((a,t)=>a+(t.points||0),0);
+  if(pts>=100)badges.push('century');
+  if(done.filter(t=>t.category==='move').length>=5)badges.push('mover');
+  if(done.filter(t=>t.category==='clean').length>=5)badges.push('cleaner');
+  if(done.filter(t=>t.category==='receive').length>=5)badges.push('receiver');
+  if(done.filter(t=>t.category==='build').length>=5)badges.push('builder');
+  if(done.filter(t=>t.category==='check').length>=5)badges.push('auditor');
   return badges;
 }
 
-function reorderIds(order, allIds, draggingId, targetId, pos) {
-  let full = [...order];
-  allIds.forEach(id=>{ if(!full.includes(id)) full.push(id); });
-  full = full.filter(id=>id!==draggingId);
-  const ti = full.indexOf(targetId);
-  if (ti===-1) { full.push(draggingId); return full; }
-  full.splice(pos==='before'?ti:ti+1, 0, draggingId);
-  return full;
-}
-function applyUserOrder(items, email, taskOrder) {
-  const order = taskOrder[email]||[];
-  if (!order.length) return [...items].sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
-  const map = new Map(order.map((id,i)=>[id,i]));
-  return [...items].sort((a,b)=>(map.has(a.id)?map.get(a.id):Infinity)-(map.has(b.id)?map.get(b.id):Infinity));
-}
-
 // ── SOUND ──────────────────────────────────────────────────────────────────
-function playSound(type) {
-  try {
-    const ctx = new (window.AudioContext||window.webkitAudioContext)();
-    const tone = (freq,start,dur,vol=0.3,wave='sine') => {
-      const o=ctx.createOscillator(), g=ctx.createGain();
-      o.connect(g); g.connect(ctx.destination); o.frequency.value=freq; o.type=wave;
-      g.gain.setValueAtTime(0,ctx.currentTime+start);
-      g.gain.linearRampToValueAtTime(vol,ctx.currentTime+start+0.01);
-      g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+start+dur);
-      o.start(ctx.currentTime+start); o.stop(ctx.currentTime+start+dur+0.05);
-    };
-    if (type==='post') {
-      tone(660,0,0.12,0.3); tone(880,0.1,0.14,0.28); tone(1100,0.2,0.18,0.25); tone(1320,0.3,0.22,0.2);
-    } else if (type==='accept') {
-      tone(200,0,0.04,0.4,'square'); tone(400,0.04,0.03,0.2,'square'); tone(520,0.1,0.2,0.15);
-    } else if (type==='complete') {
-      tone(880,0,0.08,0.5); tone(1320,0.07,0.1,0.4); tone(1760,0.16,0.18,0.35); tone(2200,0.26,0.3,0.28); tone(1100,0.3,0.14,0.2);
-    }
-  } catch(e) {}
-}
-function playDelete() {
-  try {
-    const ctx=new (window.AudioContext||window.webkitAudioContext)();
-    const o=ctx.createOscillator(), g=ctx.createGain();
-    o.connect(g); g.connect(ctx.destination);
-    o.frequency.setValueAtTime(420,ctx.currentTime);
-    o.frequency.exponentialRampToValueAtTime(55,ctx.currentTime+0.42);
-    g.gain.setValueAtTime(0.28,ctx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.44);
-    o.start(); o.stop(ctx.currentTime+0.48);
-  } catch(e) {}
-}
-function fmtAgo(ms) {
-  if (!ms) return '';
-  const d=Date.now()-ms, m=Math.floor(d/60000), h=Math.floor(d/3600000);
-  if (h>23) return `${Math.floor(h/24)}d ago`;
-  if (h>0) return `${h}h ago`;
-  if (m>0) return `${m}m ago`;
-  return 'just now';
+function playSound(type){
+  try{
+    const ctx=new(window.AudioContext||window.webkitAudioContext)();
+    const tone=(freq,start,dur,vol=0.3,wave='sine')=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.value=freq;o.type=wave;g.gain.setValueAtTime(0,ctx.currentTime+start);g.gain.linearRampToValueAtTime(vol,ctx.currentTime+start+0.01);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+start+dur);o.start(ctx.currentTime+start);o.stop(ctx.currentTime+start+dur+0.05);};
+    if(type==='post'){tone(660,0,0.12,0.3);tone(880,0.1,0.14,0.28);tone(1100,0.2,0.18,0.25);tone(1320,0.3,0.22,0.2);}
+    else if(type==='accept'){tone(200,0,0.04,0.4,'square');tone(400,0.04,0.03,0.2,'square');tone(520,0.1,0.2,0.15);}
+    else if(type==='complete'){tone(880,0,0.08,0.5);tone(1320,0.07,0.1,0.4);tone(1760,0.16,0.18,0.35);tone(2200,0.26,0.3,0.28);tone(1100,0.3,0.14,0.2);}
+  }catch(e){}
 }
 
 // ── SHEETS ─────────────────────────────────────────────────────────────────
-async function sheetsReq(cfg, method, path, body=null) {
-  const r = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${cfg.sheetId}${path}`, {
-    method,
-    headers: {'Authorization':`Bearer ${cfg.accessToken}`,'Content-Type':'application/json'},
-    ...(body ? {body:JSON.stringify(body)} : {})
-  });
-  if (!r.ok) throw new Error(`Sheets ${r.status}`);
+async function sheetsReq(cfg,method,path,body=null){
+  const r=await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${cfg.sheetId}${path}`,{method,headers:{'Authorization':`Bearer ${cfg.accessToken}`,'Content-Type':'application/json'},...(body?{body:JSON.stringify(body)}:{})});
+  if(!r.ok)throw new Error(`Sheets ${r.status}`);
   return r.json();
 }
-async function ensureHeaders(cfg) {
-  try { const d=await sheetsReq(cfg,'GET','/values/Tasks!A1:P1'); if(d.values?.[0]?.[0]==='Task ID') return; } catch(e) {}
+async function ensureHeaders(cfg){
+  try{const d=await sheetsReq(cfg,'GET','/values/Tasks!A1:P1');if(d.values?.[0]?.[0]==='Task ID')return;}catch(e){}
   await sheetsReq(cfg,'PUT','/values/Tasks!A1:P1?valueInputOption=RAW',{values:[['Task ID','Title','Description','Category','Priority','Client','Deadline','Requested By','Assigned To','Created At','Accepted At','Completed At','Duration','Points','Month','_json']]});
 }
-async function sheetAppend(cfg, task) {
+async function sheetAppend(cfg,task){
   await ensureHeaders(cfg);
   const r=[task.id,task.title,task.desc||'',task.category,task.priority,task.client||'',task.deadline||'',task.createdBy,task.assignedTo||'',fmtTime(task.createdAt),fmtTime(task.acceptedAt),fmtTime(task.completedAt),task.duration?fmtDur(task.duration):'',task.points||'',currentMonth(),JSON.stringify(task)];
   await sheetsReq(cfg,'POST','/values/Tasks!A:P:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS',{values:[r]});
 }
-async function sheetUpdate(cfg, task) {
-  try {
-    const d = await sheetsReq(cfg,'GET','/values/Tasks!A:A');
-    if (!d.values) return;
-    const i = d.values.findIndex(r=>r[0]===task.id);
-    if (i<1) { await sheetAppend(cfg,task); return; }
-    const row = i+1;
+async function sheetUpdate(cfg,task){
+  try{
+    const d=await sheetsReq(cfg,'GET','/values/Tasks!A:A');
+    if(!d.values)return;
+    const i=d.values.findIndex(r=>r[0]===task.id);
+    if(i<1){await sheetAppend(cfg,task);return;}
+    const row=i+1;
     const v=[task.id,task.title,task.desc||'',task.category,task.priority,task.client||'',task.deadline||'',task.createdBy,task.assignedTo||'',fmtTime(task.createdAt),fmtTime(task.acceptedAt),fmtTime(task.completedAt),task.duration?fmtDur(task.duration):'',task.points||'',currentMonth(),JSON.stringify(task)];
     await sheetsReq(cfg,'PUT',`/values/Tasks!A${row}:P${row}?valueInputOption=RAW`,{values:[v]});
-  } catch(e) { console.warn('sheet update',e); }
+  }catch(e){console.warn('sheet update',e);}
 }
-async function sheetLoad(cfg) {
-  try {
-    const d = await sheetsReq(cfg,'GET','/values/Tasks!A:P');
-    if (!d.values||d.values.length<2) return [];
-    const rows = d.values.slice(1); // skip header
-    const tasks = [];
-    for (const row of rows) {
-      // column P (index 15) has the full JSON
-      if (row[15]) {
-        try { tasks.push(JSON.parse(row[15])); continue; } catch(e) {}
-      }
-      // fallback: reconstruct from columns if JSON missing (old rows)
-      if (row[0]) {
-        tasks.push({
-          id:row[0], title:row[1]||'', desc:row[2]||'', category:row[3]||'other',
-          priority:row[4]||'med', client:row[5]||'', deadline:row[6]||'',
-          createdBy:row[7]||'', assignedTo:row[8]||'',
-          createdAt:row[9]?new Date(row[9]).getTime()||Date.now():Date.now(),
-          acceptedAt:row[10]?new Date(row[10]).getTime()||null:null,
-          completedAt:row[11]?new Date(row[11]).getTime()||null:null,
-          duration:null, pausedAt:null, accumulatedMs:0,
-          points:row[13]?parseInt(row[13])||null:null,
-        });
-      }
+async function sheetLoad(cfg){
+  try{
+    const d=await sheetsReq(cfg,'GET','/values/Tasks!A:P');
+    if(!d.values||d.values.length<2)return[];
+    const rows=d.values.slice(1);
+    const tasks=[];
+    for(const row of rows){
+      if(row[15]){try{tasks.push(JSON.parse(row[15]));continue;}catch(e){}}
+      if(row[0]){tasks.push({id:row[0],title:row[1]||'',desc:row[2]||'',category:row[3]||'other',priority:row[4]||'med',client:row[5]||'',deadline:row[6]||'',createdBy:row[7]||'',assignedTo:row[8]||'',createdAt:row[9]?new Date(row[9]).getTime()||Date.now():Date.now(),acceptedAt:row[10]?new Date(row[10]).getTime()||null:null,completedAt:row[11]?new Date(row[11]).getTime()||null:null,duration:null,pausedAt:null,accumulatedMs:0,points:row[13]?parseInt(row[13])||null:null,comments:[]});}
     }
     return tasks.filter(t=>t.id);
-  } catch(e) { console.warn('sheet load error',e); return []; }
+  }catch(e){console.warn('sheet load error',e);return[];}
 }
-async function sendEmail(cfg, task) {
-  if (!cfg.accessToken||!task.assignedToEmail||task.notify===false) return;
-  try {
+async function sendEmail(cfg,task){
+  if(!cfg.accessToken||!task.assignedToEmail)return;
+  try{
     const sub=`[BV Tasks] New task: ${task.title}`;
-    const body=`Hi ${task.assignedTo||'there'},\n\nNew task on the Bagavagabonds board:\n\nTitle: ${task.title}\nClient: ${task.client||'General'}\nCategory: ${task.category}\nPriority: ${task.priority.toUpperCase()}${task.deadline?`\nDeadline: ${task.deadline}`:''}\n${task.desc?`\nDetails: ${task.desc}\n`:''}\nRequested by: ${task.createdBy}\n\nAccept it and start the timer here:\nhttps://hermitthecrog.github.io/bv-taskmanager/\n\n— Bagavagabonds Task Board`;
-    const raw=[`To: ${task.assignedToEmail}`,`Subject: =?UTF-8?B?${btoa(unescape(encodeURIComponent(sub)))}?=`,'Content-Type: text/plain; charset=utf-8','MIME-Version: 1.0','',body].join('\n');
-    const bytes=new TextEncoder().encode(raw);
-    const binary=Array.from(bytes).map(b=>String.fromCharCode(b)).join('');
-    const enc=btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+    const body=`Hi ${task.assignedTo||'there'},\n\nNew task on the Bagavagabonds board:\n\nTitle: ${task.title}\nClient: ${task.client||'General'}\nCategory: ${task.category}\nPriority: ${task.priority.toUpperCase()}${task.deadline?`\nDeadline: ${task.deadline}`:''}\n${task.desc?`\nDetails: ${task.desc}\n`:''}\nRequested by: ${task.createdBy}\n\nhttps://hermitthecrog.github.io/bv-taskmanager/\n\n— Bagavagabonds Task Board`;
+    const raw=[`To: ${task.assignedToEmail}`,`Subject: ${sub}`,'Content-Type: text/plain; charset=utf-8','',body].join('\n');
+    const enc=btoa(unescape(encodeURIComponent(raw))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
     await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send',{method:'POST',headers:{'Authorization':`Bearer ${cfg.accessToken}`,'Content-Type':'application/json'},body:JSON.stringify({raw:enc})});
-  } catch(e) { console.warn('email',e); }
+  }catch(e){console.warn('email',e);}
 }
 
-// ── CHA-CHING ───────────────────────────────────────────────────────────────
-function ChaChing({onDone}) {
-  useEffect(() => { const t=setTimeout(onDone,2400); return ()=>clearTimeout(t); }, []);
-  const cx=window.innerWidth/2, cy=window.innerHeight/2;
-  const coins=Array.from({length:18},(_,i)=>{ const a=(i/18)*Math.PI*2,d=120+Math.random()*180; return{tx:Math.cos(a)*d,ty:Math.sin(a)*d-100,rot:(Math.random()-.5)*800,delay:Math.random()*0.4}; });
-  const bills=Array.from({length:10},(_,i)=>{ const a=(i/10)*Math.PI*2+0.3,d=95+Math.random()*150; return{tx:Math.cos(a)*d,ty:Math.sin(a)*d-70,rot:(Math.random()-.5)*580,delay:Math.random()*0.28}; });
-  return (
-    <div className="chaching-overlay">
-      <div className="chaching-text">CHA-CHING! 💰</div>
-      {coins.map((c,i)=><span key={i} className="coin" style={{left:cx,top:cy,'--tx':`${c.tx}px`,'--ty':`${c.ty}px`,'--rot':`${c.rot}deg`,animationDelay:`${c.delay}s`}}>🪙</span>)}
-      {bills.map((b,i)=><span key={i} className="bill" style={{left:cx,top:cy,'--tx':`${b.tx}px`,'--ty':`${b.ty}px`,'--rot':`${b.rot}deg`,animationDelay:`${b.delay}s`}}>💵</span>)}
+// ── CHA-CHING ──────────────────────────────────────────────────────────────
+function ChaChing({onDone}){
+  useEffect(()=>{const t=setTimeout(onDone,2400);return()=>clearTimeout(t);},[]);
+  const cx=window.innerWidth/2,cy=window.innerHeight/2;
+  const coins=Array.from({length:18},(_,i)=>{const a=(i/18)*Math.PI*2,d=120+Math.random()*180;return{tx:Math.cos(a)*d,ty:Math.sin(a)*d-100,rot:(Math.random()-.5)*800,delay:Math.random()*0.4};});
+  const bills=Array.from({length:10},(_,i)=>{const a=(i/10)*Math.PI*2+0.3,d=95+Math.random()*150;return{tx:Math.cos(a)*d,ty:Math.sin(a)*d-70,rot:(Math.random()-.5)*580,delay:Math.random()*0.28};});
+  return(<div className="chaching-overlay"><div className="chaching-text">CHA-CHING! 💰</div>{coins.map((c,i)=><span key={i} className="coin" style={{left:cx,top:cy,'--tx':`${c.tx}px`,'--ty':`${c.ty}px`,'--rot':`${c.rot}deg`,animationDelay:`${c.delay}s`}}>🪙</span>)}{bills.map((b,i)=><span key={i} className="bill" style={{left:cx,top:cy,'--tx':`${b.tx}px`,'--ty':`${b.ty}px`,'--rot':`${b.rot}deg`,animationDelay:`${b.delay}s`}}>💵</span>)}</div>);
+}
+
+// ── TOAST ──────────────────────────────────────────────────────────────────
+function Toast({msg,type,onDone}){
+  useEffect(()=>{const t=setTimeout(onDone,3200);return()=>clearTimeout(t);},[]);
+  return<div className={`toast ${type}`}>{msg}</div>;
+}
+
+// ── EMAIL AUTOCOMPLETE ─────────────────────────────────────────────────────
+function EmailField({value,onChange}){
+  const [open,setOpen]=useState(false);
+  const [sel,setSel]=useState(0);
+  const filtered=value.length>0?TEAM.filter(t=>t.name.toLowerCase().includes(value.toLowerCase())||t.email.toLowerCase().includes(value.toLowerCase())):[];
+  const visible=open&&filtered.length>0;
+  const pick=m=>{onChange(m.email);setOpen(false);};
+  return(
+    <div className="field" style={{position:'relative'}}>
+      <label>Assign to — type name or email</label>
+      <input value={value} onChange={e=>{onChange(e.target.value);setOpen(true);setSel(0);}} onFocus={()=>setOpen(true)} onBlur={()=>setTimeout(()=>setOpen(false),160)}
+        onKeyDown={e=>{if(!visible)return;if(e.key==='ArrowDown'){setSel(s=>Math.min(s+1,filtered.length-1));e.preventDefault();}if(e.key==='ArrowUp'){setSel(s=>Math.max(s-1,0));e.preventDefault();}if(e.key==='Enter'){pick(filtered[sel]);e.preventDefault();}if(e.key==='Escape')setOpen(false);}}
+        placeholder="Leave blank for anyone to claim" autoComplete="off"/>
+      {visible&&(<div className="ac-list">{filtered.map((m,i)=>(<div key={m.email} className={`ac-item${i===sel?' sel':''}`} onMouseDown={()=>pick(m)}><div className="ac-name">{m.name}</div><div className="ac-email">{m.email}</div></div>))}</div>)}
     </div>
   );
 }
 
-// ── TOAST ───────────────────────────────────────────────────────────────────
-function Toast({msg, type, onDone}) {
-  useEffect(()=>{ const t=setTimeout(onDone,3200); return ()=>clearTimeout(t); }, []);
-  return <div className={`toast ${type}`}>{msg}</div>;
-}
+// ── COMMENT DRAWER ─────────────────────────────────────────────────────────
+function CommentDrawer({task, user, onClose, onAddComment}){
+  const [text,setText]=useState('');
+  const listRef=useRef(null);
+  const comments=task.comments||[];
 
-// ── EMAIL AUTOCOMPLETE ──────────────────────────────────────────────────────
-function EmailField({value, onChange}) {
-  const [open,setOpen] = useState(false);
-  const [sel,setSel] = useState(0);
-  const filtered = value.length>0 ? TEAM.filter(t=>t.name.toLowerCase().includes(value.toLowerCase())||t.email.toLowerCase().includes(value.toLowerCase())) : [];
-  const visible = open && filtered.length>0;
-  const pick = m => { onChange(m.email); setOpen(false); };
-  return (
-    <div className="field" style={{position:'relative'}}>
-      <label>Assign to — type name or email</label>
-      <input value={value}
-        onChange={e=>{ onChange(e.target.value); setOpen(true); setSel(0); }}
-        onFocus={()=>setOpen(true)}
-        onBlur={()=>setTimeout(()=>setOpen(false),160)}
-        onKeyDown={e=>{
-          if (!visible) return;
-          if (e.key==='ArrowDown') { setSel(s=>Math.min(s+1,filtered.length-1)); e.preventDefault(); }
-          if (e.key==='ArrowUp') { setSel(s=>Math.max(s-1,0)); e.preventDefault(); }
-          if (e.key==='Enter') { pick(filtered[sel]); e.preventDefault(); }
-          if (e.key==='Escape') setOpen(false);
-        }}
-        placeholder="Leave blank for anyone to claim"
-        autoComplete="off" />
-      {visible && (
-        <div className="ac-list">
-          {filtered.map((m,i)=>(
-            <div key={m.email} className={`ac-item${i===sel?' sel':''}`} onMouseDown={()=>pick(m)}>
-              <div className="ac-name">{m.name}</div>
-              <div className="ac-email">{m.email}</div>
+  useEffect(()=>{
+    if(listRef.current)listRef.current.scrollTop=listRef.current.scrollHeight;
+  },[comments.length]);
+
+  const post=()=>{
+    if(!text.trim())return;
+    onAddComment(task.id,text.trim());
+    setText('');
+  };
+
+  return(
+    <div className="comment-overlay" onClick={e=>e.target===e.currentTarget&&onClose()}>
+      <div className="comment-drawer">
+        <div className="comment-header">
+          <button className="comment-close" onClick={onClose}>✕</button>
+          <div className="comment-task-title">{task.title}</div>
+          <div className="comment-sub">
+            {CATS.find(c=>c.id===task.category)?.label||task.category}
+            {task.client&&task.client!=='General / Internal'?` · ${task.client}`:''}
+            {' · '}{comments.length} comment{comments.length!==1?'s':''}
+          </div>
+        </div>
+        <div className="comment-list" ref={listRef}>
+          {comments.length===0&&<div className="comment-empty">No comments yet — be the first</div>}
+          {comments.map(c=>(
+            <div key={c.id} className="comment-item">
+              <div className="comment-meta">
+                <div className="comment-av">{initials(c.authorName)}</div>
+                <span className="comment-author">{c.authorName}</span>
+                <span className="comment-time">{fmtShort(c.createdAt)}</span>
+              </div>
+              <div className="comment-text">{c.text}</div>
             </div>
           ))}
+        </div>
+        <div className="comment-input-row">
+          <textarea className="comment-input" value={text} onChange={e=>setText(e.target.value)}
+            onKeyDown={e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();post();}}}
+            placeholder="Add a comment… (Enter to post)" rows={1}/>
+          <button className="comment-post-btn" onClick={post} disabled={!text.trim()}>Post</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── NEW TASK MODAL ─────────────────────────────────────────────────────────
+function NewTaskModal({currentUser,onClose,onSave}){
+  const [form,setForm]=useState({title:'',desc:'',category:'other',priority:'med',deadline:'',assignedToEmail:'',client:'General / Internal'});
+  const set=(k,v)=>setForm(f=>({...f,[k]:v}));
+  const member=TEAM.find(t=>t.email===form.assignedToEmail);
+  const save=()=>{
+    if(!form.title.trim())return;
+    onSave({id:'task_'+Date.now(),...form,title:form.title.trim(),desc:form.desc.trim(),assignedTo:member?.name||(form.assignedToEmail?form.assignedToEmail.split('@')[0]:''),createdBy:currentUser.name,createdByEmail:currentUser.email,createdAt:Date.now(),acceptedAt:null,completedAt:null,duration:null,pausedAt:null,accumulatedMs:0,points:null,comments:[]});
+  };
+  return(
+    <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&onClose()}>
+      <div className="modal">
+        <div className="modal-title">Post a <span>task</span></div>
+        <div className="field"><label>Title *</label><input value={form.title} onChange={e=>set('title',e.target.value)} placeholder="e.g. Move pallet 3 to bay 4" autoFocus/></div>
+        <div className="field"><label>Details / instructions</label><textarea value={form.desc} onChange={e=>set('desc',e.target.value)} placeholder="Notes for the crew..."/></div>
+        <div className="field"><label>Client / Project</label><select value={form.client} onChange={e=>set('client',e.target.value)}>{CLIENTS.map(c=><option key={c} value={c}>{c}</option>)}</select></div>
+        <div className="field-row">
+          <div className="field"><label>Category</label><select value={form.category} onChange={e=>set('category',e.target.value)}>{CATS.map(c=><option key={c.id} value={c.id}>{c.label}</option>)}</select></div>
+          <div className="field"><label>Priority</label><select value={form.priority} onChange={e=>set('priority',e.target.value)}><option value="high">High</option><option value="med">Medium</option><option value="low">Low</option></select></div>
+        </div>
+        <div className="field"><label>Deadline (optional)</label><input type="date" value={form.deadline} onChange={e=>set('deadline',e.target.value)}/></div>
+        <EmailField value={form.assignedToEmail} onChange={v=>set('assignedToEmail',v)}/>
+        <div className="modal-actions">
+          <button className="btn-cancel" onClick={onClose}>Cancel</button>
+          <button className="btn-post" onClick={save} disabled={!form.title.trim()}>Post task</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── TASK CARD ──────────────────────────────────────────────────────────────
+function TaskCard({task,onAccept,onComplete,onPause,onResume,onDelete,onComment,tick,fontSize}){
+  const {col,rot}=noteStyle(task.id);
+  const isDone=!!task.completedAt;
+  const isActive=task.acceptedAt&&!task.completedAt&&!task.pausedAt;
+  const isPaused=task.acceptedAt&&!task.completedAt&&!!task.pausedAt;
+  const overdue=!isDone&&isOverdue(task.deadline);
+  const fs=fontSize||14;
+  let elapsed=null;
+  if(isActive)elapsed=fmtDur((task.accumulatedMs||0)+(Date.now()-task.acceptedAt));
+  if(isPaused)elapsed=fmtDur(task.accumulatedMs||0);
+  const commentCount=(task.comments||[]).length;
+  return(
+    <div className={`note ${col} ${rot}${isDone?' is-done':''}`} style={{fontSize:fs+'px'}}
+      draggable={!isDone}
+      onDragStart={e=>{e.dataTransfer.setData('taskId',task.id);e.dataTransfer.effectAllowed='move';}}>
+      <div className="ncat" style={{fontSize:(fs*0.57)+'px'}}>{CATS.find(c=>c.id===task.category)?.label||task.category}{task.client&&task.client!=='General / Internal'?` · ${task.client}`:''}</div>
+      <span className={`nprio-badge ${task.priority==='high'?'nph':task.priority==='med'?'npm':'npl'}`} style={{fontSize:(fs*0.57)+'px'}}>{task.priority}</span>
+      <div className="ntitle" style={{fontSize:(fs*1)+'px'}}>{task.title}</div>
+      {task.desc&&<div className="ndesc" style={{fontSize:(fs*0.82)+'px'}}>{task.desc}</div>}
+      {task.deadline&&<div className={`ndl${overdue?' overdue':''}`} style={{fontSize:(fs*0.64)+'px'}}>{overdue?'⚠ Overdue: ':'📅 '}{task.deadline}</div>}
+      {isActive&&<div className="ntimer" style={{fontSize:(fs*0.71)+'px'}}><div className="npulse"/>{elapsed}</div>}
+      {isPaused&&<div className="npaused" style={{fontSize:(fs*0.71)+'px'}}>⏸ Paused · {elapsed}</div>}
+      {isDone&&task.duration&&<div className="done-log" style={{fontSize:(fs*0.64)+'px'}}>✓ {fmtDur(task.duration)} · {task.assignedTo||'—'}</div>}
+      {isDone&&task.points&&<div className="pts-badge" style={{fontSize:(fs*0.64)+'px'}}>+{task.points} pts</div>}
+      <div className="nbtns">
+        {!task.acceptedAt&&!isDone&&<button className="nbtn" style={{fontSize:(fs*0.64)+'px'}} onClick={()=>onAccept(task)}>▶ Accept</button>}
+        {isActive&&<button className="nbtn" style={{fontSize:(fs*0.64)+'px'}} onClick={()=>onPause(task)}>⏸ Pause</button>}
+        {isPaused&&<button className="nbtn" style={{fontSize:(fs*0.64)+'px'}} onClick={()=>onResume(task)}>▶ Resume</button>}
+        {(isActive||isPaused)&&<button className="nbtn" style={{fontSize:(fs*0.64)+'px'}} onClick={()=>onComplete(task)}>✓ Done</button>}
+        <button className="nbtn comment" style={{fontSize:(fs*0.64)+'px'}} onClick={()=>onComment(task)}>💬{commentCount>0?` ${commentCount}`:''}</button>
+        <button className="nbtn danger" style={{fontSize:(fs*0.64)+'px'}} onClick={()=>onDelete(task.id)}>✕</button>
+      </div>
+      <div className="by-line" style={{fontSize:(fs*0.64)+'px'}}>{task.assignedTo&&!isDone?`→ ${task.assignedTo} · `:''}{task.createdBy} · {fmtTime(task.createdAt)}</div>
+    </div>
+  );
+}
+
+// ── LIST ROW ───────────────────────────────────────────────────────────────
+function ListRow({task,onAccept,onComplete,onPause,onResume,onDelete,onComment,tick,user}){
+  const [open,setOpen]=useState(false);
+  const isDone=!!task.completedAt;
+  const isActive=task.acceptedAt&&!task.completedAt&&!task.pausedAt;
+  const isPaused=task.acceptedAt&&!task.completedAt&&!!task.pausedAt;
+  const overdue=!isDone&&isOverdue(task.deadline);
+  const commentCount=(task.comments||[]).length;
+
+  let elapsed=null;
+  if(isActive)elapsed=fmtDur((task.accumulatedMs||0)+(Date.now()-task.acceptedAt));
+  if(isPaused)elapsed=fmtDur(task.accumulatedMs||0);
+
+  const priColor=task.priority==='high'?'#cc3333':task.priority==='med'?'#c4682a':'#4a8a4a';
+  const statusColor=isDone?'#4a8a4a':isActive?'#c4682a':isPaused?'#9a6200':'rgba(255,255,255,0.2)';
+
+  // display name: show assigned if set, otherwise show "unassigned"
+  const displayName=task.assignedTo||'';
+
+  return(
+    <div className="list-row">
+      <div className="list-row-main" onClick={()=>setOpen(o=>!o)}>
+        <div className="lr-dot" style={{background:statusColor}}/>
+        <div className={`lr-title${isDone?' is-done':''}`}>{task.title}</div>
+        {displayName&&<div className="lr-assignee">{displayName}</div>}
+        {commentCount>0&&<div className="lr-comment-badge">💬{commentCount}</div>}
+        <div className={`lr-expand${open?' open':''}`}>▾</div>
+      </div>
+      {open&&(
+        <div className="list-row-detail">
+          {(isActive||isPaused)&&<div className="lrd-timer">{isActive?<><span style={{width:6,height:6,borderRadius:'50%',background:'var(--amber)',display:'inline-block',animation:'pp 1.2s infinite'}}/>Running: {elapsed}</>:<>⏸ Paused: {elapsed}</>}</div>}
+          {task.desc&&<div className="lrd-desc">{task.desc}</div>}
+          <div className="lrd-meta">
+            <span className="lrd-tag">{CATS.find(c=>c.id===task.category)?.label||task.category}</span>
+            {task.client&&task.client!=='General / Internal'&&<span className="lrd-tag">{task.client}</span>}
+            <span className="lrd-tag" style={{color:priColor}}>{task.priority} priority</span>
+            {task.deadline&&<span className="lrd-tag" style={{color:overdue?'#f08080':'inherit'}}>{overdue?'⚠ ':''}{task.deadline}</span>}
+            {task.createdBy&&<span className="lrd-tag">by {task.createdBy}</span>}
+          </div>
+          {isDone&&<div className="lrd-meta"><span className="lrd-tag" style={{color:'var(--amber)'}}>✓ {fmtDur(task.duration)} · +{task.points||0} pts</span></div>}
+          <div className="lrd-btns">
+            {!task.acceptedAt&&!isDone&&<button className="lrd-btn primary" onClick={()=>onAccept(task)}>▶ Accept</button>}
+            {isActive&&<button className="lrd-btn" onClick={()=>onPause(task)}>⏸ Pause</button>}
+            {isPaused&&<button className="lrd-btn primary" onClick={()=>onResume(task)}>▶ Resume</button>}
+            {(isActive||isPaused)&&<button className="lrd-btn primary" onClick={()=>onComplete(task)}>✓ Done</button>}
+            <button className="lrd-btn" onClick={()=>onComment(task)}>💬 Comments{commentCount>0?` (${commentCount})`:''}</button>
+            <button className="lrd-btn danger" onClick={()=>onDelete(task.id)}>✕ Remove</button>
+          </div>
         </div>
       )}
     </div>
   );
 }
 
-// ── NEW / EDIT TASK MODAL ───────────────────────────────────────────────────
-function NewTaskModal({currentUser, onClose, onSave, editTask}) {
-  const isEdit = !!editTask;
-  const [form,setForm] = useState(isEdit ? {
-    title: editTask.title||'', desc: editTask.desc||'', category: editTask.category||'other',
-    priority: editTask.priority||'med', deadline: editTask.deadline||'',
-    assignedToEmail: editTask.assignedToEmail||editTask.assignedTo||'',
-    client: editTask.client||'General / Internal', notify: editTask.notify!==false,
-  } : {title:'',desc:'',category:'other',priority:'med',deadline:'',assignedToEmail:'',client:'General / Internal',notify:true});
-  const set = (k,v) => setForm(f=>({...f,[k]:v}));
-  const member = TEAM.find(t=>t.email===form.assignedToEmail);
-  const save = () => {
-    if (!form.title.trim()) return;
-    const base = isEdit ? {...editTask} : {id:'task_'+Date.now(), createdBy:currentUser.name, createdByEmail:currentUser.email, createdAt:Date.now(), acceptedAt:null, completedAt:null, duration:null, pausedAt:null, accumulatedMs:0, points:null};
-    onSave({
-      ...base, ...form,
-      title:form.title.trim(), desc:form.desc.trim(),
-      assignedTo: member?.name || (form.assignedToEmail ? form.assignedToEmail.split('@')[0] : ''),
-      ...(isEdit ? {editedAt: Date.now()} : {}),
-    });
-  };
-  return (
-    <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&onClose()}>
-      <div className="modal">
-        <div className="modal-title">{isEdit ? 'Edit ' : 'Post a '}<span>{isEdit ? 'task' : 'task'}</span></div>
-        <div className="field">
-          <label>Title *</label>
-          <input value={form.title} onChange={e=>set('title',e.target.value)} placeholder="e.g. Move pallet 3 to bay 4" autoFocus/>
-        </div>
-        <div className="field">
-          <label>Details / instructions</label>
-          <textarea value={form.desc} onChange={e=>set('desc',e.target.value)} placeholder="Notes for the crew..."/>
-        </div>
-        <div className="field">
-          <label>Client / Project</label>
-          <select value={form.client} onChange={e=>set('client',e.target.value)}>
-            {CLIENTS.map(c=><option key={c} value={c}>{c}</option>)}
-          </select>
-        </div>
-        <div className="field-row">
-          <div className="field">
-            <label>Category</label>
-            <select value={form.category} onChange={e=>set('category',e.target.value)}>
-              {CATS.map(c=><option key={c.id} value={c.id}>{c.label}</option>)}
-            </select>
-          </div>
-          <div className="field">
-            <label>Priority</label>
-            <select value={form.priority} onChange={e=>set('priority',e.target.value)}>
-              <option value="high">High</option>
-              <option value="med">Medium</option>
-              <option value="low">Low</option>
-            </select>
-          </div>
-        </div>
-        <div className="field">
-          <label>Deadline (optional)</label>
-          <input type="date" value={form.deadline} onChange={e=>set('deadline',e.target.value)}/>
-        </div>
-        <EmailField value={form.assignedToEmail} onChange={v=>set('assignedToEmail',v)}/>
-        {form.assignedToEmail && (
-          <div style={{display:'flex',alignItems:'center',gap:'10px',marginBottom:'4px'}}>
-            <input type="checkbox" id="notify-chk" checked={form.notify} onChange={e=>set('notify',e.target.checked)} style={{accentColor:'var(--amber)',width:'14px',height:'14px',cursor:'pointer'}}/>
-            <label htmlFor="notify-chk" style={{fontSize:'12px',color:'var(--text2)',fontFamily:'DM Mono,monospace',cursor:'pointer'}}>Send email notification to assignee</label>
-          </div>
-        )}
-        <div className="modal-actions">
-          <button className="btn-cancel" onClick={onClose}>Cancel</button>
-          <button className="btn-post" onClick={save} disabled={!form.title.trim()}>{isEdit ? 'Save changes' : 'Post task'}</button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ── DELETE CONFIRM MODAL ────────────────────────────────────────────────────
-function DeleteConfirmModal({task, onConfirm, onCancel}) {
-  return (
-    <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&onCancel()}>
-      <div className="del-modal">
-        <div className="del-icon">🗑️</div>
-        <div className="del-title">Delete task?</div>
-        <div className="del-name">"{task.title}"</div>
-        <div style={{display:'flex',gap:'10px',justifyContent:'center'}}>
-          <button className="btn-cancel" onClick={onCancel}>Cancel</button>
-          <button className="btn-post" style={{background:'rgba(180,50,50,0.85)'}} onClick={onConfirm}>Delete</button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-
-function TaskCard({task, onAccept, onComplete, onPause, onResume, onDelete, onEdit, tick, fontSize}) {
-  const {col,rot} = noteStyle(task.id);
-  const isDone = !!task.completedAt;
-  const isActive = task.acceptedAt && !task.completedAt && !task.pausedAt;
-  const isPaused = task.acceptedAt && !task.completedAt && !!task.pausedAt;
-  const overdue = !isDone && isOverdue(task.deadline);
-  const fs = fontSize || 14;
-  let elapsed = null;
-  if (isActive) elapsed = fmtDur((task.accumulatedMs||0)+(Date.now()-task.acceptedAt));
-  if (isPaused) elapsed = fmtDur(task.accumulatedMs||0);
-  return (
-    <div className={`note ${col} ${rot}${isDone?' is-done':''}`} style={{fontSize:fs+'px'}}
-      draggable={!isDone}
-      onDragStart={e=>{ e.dataTransfer.setData('taskId',task.id); e.dataTransfer.effectAllowed='move'; }}>
-      <div className="ncat" style={{fontSize:(fs*0.57)+'px'}}>
-        {CATS.find(c=>c.id===task.category)?.label||task.category}
-        {task.client&&task.client!=='General / Internal'?` · ${task.client}`:''}
-      </div>
-      <span className={`nprio-badge ${task.priority==='high'?'nph':task.priority==='med'?'npm':'npl'}`} style={{fontSize:(fs*0.57)+'px'}}>{task.priority}</span>
-      <div className="ntitle" style={{fontSize:(fs*1)+'px'}}>{task.title}</div>
-      {task.desc && <div className="ndesc" style={{fontSize:(fs*0.82)+'px'}}>{task.desc}</div>}
-      {task.deadline && <div className={`ndl${overdue?' overdue':''}`} style={{fontSize:(fs*0.64)+'px'}}>{overdue?'⚠ Overdue: ':'📅 '}{task.deadline}</div>}
-      {isActive && <div className="ntimer" style={{fontSize:(fs*0.71)+'px'}}><div className="npulse"/>{elapsed}</div>}
-      {isPaused && <div className="npaused" style={{fontSize:(fs*0.71)+'px'}}>⏸ Paused · {elapsed}</div>}
-      {isDone && task.duration && <div className="done-log" style={{fontSize:(fs*0.64)+'px'}}>✓ {fmtDur(task.duration)} · {task.assignedTo||'—'}</div>}
-      {isDone && task.points && <div className="pts-badge" style={{fontSize:(fs*0.64)+'px'}}>+{task.points} pts</div>}
-      <div className="nbtns">
-        {!task.acceptedAt&&!isDone && <button className="nbtn" style={{fontSize:(fs*0.64)+'px'}} onClick={()=>onAccept(task)}>▶ Accept</button>}
-        {isActive && <button className="nbtn" style={{fontSize:(fs*0.64)+'px'}} onClick={()=>onPause(task)}>⏸ Pause</button>}
-        {isPaused && <button className="nbtn" style={{fontSize:(fs*0.64)+'px'}} onClick={()=>onResume(task)}>▶ Resume</button>}
-        {(isActive||isPaused) && <button className="nbtn" style={{fontSize:(fs*0.64)+'px'}} onClick={()=>onComplete(task)}>✓ Done</button>}
-        {!isDone && <button className="nbtn" style={{fontSize:(fs*0.64)+'px'}} onClick={()=>onEdit(task)}>✏️</button>}
-        <button className="nbtn danger" style={{fontSize:(fs*0.64)+'px'}} onClick={()=>onDelete(task.id)}>✕</button>
-      </div>
-      <div className="by-line" style={{fontSize:(fs*0.64)+'px'}}>
-        {task.assignedTo&&!isDone?`${task.assignedTo} · `:''}
-        {task.createdBy} · {fmtTime(task.createdAt)}
-        {task.editedAt?<span style={{opacity:0.6}}> · ✏️ {fmtAgo(task.editedAt)}</span>:null}
-      </div>
-    </div>
-  );
-}
-
-// ── SIDEBAR ─────────────────────────────────────────────────────────────────
-function Sidebar({tasks}) {
-  const now=new Date(), yr=now.getFullYear(), mo=now.getMonth();
+// ── SIDEBAR ────────────────────────────────────────────────────────────────
+function Sidebar({tasks}){
+  const now=new Date(),yr=now.getFullYear(),mo=now.getMonth();
   const moName=now.toLocaleString('en-US',{month:'long',year:'numeric'});
-  const firstDay=new Date(yr,mo,1).getDay(), dim=new Date(yr,mo+1,0).getDate(), today=now.getDate();
+  const firstDay=new Date(yr,mo,1).getDay(),dim=new Date(yr,mo+1,0).getDate(),today=now.getDate();
   const taskDays=new Set(tasks.filter(t=>t.deadline&&!t.completedAt).map(t=>new Date(t.deadline+'T12:00:00').getDate()));
-  const days=[]; for(let i=0;i<firstDay;i++) days.push({e:true}); for(let d=1;d<=dim;d++) days.push({d});
+  const days=[];for(let i=0;i<firstDay;i++)days.push({e:true});for(let d=1;d<=dim;d++)days.push({d});
   const upcoming=tasks.filter(t=>t.deadline&&!t.completedAt).sort((a,b)=>new Date(a.deadline)-new Date(b.deadline)).slice(0,4);
   const doneToday=tasks.filter(t=>t.completedAt&&new Date(t.completedAt).toDateString()===now.toDateString());
   const active=tasks.filter(t=>t.acceptedAt&&!t.completedAt);
   const avg=doneToday.length?doneToday.reduce((a,t)=>a+(t.duration||0),0)/doneToday.length:0;
   const dotCols=['#f5cc90','#c4682a','#7a1c1c','#c2e098'];
-  return (
+  return(
     <div className="sidebar">
       <div className="cal-mo">{moName}</div>
       <div className="cgrid">
@@ -751,13 +721,8 @@ function Sidebar({tasks}) {
         {days.map((d,i)=><div key={i} className={`cdd${d.e?' empty':d.d===today?' today':taskDays.has(d.d)?' has-task':''}`}>{d.d||''}</div>)}
       </div>
       <div className="slabel">Due soon</div>
-      {upcoming.length===0 && <div style={{fontSize:'9px',color:'var(--text3)',fontFamily:'DM Mono,monospace',fontStyle:'italic'}}>none set</div>}
-      {upcoming.map((t,i)=>(
-        <div key={t.id} className="devent">
-          <div className="devtxt"><span className="devdot" style={{background:dotCols[i%4]}}></span>{t.title.slice(0,20)}{t.title.length>20?'…':''}</div>
-          <div className="devdate">{t.deadline}</div>
-        </div>
-      ))}
+      {upcoming.length===0&&<div style={{fontSize:'9px',color:'var(--text3)',fontFamily:'DM Mono,monospace',fontStyle:'italic'}}>none set</div>}
+      {upcoming.map((t,i)=>(<div key={t.id} className="devent"><div className="devtxt"><span className="devdot" style={{background:dotCols[i%4]}}></span>{t.title.slice(0,20)}{t.title.length>20?'…':''}</div><div className="devdate">{t.deadline}</div></div>))}
       <div className="sstat">{doneToday.length}</div><div className="ssub">done today</div>
       <div className="sstat" style={{color:'var(--amber)',fontSize:'17px'}}>{avg>0?fmtDur(avg):'—'}</div><div className="ssub">avg time</div>
       <div className="sstat" style={{fontSize:'17px'}}>{active.length}</div><div className="ssub">active now</div>
@@ -765,16 +730,16 @@ function Sidebar({tasks}) {
   );
 }
 
-// ── LOG VIEW ─────────────────────────────────────────────────────────────────
-function LogView({tasks, config}) {
+// ── LOG VIEW ───────────────────────────────────────────────────────────────
+function LogView({tasks,config}){
   const done=tasks.filter(t=>t.completedAt);
   const avg=done.length?done.reduce((a,t)=>a+(t.duration||0),0)/done.length:0;
   const today=done.filter(t=>new Date(t.completedAt).toDateString()===new Date().toDateString());
-  return (
+  return(
     <div className="log-view">
       <div className="log-header">
         <div><h2>Task History</h2><p>Full log — who, when, how long, how many points</p></div>
-        {config?.sheetId && <a className="sheets-btn" target="_blank" rel="noopener" href={`https://docs.google.com/spreadsheets/d/${config.sheetId}`}>↗ Open in Sheets</a>}
+        {config?.sheetId&&<a className="sheets-btn" target="_blank" rel="noopener" href={`https://docs.google.com/spreadsheets/d/${config.sheetId}`}>↗ Open in Sheets</a>}
       </div>
       <div className="log-stats">
         <div className="stat-card"><div className="stat-label">Total done</div><div className="stat-val">{done.length}</div></div>
@@ -783,17 +748,15 @@ function LogView({tasks, config}) {
         <div className="stat-card"><div className="stat-label">Active now</div><div className="stat-val">{tasks.filter(t=>t.acceptedAt&&!t.completedAt).length}</div></div>
       </div>
       <div className="log-wrap">
-        {done.length===0 ? <div className="no-tasks-msg">no completed tasks yet</div> : (
+        {done.length===0?<div className="no-tasks-msg">no completed tasks yet</div>:(
           <table className="log-table">
-            <thead><tr><th>Task</th><th>Client</th><th>Category</th><th>Priority</th><th>Deadline</th><th>Requested by</th><th>Completed by</th><th>Completed at</th><th>Duration</th><th>Pts</th></tr></thead>
+            <thead><tr><th>Task</th><th>Client</th><th>Priority</th><th>Requested by</th><th>Completed by</th><th>Completed at</th><th>Duration</th><th>Pts</th></tr></thead>
             <tbody>
               {[...done].sort((a,b)=>b.completedAt-a.completedAt).map(t=>(
                 <tr key={t.id}>
                   <td className="tname">{t.title}</td>
                   <td className="tmono">{t.client||'—'}</td>
-                  <td className="tmono">{t.category}</td>
                   <td><span className={`nprio-badge ${t.priority==='high'?'nph':t.priority==='med'?'npm':'npl'}`} style={{position:'static',display:'inline-block',fontSize:'9px'}}>{t.priority}</span></td>
-                  <td className="tmono">{t.deadline||'—'}</td>
                   <td className="tmono">{t.createdBy||'—'}</td>
                   <td className="tmono">{t.assignedTo||'—'}</td>
                   <td className="tmono">{fmtTime(t.completedAt)}</td>
@@ -809,33 +772,27 @@ function LogView({tasks, config}) {
   );
 }
 
-// ── SCORES VIEW ──────────────────────────────────────────────────────────────
-function ScoresView({tasks, manualBadges, demerits}) {
+// ── SCORES VIEW ────────────────────────────────────────────────────────────
+function ScoresView({tasks,manualBadges,demerits}){
   const mo=currentMonth();
   const moLabel=new Date().toLocaleString('en-US',{month:'long',year:'numeric'});
   const members=TEAM.map(member=>{
     const done=tasks.filter(t=>t.completedAt&&t.assignedTo===member.name);
-    const moDone=done.filter(t=>{ const d=new Date(t.completedAt); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`===mo; });
+    const moDone=done.filter(t=>{const d=new Date(t.completedAt);return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`===mo;});
     const demeritTotal=demerits.filter(d=>d.member===member.name).reduce((a,d)=>a+d.pts,0);
-    const demeritMo=demerits.filter(d=>{ const dm=new Date(d.issuedAt); return d.member===member.name&&`${dm.getFullYear()}-${String(dm.getMonth()+1).padStart(2,'0')}`===mo; }).reduce((a,d)=>a+d.pts,0);
+    const demeritMo=demerits.filter(d=>{const dm=new Date(d.issuedAt);return d.member===member.name&&`${dm.getFullYear()}-${String(dm.getMonth()+1).padStart(2,'0')}`===mo;}).reduce((a,d)=>a+d.pts,0);
     const totalPts=Math.max(0,done.reduce((a,t)=>a+(t.points||0),0)-demeritTotal);
     const moPts=Math.max(0,moDone.reduce((a,t)=>a+(t.points||0),0)-demeritMo);
     const autoBadges=calcAutoBadges(member.name,tasks);
     const badges=[...new Set([...autoBadges,...(manualBadges[member.name]||[])])];
-    return {...member, done:done.length, moDone:moDone.length, totalPts, moPts, badges};
+    return{...member,done:done.length,moDone:moDone.length,totalPts,moPts,badges};
   }).filter(m=>m.done>0).sort((a,b)=>b.moPts-a.moPts);
-
-  const withTopBadge=members.map((m,i)=>({
-    ...m, badges: i===0&&m.moPts>0 ? [...new Set([...m.badges,'top_month'])] : m.badges
-  }));
+  const withTopBadge=members.map((m,i)=>({...m,badges:i===0&&m.moPts>0?[...new Set([...m.badges,'top_month'])]:m.badges}));
   const rankEmoji=['🥇','🥈','🥉'];
-  return (
+  return(
     <div className="scores-view">
-      <div className="scores-header">
-        <h2>Leaderboard 🏆</h2>
-        <div className="month-label">{moLabel}</div>
-      </div>
-      {withTopBadge.length===0 && <div style={{textAlign:'center',padding:'60px 24px',fontSize:'13px',color:'var(--text3)',fontFamily:'DM Mono,monospace'}}>no completed tasks yet — get to work! 💪</div>}
+      <div className="scores-header"><h2>Leaderboard 🏆</h2><div className="month-label">{moLabel}</div></div>
+      {withTopBadge.length===0&&<div style={{textAlign:'center',padding:'60px 24px',fontSize:'13px',color:'var(--text3)',fontFamily:'DM Mono,monospace'}}>no completed tasks yet — get to work! 💪</div>}
       <div className="leaderboard">
         {withTopBadge.map((m,i)=>(
           <div key={m.email} className={`player-card${i<3?` rank-${i+1}`:''}`}>
@@ -844,15 +801,8 @@ function ScoresView({tasks, manualBadges, demerits}) {
             <div className="player-name">{m.name}</div>
             <div className="player-pts">{m.moPts}</div>
             <div className="player-pts-label">pts this month</div>
-            <div className="player-stats">
-              <div className="pstat">This month: <span>{m.moDone}</span></div>
-              <div className="pstat">Total pts: <span>{m.totalPts}</span></div>
-            </div>
-            {m.badges.length>0 && (
-              <div className="badges-row">
-                {m.badges.map(bid=>{ const b=BADGES_DEF.find(x=>x.id===bid); return b?<div key={bid} className="badge">{b.emoji}<div className="badge-tip">{b.label}</div></div>:null; })}
-              </div>
-            )}
+            <div className="player-stats"><div className="pstat">This month: <span>{m.moDone}</span></div><div className="pstat">Total pts: <span>{m.totalPts}</span></div></div>
+            {m.badges.length>0&&(<div className="badges-row">{m.badges.map(bid=>{const b=BADGES_DEF.find(x=>x.id===bid);return b?<div key={bid} className="badge">{b.emoji}<div className="badge-tip">{b.label}</div></div>:null;})}</div>)}
           </div>
         ))}
       </div>
@@ -860,9 +810,7 @@ function ScoresView({tasks, manualBadges, demerits}) {
         <div style={{fontSize:'10px',fontFamily:'DM Mono,monospace',fontWeight:'800',letterSpacing:'0.12em',textTransform:'uppercase',color:'var(--text3)',marginBottom:'12px'}}>Point values</div>
         <div style={{display:'flex',gap:'20px',flexWrap:'wrap'}}>
           {[['High','3 pts','nph'],['Medium','2 pts','npm'],['Low','1 pt','npl'],['Speed bonus (under 10 min)','+1 pt','']].map(([label,val,cls])=>(
-            <div key={label} style={{fontSize:'12px',color:'var(--text2)',fontFamily:'DM Mono,monospace'}}>
-              <span className={cls?`nprio-badge ${cls}`:''} style={{position:'static',display:'inline-block',fontSize:'9px',marginRight:'6px'}}>{val}</span>{label}
-            </div>
+            <div key={label} style={{fontSize:'12px',color:'var(--text2)',fontFamily:'DM Mono,monospace'}}><span className={cls?`nprio-badge ${cls}`:''} style={{position:'static',display:'inline-block',fontSize:'9px',marginRight:'6px'}}>{val}</span>{label}</div>
           ))}
         </div>
       </div>
@@ -870,222 +818,104 @@ function ScoresView({tasks, manualBadges, demerits}) {
   );
 }
 
-// ── SETTINGS VIEW ────────────────────────────────────────────────────────────
-function SettingsView({settings, onSettings, onSave, onClearTasks, manualBadges, onManualBadges, demerits, onDemerits, showToast, adminUnlocked, onAdminUnlock, onAdminLock}) {
-  const [draft,setDraft] = useState(settings);
-  const [saved,setSaved] = useState(false);
-  const [devOpen,setDevOpen] = useState(false);
-  const [devPin,setDevPin] = useState('');
-  const [devError,setDevError] = useState(false);
-  const [badgeMember,setBadgeMember] = useState(TEAM[0].name);
-  const [demeritMember,setDemeritMember] = useState(TEAM[0].name);
-  const [demeritPts,setDemeritPts] = useState(1);
-  const [demeritReason,setDemeritReason] = useState('');
-  const [confirmClear,setConfirmClear] = useState(false);
-  const [newPin,setNewPin] = useState('');
-  const [curPin,setCurPin] = useState('');
-  const [pinMsg,setPinMsg] = useState('');
+// ── SETTINGS VIEW ──────────────────────────────────────────────────────────
+function SettingsView({settings,onSettings,onSave,onClearTasks,manualBadges,onManualBadges,demerits,onDemerits,showToast}){
+  const [draft,setDraft]=useState(settings);
+  const [saved,setSaved]=useState(false);
+  const [devOpen,setDevOpen]=useState(false);
+  const [devPin,setDevPin]=useState('');
+  const [devError,setDevError]=useState(false);
+  const [adminUnlocked,setAdminUnlocked]=useState(false);
+  const [badgeMember,setBadgeMember]=useState(TEAM[0].name);
+  const [demeritMember,setDemeritMember]=useState(TEAM[0].name);
+  const [demeritPts,setDemeritPts]=useState(1);
+  const [demeritReason,setDemeritReason]=useState('');
+  const [confirmClear,setConfirmClear]=useState(false);
+  const [newPin,setNewPin]=useState('');
+  const [curPin,setCurPin]=useState('');
+  const [pinMsg,setPinMsg]=useState('');
 
-  const handleFontSize = e => { const fs=parseInt(e.target.value); setDraft(d=>({...d,fontSize:fs})); onSettings({...settings,...draft,fontSize:fs}); };
-  const handleTheme = id => { setDraft(d=>({...d,theme:id})); onSettings({...settings,...draft,theme:id}); };
-  const handleSave = () => { onSave(draft); setSaved(true); setTimeout(()=>setSaved(false),2000); };
+  const handleFontSize=e=>{const fs=parseInt(e.target.value);setDraft(d=>({...d,fontSize:fs}));onSettings({...settings,...draft,fontSize:fs});};
+  const handleTheme=id=>{setDraft(d=>({...d,theme:id}));onSettings({...settings,...draft,theme:id});};
+  const handleSave=()=>{onSave(draft);setSaved(true);setTimeout(()=>setSaved(false),2000);};
+  const tryUnlock=()=>{const stored=localStorage.getItem(ADMIN_PIN_KEY)||DEFAULT_PIN;if(devPin===stored){setAdminUnlocked(true);setDevPin('');setDevError(false);}else{setDevError(true);setDevPin('');setTimeout(()=>setDevError(false),1200);}};
+  const memberBadges=manualBadges[badgeMember]||[];
+  const toggleBadge=bid=>{const cur=manualBadges[badgeMember]||[];const upd=cur.includes(bid)?cur.filter(b=>b!==bid):[...cur,bid];onManualBadges({...manualBadges,[badgeMember]:upd});};
+  const issueDemerit=()=>{if(!demeritReason.trim())return;const entry={id:'dm_'+Date.now(),member:demeritMember,pts:demeritPts,reason:demeritReason.trim(),issuedAt:Date.now()};onDemerits([...demerits,entry]);setDemeritReason('');showToast(`Demerit issued to ${demeritMember} (-${demeritPts} pts)`,'');};
+  const changePin=()=>{const stored=localStorage.getItem(ADMIN_PIN_KEY)||DEFAULT_PIN;if(curPin!==stored){setPinMsg('Current password incorrect');return;}if(newPin.length<4){setPinMsg('New password must be at least 4 characters');return;}localStorage.setItem(ADMIN_PIN_KEY,newPin);setCurPin('');setNewPin('');setPinMsg('✓ Password updated!');setTimeout(()=>setPinMsg(''),2500);};
 
-  const tryUnlock = () => {
-    const stored=localStorage.getItem(ADMIN_PIN_KEY)||DEFAULT_PIN;
-    if (devPin===stored) { onAdminUnlock(); setDevPin(''); setDevError(false); }
-    else { setDevError(true); setDevPin(''); setTimeout(()=>setDevError(false),1200); }
-  };
-
-  const memberBadges = manualBadges[badgeMember]||[];
-  const toggleBadge = bid => {
-    const cur=manualBadges[badgeMember]||[];
-    const upd=cur.includes(bid)?cur.filter(b=>b!==bid):[...cur,bid];
-    onManualBadges({...manualBadges,[badgeMember]:upd});
-  };
-
-  const issueDemerit = () => {
-    if (!demeritReason.trim()) return;
-    const entry={id:'dm_'+Date.now(),member:demeritMember,pts:demeritPts,reason:demeritReason.trim(),issuedAt:Date.now()};
-    onDemerits([...demerits,entry]);
-    setDemeritReason('');
-    showToast(`Demerit issued to ${demeritMember} (-${demeritPts} pts)`,'');
-  };
-
-  const changePin = () => {
-    const stored=localStorage.getItem(ADMIN_PIN_KEY)||DEFAULT_PIN;
-    if (curPin!==stored) { setPinMsg('Current password incorrect'); return; }
-    if (newPin.length<4) { setPinMsg('New password must be at least 4 characters'); return; }
-    localStorage.setItem(ADMIN_PIN_KEY,newPin);
-    setCurPin(''); setNewPin(''); setPinMsg('✓ Password updated!');
-    setTimeout(()=>setPinMsg(''),2500);
-  };
-
-  return (
+  return(
     <div className="settings-view">
       <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:'22px'}}>
         <h2>Settings ⚙️</h2>
-        <button className="btn-post" style={{padding:'8px 20px',fontSize:'12px'}} onClick={handleSave}>
-          {saved?'✓ Saved!':'Save changes'}
-        </button>
+        <button className="btn-post" style={{padding:'8px 20px',fontSize:'12px'}} onClick={handleSave}>{saved?'✓ Saved!':'Save changes'}</button>
       </div>
-
       <div className="settings-section">
         <h3>Color Theme</h3>
-        {['Dark','Earth','Forest','Light'].map(grp=>(
-          <div key={grp}>
-            <div className="theme-group-label">{grp}</div>
-            <div className="theme-grid">
-              {THEMES.filter(t=>t.group===grp).map(t=>(
-                <div key={t.id} className={`theme-btn${draft.theme===t.id?' active':''}`} style={{background:t.bg}} onClick={()=>handleTheme(t.id)}>
-                  <div className="theme-preview" style={{background:`linear-gradient(135deg,${t.bg},${t.accent})`}}/>
-                  <div className="theme-btn-label" style={{color:t.accent}}>{t.label}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
+        <div className="theme-grid">
+          {THEMES.map(t=>(<div key={t.id} className={`theme-btn${draft.theme===t.id?' active':''}`} style={{background:t.bg}} onClick={()=>handleTheme(t.id)}><div className="theme-preview" style={{background:`linear-gradient(135deg,${t.bg},${t.accent})`}}/><div className="theme-btn-label" style={{color:t.accent}}>{t.label}</div></div>))}
+        </div>
       </div>
-
       <div className="settings-section">
-        <h3>Card Font Size <span style={{fontWeight:400,color:'var(--text3)',fontSize:'10px',fontFamily:'DM Mono,monospace',marginLeft:'8px'}}>updates live</span></h3>
+        <h3>Card Font Size</h3>
         <div className="font-row">
           <label>Small</label>
           <input type="range" className="font-slider" min="11" max="20" value={draft.fontSize||14} onChange={handleFontSize}/>
           <label>Large</label>
           <span className="font-preview">{draft.fontSize||14}px</span>
         </div>
-        <div style={{marginTop:'12px',background:'var(--bg3)',borderRadius:'6px',padding:'10px 14px',fontSize:(draft.fontSize||14)+'px',color:'var(--text2)',fontFamily:'Syne,sans-serif'}}>
-          Preview: Move pallet 3 to bay 4
-        </div>
+        <div style={{marginTop:'12px',background:'var(--bg3)',borderRadius:'6px',padding:'10px 14px',fontSize:(draft.fontSize||14)+'px',color:'var(--text2)',fontFamily:'Syne,sans-serif'}}>Preview: Move pallet 3 to bay 4</div>
       </div>
-
       <div className="dev-section" style={{borderColor:adminUnlocked?'rgba(196,104,42,0.4)':'var(--border)'}}>
         <div className="dev-header" onClick={()=>!adminUnlocked&&setDevOpen(o=>!o)}>
-          <div className="dev-title" style={{color:adminUnlocked?'var(--amber)':'var(--text3)'}}>
-            {adminUnlocked?'🔓 Developer Options — Admin Unlocked':'🔒 Developer Options'}
-          </div>
-          {!adminUnlocked && <span style={{fontSize:'11px',color:'var(--text3)',fontFamily:'DM Mono,monospace'}}>{devOpen?'▲':'▼'}</span>}
+          <div className="dev-title" style={{color:adminUnlocked?'var(--amber)':'var(--text3)'}}>{adminUnlocked?'🔓 Admin Unlocked':'🔒 Developer Options'}</div>
+          {!adminUnlocked&&<span style={{fontSize:'11px',color:'var(--text3)',fontFamily:'DM Mono,monospace'}}>{devOpen?'▲':'▼'}</span>}
         </div>
-
-        {!adminUnlocked && devOpen && (
+        {!adminUnlocked&&devOpen&&(
           <div style={{marginTop:'16px'}}>
             <p style={{fontSize:'12px',color:'var(--text2)',fontFamily:'DM Mono,monospace',marginBottom:'12px'}}>Enter admin password to unlock privileged controls.</p>
             <div style={{display:'flex',gap:'10px',alignItems:'flex-start'}}>
-              <div className="field" style={{margin:0,flex:1}}>
-                <input type="password" value={devPin} onChange={e=>setDevPin(e.target.value)}
-                  onKeyDown={e=>e.key==='Enter'&&tryUnlock()}
-                  placeholder="Admin password"
-                  style={{borderColor:devError?'#f08080':'var(--border2)'}}/>
-                {devError && <div style={{color:'#f08080',fontSize:'11px',fontFamily:'DM Mono,monospace',marginTop:'5px'}}>Incorrect password</div>}
-              </div>
+              <div className="field" style={{margin:0,flex:1}}><input type="password" value={devPin} onChange={e=>setDevPin(e.target.value)} onKeyDown={e=>e.key==='Enter'&&tryUnlock()} placeholder="Admin password" style={{borderColor:devError?'#f08080':'var(--border2)'}}/>{devError&&<div style={{color:'#f08080',fontSize:'11px',fontFamily:'DM Mono,monospace',marginTop:'5px'}}>Incorrect password</div>}</div>
               <button className="btn-post" style={{padding:'9px 16px',fontSize:'12px'}} onClick={tryUnlock}>Unlock</button>
             </div>
           </div>
         )}
-
-        {adminUnlocked && (
+        {adminUnlocked&&(
           <div style={{marginTop:'20px',display:'flex',flexDirection:'column',gap:'24px'}}>
-
-            {/* BADGE MANAGEMENT */}
             <div className="admin-subsection">
               <div className="admin-sub-label">Award / Revoke Badges</div>
-              <div style={{marginBottom:'12px'}}>
-                <select value={badgeMember} onChange={e=>setBadgeMember(e.target.value)}
-                  style={{background:'var(--bg3)',border:'1px solid var(--border2)',borderRadius:'6px',color:'var(--text)',fontFamily:'Syne,sans-serif',fontSize:'13px',padding:'9px 14px',outline:'none'}}>
-                  {TEAM.map(m=><option key={m.email} value={m.name}>{m.name}</option>)}
-                </select>
-              </div>
+              <div style={{marginBottom:'12px'}}><select value={badgeMember} onChange={e=>setBadgeMember(e.target.value)} style={{background:'var(--bg3)',border:'1px solid var(--border2)',borderRadius:'6px',color:'var(--text)',fontFamily:'Syne,sans-serif',fontSize:'13px',padding:'9px 14px',outline:'none'}}>{TEAM.map(m=><option key={m.email} value={m.name}>{m.name}</option>)}</select></div>
               <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(190px,1fr))',gap:'7px'}}>
-                {BADGES_DEF.map(b=>{
-                  const active=memberBadges.includes(b.id);
-                  return (
-                    <div key={b.id} className={`badge-toggle${active?' on':''}`} onClick={()=>toggleBadge(b.id)}>
-                      <span style={{fontSize:'18px'}}>{b.emoji}</span>
-                      <div>
-                        <div className="badge-toggle-label" style={{color:active?'var(--amber)':'var(--text)'}}>{b.label}</div>
-                        <div className="badge-toggle-sub">{active?'awarded ✓':'click to award'}</div>
-                      </div>
-                    </div>
-                  );
-                })}
+                {BADGES_DEF.map(b=>{const active=memberBadges.includes(b.id);return(<div key={b.id} className={`badge-toggle${active?' on':''}`} onClick={()=>toggleBadge(b.id)}><span style={{fontSize:'18px'}}>{b.emoji}</span><div><div className="badge-toggle-label" style={{color:active?'var(--amber)':'var(--text)'}}>{b.label}</div><div className="badge-toggle-sub">{active?'awarded ✓':'click to award'}</div></div></div>);})}
               </div>
             </div>
-
-            {/* DEMERIT SYSTEM */}
             <div className="admin-subsection">
               <div className="admin-sub-label">Issue Demerit</div>
               <div style={{display:'flex',gap:'10px',flexWrap:'wrap',alignItems:'flex-end',marginBottom:'14px'}}>
-                <div className="field" style={{margin:0}}>
-                  <label>Member</label>
-                  <select value={demeritMember} onChange={e=>setDemeritMember(e.target.value)}
-                    style={{background:'var(--bg3)',border:'1px solid var(--border2)',borderRadius:'6px',color:'var(--text)',fontFamily:'Syne,sans-serif',fontSize:'13px',padding:'9px 14px',outline:'none'}}>
-                    {TEAM.map(m=><option key={m.email} value={m.name}>{m.name}</option>)}
-                  </select>
-                </div>
-                <div className="field" style={{margin:0,width:'90px'}}>
-                  <label>Points</label>
-                  <select value={demeritPts} onChange={e=>setDemeritPts(parseInt(e.target.value))}
-                    style={{background:'var(--bg3)',border:'1px solid var(--border2)',borderRadius:'6px',color:'var(--text)',fontFamily:'Syne,sans-serif',fontSize:'13px',padding:'9px 14px',outline:'none'}}>
-                    {[1,2,3,5,10].map(n=><option key={n} value={n}>-{n}</option>)}
-                  </select>
-                </div>
-                <div className="field" style={{margin:0,flex:1,minWidth:'160px'}}>
-                  <label>Reason</label>
-                  <input value={demeritReason} onChange={e=>setDemeritReason(e.target.value)}
-                    onKeyDown={e=>e.key==='Enter'&&issueDemerit()}
-                    placeholder="e.g. Late on deadline..."/>
-                </div>
+                <div className="field" style={{margin:0}}><label>Member</label><select value={demeritMember} onChange={e=>setDemeritMember(e.target.value)} style={{background:'var(--bg3)',border:'1px solid var(--border2)',borderRadius:'6px',color:'var(--text)',fontFamily:'Syne,sans-serif',fontSize:'13px',padding:'9px 14px',outline:'none'}}>{TEAM.map(m=><option key={m.email} value={m.name}>{m.name}</option>)}</select></div>
+                <div className="field" style={{margin:0,width:'90px'}}><label>Points</label><select value={demeritPts} onChange={e=>setDemeritPts(parseInt(e.target.value))} style={{background:'var(--bg3)',border:'1px solid var(--border2)',borderRadius:'6px',color:'var(--text)',fontFamily:'Syne,sans-serif',fontSize:'13px',padding:'9px 14px',outline:'none'}}>{[1,2,3,5,10].map(n=><option key={n} value={n}>-{n}</option>)}</select></div>
+                <div className="field" style={{margin:0,flex:1,minWidth:'160px'}}><label>Reason</label><input value={demeritReason} onChange={e=>setDemeritReason(e.target.value)} onKeyDown={e=>e.key==='Enter'&&issueDemerit()} placeholder="e.g. Late on deadline..."/></div>
                 <button className="clear-btn" style={{padding:'9px 14px',fontSize:'12px'}} onClick={issueDemerit}>Issue</button>
               </div>
-              {demerits.length>0 ? (
-                <div style={{background:'var(--bg3)',borderRadius:'7px',overflow:'hidden',border:'1px solid var(--border)'}}>
-                  {[...demerits].sort((a,b)=>b.issuedAt-a.issuedAt).map(d=>(
-                    <div key={d.id} className="demerit-row">
-                      <span className="demerit-pts">-{d.pts}</span>
-                      <span className="demerit-who">{d.member}</span>
-                      <span className="demerit-reason">{d.reason}</span>
-                      <span className="demerit-time">{fmtTime(d.issuedAt)}</span>
-                      <button className="demerit-del" onClick={()=>onDemerits(demerits.filter(x=>x.id!==d.id))}>✕</button>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div style={{fontSize:'11px',color:'var(--text3)',fontFamily:'DM Mono,monospace',fontStyle:'italic'}}>No demerits issued</div>
-              )}
+              {demerits.length>0?(<div style={{background:'var(--bg3)',borderRadius:'7px',overflow:'hidden',border:'1px solid var(--border)'}}>
+                {[...demerits].sort((a,b)=>b.issuedAt-a.issuedAt).map(d=>(<div key={d.id} className="demerit-row"><span className="demerit-pts">-{d.pts}</span><span className="demerit-who">{d.member}</span><span className="demerit-reason">{d.reason}</span><span className="demerit-time">{fmtTime(d.issuedAt)}</span><button className="demerit-del" onClick={()=>onDemerits(demerits.filter(x=>x.id!==d.id))}>✕</button></div>))}
+              </div>):(<div style={{fontSize:'11px',color:'var(--text3)',fontFamily:'DM Mono,monospace',fontStyle:'italic'}}>No demerits issued</div>)}
             </div>
-
-            {/* DATA */}
             <div className="admin-subsection">
               <div className="admin-sub-label">Data</div>
               <p style={{fontSize:'12px',color:'var(--text2)',fontFamily:'DM Mono,monospace',marginBottom:'12px'}}>Clear all local task data. Does not affect your Google Sheet.</p>
-              {!confirmClear
-                ? <button className="clear-btn" onClick={()=>setConfirmClear(true)}>Clear all tasks</button>
-                : <div style={{display:'flex',gap:'10px',alignItems:'center'}}>
-                    <span style={{fontSize:'12px',color:'var(--text2)',fontFamily:'DM Mono,monospace'}}>Are you sure?</span>
-                    <button className="clear-btn" onClick={()=>{onClearTasks();setConfirmClear(false);}}>Yes, clear</button>
-                    <button className="btn-cancel" onClick={()=>setConfirmClear(false)}>Cancel</button>
-                  </div>
-              }
+              {!confirmClear?<button className="clear-btn" onClick={()=>setConfirmClear(true)}>Clear all tasks</button>:<div style={{display:'flex',gap:'10px',alignItems:'center'}}><span style={{fontSize:'12px',color:'var(--text2)',fontFamily:'DM Mono,monospace'}}>Are you sure?</span><button className="clear-btn" onClick={()=>{onClearTasks();setConfirmClear(false);}}>Yes, clear</button><button className="btn-cancel" onClick={()=>setConfirmClear(false)}>Cancel</button></div>}
             </div>
-
-            {/* CHANGE PASSWORD */}
             <div className="admin-subsection">
               <div className="admin-sub-label">Change Admin Password</div>
               <div style={{display:'flex',gap:'10px',flexWrap:'wrap',alignItems:'flex-end'}}>
-                <div className="field" style={{margin:0,flex:1,minWidth:'120px'}}>
-                  <label>Current password</label>
-                  <input type="password" value={curPin} onChange={e=>setCurPin(e.target.value)} placeholder="Current"/>
-                </div>
-                <div className="field" style={{margin:0,flex:1,minWidth:'120px'}}>
-                  <label>New password</label>
-                  <input type="password" value={newPin} onChange={e=>setNewPin(e.target.value)} placeholder="Min 4 chars"/>
-                </div>
+                <div className="field" style={{margin:0,flex:1,minWidth:'120px'}}><label>Current</label><input type="password" value={curPin} onChange={e=>setCurPin(e.target.value)} placeholder="Current password"/></div>
+                <div className="field" style={{margin:0,flex:1,minWidth:'120px'}}><label>New</label><input type="password" value={newPin} onChange={e=>setNewPin(e.target.value)} placeholder="Min 4 chars"/></div>
                 <button className="btn-post" style={{padding:'9px 16px',fontSize:'12px'}} onClick={changePin}>Update</button>
               </div>
-              {pinMsg && <div style={{fontSize:'11px',fontFamily:'DM Mono,monospace',color:pinMsg.startsWith('✓')?'#8fce8f':'#f08080',marginTop:'8px'}}>{pinMsg}</div>}
+              {pinMsg&&<div style={{fontSize:'11px',fontFamily:'DM Mono,monospace',color:pinMsg.startsWith('✓')?'#8fce8f':'#f08080',marginTop:'8px'}}>{pinMsg}</div>}
             </div>
-
-            <button className="btn-cancel" style={{fontSize:'12px',alignSelf:'flex-start'}} onClick={onAdminLock}>🔒 Lock admin panel</button>
+            <button className="btn-cancel" style={{fontSize:'12px',alignSelf:'flex-start'}} onClick={()=>setAdminUnlocked(false)}>🔒 Lock admin panel</button>
           </div>
         )}
       </div>
@@ -1093,274 +923,228 @@ function SettingsView({settings, onSettings, onSave, onClearTasks, manualBadges,
   );
 }
 
-// ── SETUP SCREEN ─────────────────────────────────────────────────────────────
-function SetupScreen({onSave}) {
-  const [clientId,setClientId] = useState('');
-  const [sheetId,setSheetId] = useState('');
-  const save = () => {
-    if (!clientId.trim()||!sheetId.trim()) return;
-    let sid=sheetId.trim();
-    const m=sid.match(/\/d\/([a-zA-Z0-9_-]+)/);
-    if (m) sid=m[1];
-    sid=sid.split('/')[0].split('#')[0].split('?')[0];
-    onSave({clientId:clientId.trim(),sheetId:sid});
-  };
-  return (
-    <div className="setup-screen">
-      <div className="setup-header"><h1>One-time setup</h1><p>Connect Google Cloud to enable Sheets sync and email notifications.</p></div>
-      <div className="setup-step"><div className="setup-num">STEP 01</div><h3>Google Cloud project</h3><p>Enable <strong>Google Sheets API</strong> and <strong>Gmail API</strong> at <a href="https://console.cloud.google.com" target="_blank">console.cloud.google.com</a></p></div>
-      <div className="setup-step"><div className="setup-num">STEP 02</div><h3>OAuth Client ID</h3><p>APIs &amp; Services → Credentials → OAuth client ID → Web application. Add your GitHub Pages URL as an authorized origin. Paste Client ID:</p><input value={clientId} onChange={e=>setClientId(e.target.value)} placeholder="123456789-abc.apps.googleusercontent.com"/></div>
-      <div className="setup-step"><div className="setup-num">STEP 03</div><h3>Google Sheet ID</h3><p>Create a sheet at <a href="https://sheets.new" target="_blank">sheets.new</a>, rename first tab to <strong>Tasks</strong>, paste URL or ID:</p><input value={sheetId} onChange={e=>setSheetId(e.target.value)} placeholder="Paste full URL or just the Sheet ID"/></div>
-      <button className="setup-save-btn" onClick={save} disabled={!clientId.trim()||!sheetId.trim()}>Save and continue →</button>
-    </div>
-  );
-}
-
-// ── AUTH SCREEN ───────────────────────────────────────────────────────────────
-function AuthScreen({onSignIn, gsiReady, gsiError, onRetry}) {
-  return (
+// ── AUTH SCREEN ────────────────────────────────────────────────────────────
+function AuthScreen({onSignIn,restoring}){
+  return(
     <div className="auth-screen">
       <div className="auth-dots"/>
       <div className="auth-card">
         <div className="auth-badge">BV</div>
         <div className="auth-title">Bagavagabonds<br/>Task Board</div>
         <div className="auth-sub">Assign tasks from anywhere.<br/>Warehouse crew gets notified instantly.</div>
-        {gsiError ? (
-          <>
-            <div style={{fontSize:'12px',color:'#f08080',fontFamily:'DM Mono,monospace',marginBottom:'14px',lineHeight:'1.6',background:'rgba(200,60,60,0.1)',border:'1px solid rgba(200,60,60,0.2)',borderRadius:'7px',padding:'10px 14px'}}>
-              Google sign-in failed to load.<br/>
-              This is usually caused by an ad blocker or network filter blocking <code>accounts.google.com</code>.<br/><br/>
-              Try disabling extensions, or use a different browser.
-            </div>
-            <button className="auth-btn" onClick={onRetry}>↺ Retry</button>
-          </>
-        ) : !gsiReady ? (
-          <>
-            <button className="auth-btn" style={{opacity:0.6,cursor:'default',gap:'10px'}} disabled>
-              <span className="spinner" style={{borderTopColor:'#f5c5a3'}}/>
-              Loading Google API…
-            </button>
-            <div className="auth-note">if this takes more than 5 seconds, try disabling ad blockers</div>
-          </>
-        ) : (
-          <button className="auth-btn" onClick={onSignIn}>Sign in with Google</button>
-        )}
-        {gsiReady && <div className="auth-note">use your @bagavagabonds.com account</div>}
+        {restoring
+          ?<button className="auth-btn" disabled style={{opacity:0.6}}><div className="spinner" style={{width:'14px',height:'14px',borderWidth:'2px'}}/> Restoring session...</button>
+          :<button className="auth-btn" onClick={onSignIn}>Sign in with Google</button>
+        }
+        <div className="auth-note">use your @bagavagabonds.com account</div>
       </div>
     </div>
   );
 }
 
-// ── MAIN APP ──────────────────────────────────────────────────────────────────
-function App() {
-  const [config,setConfig] = useState(()=>{
-    // Always use hardcoded credentials — no setup screen needed
-    const saved = (() => { try{return JSON.parse(localStorage.getItem(CONFIG_KEY));}catch{return null;} })();
-    return { ...HARDCODED_CONFIG, accessToken: saved?.accessToken || null };
+// ── MAIN APP ───────────────────────────────────────────────────────────────
+function App(){
+  const getSaved = key => { try{return JSON.parse(localStorage.getItem(key));}catch{return null;} };
+
+  // Auth: store token + expiry for session persistence
+  const [config,setConfig]=useState(()=>{
+    const saved=getSaved(CONFIG_KEY);
+    const tokenValid=saved?.accessToken&&saved?.tokenExpiry&&saved.tokenExpiry>Date.now()+30000;
+    return{...HARDCODED_CONFIG,accessToken:tokenValid?saved.accessToken:null,tokenExpiry:tokenValid?saved.tokenExpiry:null};
   });
-  const [user,setUser]           = useState(null);
-  const [tasks,setTasks]         = useState(()=>{ try{return JSON.parse(localStorage.getItem(TASKS_KEY))||[];}catch{return [];} });
-  const [settings,setSettings]   = useState(()=>{ try{return JSON.parse(localStorage.getItem(SETTINGS_KEY))||{theme:'theme-e',fontSize:14};}catch{return{theme:'theme-e',fontSize:14};} });
-  const [manualBadges,setManualBadges] = useState(()=>{ try{return JSON.parse(localStorage.getItem(BADGES_KEY))||{};}catch{return {};} });
-  const [demerits,setDemerits]   = useState(()=>{ try{return JSON.parse(localStorage.getItem(DEMERITS_KEY))||[];}catch{return [];} });
-  const [view,setView]           = useState('board');
-  const [showNew,setShowNew]     = useState(false);
-  const [toast,setToast]         = useState(null);
-  const [syncing,setSyncing]     = useState(false);
-  const [loading,setLoading]     = useState(false);
-  const [showMenu,setShowMenu]   = useState(false);
-  const [chaChing,setChaChing]   = useState(false);
-  const [dragOver,setDragOver]   = useState(null);
-  const [tick,setTick]           = useState(0);
-  const [adminUnlocked,setAdminUnlocked] = useState(false);
-  const [pendingDelete,setPendingDelete] = useState(null);
-  const [editTask,setEditTask]   = useState(null);
-  const [confirmClearDone,setConfirmClearDone] = useState(false);
-  const [listView,setListView]   = useState(false);
-  const [taskOrder,setTaskOrder] = useState(()=>{ try{return JSON.parse(localStorage.getItem(TASK_ORDER_KEY))||{};}catch{return {};} });
-  const [showMine,setShowMine]   = useState(()=>{ try{return JSON.parse(localStorage.getItem(USER_PREFS_KEY))?.showMine||false;}catch{return false;} });
-  const [expandedId,setExpandedId] = useState(null);
-  const [dropTarget,setDropTarget] = useState(null); // {taskId, pos:'before'|'after'}
-  const [dragId,setDragId]       = useState(null);
-  const tokenRef = useRef(null);
-  const [gsiReady,setGsiReady]   = useState(false);
-  const [gsiError,setGsiError]   = useState(false);
+  const [user,setUser]=useState(null);
+  const [restoring,setRestoring]=useState(()=>{
+    const saved=getSaved(CONFIG_KEY);
+    return!!(saved?.accessToken&&saved?.tokenExpiry&&saved.tokenExpiry>Date.now()+30000);
+  });
+  const [tasks,setTasks]=useState(()=>getSaved(TASKS_KEY)||[]);
+  const [settings,setSettings]=useState(()=>getSaved(SETTINGS_KEY)||{theme:'theme-e',fontSize:14,viewMode:isMobileWidth()?'list':'cards'});
+  const [manualBadges,setManualBadges]=useState(()=>getSaved(BADGES_KEY)||{});
+  const [demerits,setDemerits]=useState(()=>getSaved(DEMERITS_KEY)||[]);
+  const [view,setView]=useState('board');
+  const [viewMode,setViewMode]=useState(()=>(getSaved(SETTINGS_KEY)||{}).viewMode||(isMobileWidth()?'list':'cards'));
+  const [filterMine,setFilterMine]=useState(false);
+  const [showNew,setShowNew]=useState(false);
+  const [toast,setToast]=useState(null);
+  const [syncing,setSyncing]=useState(false);
+  const [loading,setLoading]=useState(false);
+  const [showMenu,setShowMenu]=useState(false);
+  const [chaChing,setChaChing]=useState(false);
+  const [dragOver,setDragOver]=useState(null);
+  const [tick,setTick]=useState(0);
+  const [commentTask,setCommentTask]=useState(null);
+  const tokenRef=useRef(null);
 
-  useEffect(()=>{ const id=setInterval(()=>setTick(t=>t+1),1000); return()=>clearInterval(id); },[]);
-  useEffect(()=>{ localStorage.setItem(TASKS_KEY,JSON.stringify(tasks)); },[tasks]);
-  useEffect(()=>{ localStorage.setItem(SETTINGS_KEY,JSON.stringify(settings)); },[settings]);
-  useEffect(()=>{ localStorage.setItem(BADGES_KEY,JSON.stringify(manualBadges)); },[manualBadges]);
-  useEffect(()=>{ localStorage.setItem(DEMERITS_KEY,JSON.stringify(demerits)); },[demerits]);
-  useEffect(()=>{ localStorage.setItem(TASK_ORDER_KEY,JSON.stringify(taskOrder)); },[taskOrder]);
-  useEffect(()=>{ if(user) localStorage.setItem(USER_PREFS_KEY,JSON.stringify({showMine})); },[showMine,user]);
-  useEffect(()=>{
-    const h=document.documentElement;
-    THEMES.forEach(t=>h.classList.remove(t.id));
-    h.classList.add(settings.theme||'theme-e');
-  },[settings.theme]);
+  useEffect(()=>{const id=setInterval(()=>setTick(t=>t+1),1000);return()=>clearInterval(id);},[]);
+  useEffect(()=>{localStorage.setItem(TASKS_KEY,JSON.stringify(tasks));},[tasks]);
+  useEffect(()=>{localStorage.setItem(SETTINGS_KEY,JSON.stringify({...settings,viewMode}));},[settings,viewMode]);
+  useEffect(()=>{localStorage.setItem(BADGES_KEY,JSON.stringify(manualBadges));},[manualBadges]);
+  useEffect(()=>{localStorage.setItem(DEMERITS_KEY,JSON.stringify(demerits));},[demerits]);
+  useEffect(()=>{const h=document.documentElement;THEMES.forEach(t=>h.classList.remove(t.id));h.classList.add(settings.theme||'theme-e');},[settings.theme]);
 
+  // ── Try to restore session from stored token ──
   useEffect(()=>{
-    if (!config) return;
-    setGsiReady(false); setGsiError(false);
-    const s=document.createElement('script'); s.src='https://accounts.google.com/gsi/client'; s.async=true; s.defer=true;
-    const timeout=setTimeout(()=>{ if(!tokenRef.current) setGsiError(true); }, 8000);
-    s.onerror=()=>{ clearTimeout(timeout); setGsiError(true); };
+    if(!config?.accessToken||user)return;
+    (async()=>{
+      try{
+        const pr=await fetch('https://www.googleapis.com/oauth2/v2/userinfo',{headers:{Authorization:`Bearer ${config.accessToken}`}});
+        if(!pr.ok)throw new Error('token invalid');
+        const p=await pr.json();
+        const member=TEAM.find(t=>t.email===p.email);
+        setUser({name:member?.name||p.name,email:p.email});
+        setRestoring(false);
+      }catch{
+        // Token invalid, clear it
+        setConfig(c=>({...c,accessToken:null,tokenExpiry:null}));
+        setRestoring(false);
+      }
+    })();
+  },[]);
+
+  // ── Load Google Sign-In ──
+  useEffect(()=>{
+    if(!config)return;
+    const s=document.createElement('script');s.src='https://accounts.google.com/gsi/client';s.async=true;s.defer=true;
     s.onload=()=>{
-      clearTimeout(timeout);
-      if (!window.google||!config) { setGsiError(true); return; }
+      if(!window.google||!config)return;
       tokenRef.current=window.google.accounts.oauth2.initTokenClient({
         client_id:config.clientId,
         scope:'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/gmail.send email profile',
         callback:async resp=>{
-          if (resp.access_token) {
-            const c={...HARDCODED_CONFIG, accessToken:resp.access_token};
-            setConfig(c); localStorage.setItem(CONFIG_KEY,JSON.stringify(c));
+          if(resp.access_token){
+            const expiry=Date.now()+((resp.expires_in||3600)*1000);
+            const c={...HARDCODED_CONFIG,accessToken:resp.access_token,tokenExpiry:expiry};
+            setConfig(c);localStorage.setItem(CONFIG_KEY,JSON.stringify(c));
             const pr=await fetch('https://www.googleapis.com/oauth2/v2/userinfo',{headers:{Authorization:`Bearer ${resp.access_token}`}});
             const p=await pr.json();
             const member=TEAM.find(t=>t.email===p.email);
-            setUser({name:member?.name||p.name,email:p.email});
-            showToast('Signed in — loading tasks...','success');
+            const uname=member?.name||p.name;
+            setUser({name:uname,email:p.email});
+            showToast('Loading tasks...','success');
             setLoading(true);
-            try {
-              const sheetTasks = await sheetLoad(c);
-              if (sheetTasks.length>0) {
-                setTasks(sheetTasks);
-                localStorage.setItem(TASKS_KEY,JSON.stringify(sheetTasks));
-                showToast(`Signed in as ${member?.name||p.name} · ${sheetTasks.length} tasks loaded`,'success');
-              } else {
-                showToast('Signed in as '+(member?.name||p.name),'success');
-              }
-            } catch(e) {
-              showToast('Signed in — using local data','success');
-            }
+            try{
+              const sheetTasks=await sheetLoad(c);
+              if(sheetTasks.length>0){setTasks(sheetTasks);localStorage.setItem(TASKS_KEY,JSON.stringify(sheetTasks));showToast(`Signed in as ${uname} · ${sheetTasks.length} tasks loaded`,'success');}
+              else{showToast(`Signed in as ${uname}`,'success');}
+            }catch{showToast('Signed in — using local data','success');}
             setLoading(false);
           }
         }
       });
-      setGsiReady(true);
     };
     document.head.appendChild(s);
-    return()=>{ clearTimeout(timeout); try{document.head.removeChild(s);}catch{} };
+    return()=>{try{document.head.removeChild(s);}catch{}};
   },[config?.clientId]);
 
-  const handleSignIn   = () => { if(tokenRef.current) tokenRef.current.requestAccessToken(); else showToast('Google API not ready — try again','error'); };
-  const handleGsiRetry = () => { setGsiError(false); setGsiReady(false); tokenRef.current=null; setConfig(c=>({...c})); };
-  const showToast      = (msg,type='') => setToast({msg,type});
+  const handleSignIn=()=>tokenRef.current?tokenRef.current.requestAccessToken():showToast('Google API loading — try again','error');
+  const showToast=(msg,type='')=>setToast({msg,type});
 
-  const syncTask = async (task, isNew=false) => {
-    if (!config?.accessToken||!config?.sheetId) return;
+  const syncTask=async(task,isNew=false)=>{
+    if(!config?.accessToken||!config?.sheetId)return;
     setSyncing(true);
-    try { isNew ? await sheetAppend(config,task) : await sheetUpdate(config,task); }
-    catch { showToast('Sheets sync failed — saved locally','error'); }
+    try{isNew?await sheetAppend(config,task):await sheetUpdate(config,task);}
+    catch{showToast('Sheets sync failed — saved locally','error');}
     setSyncing(false);
   };
 
-  const handleNewTask = async task => {
-    setShowNew(false); setTasks(prev=>[task,...prev]);
-    if(user) setTaskOrder(prev=>({...prev,[user.email]:[task.id,...(prev[user.email]||[])]}));
-    playSound('post'); showToast('Task posted! 🎯','success');
+  const handleNewTask=async task=>{
+    setShowNew(false);setTasks(prev=>[task,...prev]);
+    playSound('post');showToast('Task posted! 🎯','success');
     await syncTask(task,true);
-    if (task.assignedToEmail&&config?.accessToken) await sendEmail(config,task);
+    if(task.assignedToEmail&&config?.accessToken)await sendEmail(config,task);
   };
 
-  const handleAccept = async task => {
+  const handleAccept=async task=>{
     const now=Date.now();
     const updated=tasks.map(t=>t.id===task.id?{...t,acceptedAt:now,accumulatedMs:0,pausedAt:null,assignedTo:t.assignedTo||user?.name||'Unknown'}:t);
-    setTasks(updated); playSound('accept'); showToast('Task accepted — timer started ⏱','success');
+    setTasks(updated);playSound('accept');showToast('Task accepted — timer started ⏱','success');
     await syncTask(updated.find(t=>t.id===task.id));
   };
 
-  const handlePause = async task => {
-    const now=Date.now(); const elapsed=(task.accumulatedMs||0)+(now-task.acceptedAt);
+  const handlePause=async task=>{
+    const now=Date.now();const elapsed=(task.accumulatedMs||0)+(now-task.acceptedAt);
     const updated=tasks.map(t=>t.id===task.id?{...t,pausedAt:now,accumulatedMs:elapsed,acceptedAt:now}:t);
-    setTasks(updated); showToast('Task paused ⏸','');
+    setTasks(updated);showToast('Task paused ⏸','');
   };
 
-  const handleResume = async task => {
+  const handleResume=async task=>{
     const now=Date.now();
     const updated=tasks.map(t=>t.id===task.id?{...t,pausedAt:null,acceptedAt:now}:t);
-    setTasks(updated); playSound('accept'); showToast('Resumed — timer running ▶','success');
+    setTasks(updated);playSound('accept');showToast('Resumed ▶','success');
   };
 
-  const handleComplete = async task => {
+  const handleComplete=async task=>{
     const now=Date.now();
     const runMs=task.pausedAt?0:(now-task.acceptedAt);
     const total=(task.accumulatedMs||0)+runMs;
     const pts=taskPts({...task,duration:total});
     const updated=tasks.map(t=>t.id===task.id?{...t,completedAt:now,duration:total,pausedAt:null,points:pts}:t);
-    setTasks(updated); setChaChing(true); playSound('complete');
+    setTasks(updated);setChaChing(true);playSound('complete');
     showToast(`Done! +${pts} pts · ${fmtDur(total)} 💰`,'success');
     await syncTask(updated.find(t=>t.id===task.id));
   };
 
-  const handleDelete     = id => { const t=tasks.find(x=>x.id===id); if(t) setPendingDelete(t); };
-  const confirmDelete    = () => { if(!pendingDelete) return; playDelete(); setTasks(tasks.filter(t=>t.id!==pendingDelete.id)); setPendingDelete(null); };
-  const handleEditSave   = async updated => { setEditTask(null); setTasks(prev=>prev.map(t=>t.id===updated.id?updated:t)); showToast('Task updated ✓','success'); await syncTask(updated); };
-  const handleClearDone  = () => { setTasks(prev=>prev.filter(t=>!t.completedAt)); setConfirmClearDone(false); showToast('Done column cleared 🗑️',''); };
-  const handleClearTasks = () => { setTasks([]); showToast('All tasks cleared',''); };
-  const handleSignOut    = () => { setUser(null); setShowMenu(false); if(window.google) window.google.accounts.oauth2.revoke(config?.accessToken||''); setConfig(p=>p?{...p,accessToken:null}:null); };
+  const handleDelete=id=>setTasks(tasks.filter(t=>t.id!==id));
+  const handleClearTasks=()=>{setTasks([]);showToast('All tasks cleared','');};
+  const handleSignOut=()=>{setUser(null);setShowMenu(false);setConfig(p=>({...p,accessToken:null,tokenExpiry:null}));localStorage.removeItem(CONFIG_KEY);if(window.google)window.google.accounts.oauth2.revoke(config?.accessToken||'');};
 
-  const handleDrop = (e,col) => {
-    e.preventDefault();
-    const id=e.dataTransfer.getData('taskId'); if(!id) return;
-    const task=tasks.find(t=>t.id===id); if(!task) return;
-    const now=Date.now(); let updated=tasks;
-    if (dropTarget&&dropTarget.taskId!==id) {
-      const colItems = col==='open'?openRaw:col==='inprog'?inProgRaw:[];
-      const allIds = colItems.map(t=>t.id);
-      const newOrder = reorderIds(taskOrder[email]||[], allIds, id, dropTarget.taskId, dropTarget.pos);
-      setTaskOrder(prev=>({...prev,[email]:newOrder}));
-    }
-    if (col==='open') updated=tasks.map(t=>t.id===id?{...t,acceptedAt:null,completedAt:null,pausedAt:null,accumulatedMs:0,points:null}:t);
-    else if (col==='inprog'&&!task.acceptedAt) updated=tasks.map(t=>t.id===id?{...t,acceptedAt:now,accumulatedMs:0,pausedAt:null,assignedTo:t.assignedTo||user?.name||'Unknown'}:t);
-    setTasks(updated); setDragOver(null); setDropTarget(null); setDragId(null);
+  const handleAddComment=async(taskId,text)=>{
+    const comment={id:'c_'+Date.now(),text,authorName:user.name,authorEmail:user.email,createdAt:Date.now()};
+    const updated=tasks.map(t=>t.id===taskId?{...t,comments:[...(t.comments||[]),comment]}:t);
+    setTasks(updated);
+    // Update comment task state too so drawer refreshes
+    const updatedTask=updated.find(t=>t.id===taskId);
+    setCommentTask(updatedTask);
+    await syncTask(updatedTask);
   };
 
-  const email = user?.email||'';
-  const mineFilter = t => !showMine || !t.assignedTo || t.assignedTo===user?.name;
-  const openRaw  = tasks.filter(t=>!t.acceptedAt&&!t.completedAt&&mineFilter(t));
-  const inProgRaw= tasks.filter(t=>t.acceptedAt&&!t.completedAt&&mineFilter(t));
-  const open     = applyUserOrder(openRaw, email, taskOrder);
-  const inProg   = applyUserOrder(inProgRaw, email, taskOrder);
-  const done     = [...tasks.filter(t=>t.completedAt)].sort((a,b)=>b.completedAt-a.completedAt).slice(0,20);
+  const handleDrop=(e,col)=>{
+    e.preventDefault();
+    const id=e.dataTransfer.getData('taskId');if(!id)return;
+    const task=tasks.find(t=>t.id===id);if(!task)return;
+    const now=Date.now();let updated=tasks;
+    if(col==='open')updated=tasks.map(t=>t.id===id?{...t,acceptedAt:null,completedAt:null,pausedAt:null,accumulatedMs:0,points:null}:t);
+    else if(col==='inprog'&&!task.acceptedAt)updated=tasks.map(t=>t.id===id?{...t,acceptedAt:now,accumulatedMs:0,pausedAt:null,assignedTo:t.assignedTo||user?.name||'Unknown'}:t);
+    setTasks(updated);setDragOver(null);
+  };
 
-  if (!user)   return <div className={settings.theme||'theme-e'}><AuthScreen onSignIn={handleSignIn} gsiReady={gsiReady} gsiError={gsiError} onRetry={handleGsiRetry}/></div>;
-  if (loading) return (
+  // Filter tasks for Mine view
+  const filterFn=t=>!filterMine||(t.assignedTo===user?.name||t.createdBy===user?.name);
+
+  const openTasks=tasks.filter(t=>!t.acceptedAt&&!t.completedAt&&filterFn(t));
+  const inProgTasks=tasks.filter(t=>t.acceptedAt&&!t.completedAt&&filterFn(t));
+  const doneTasks=[...tasks.filter(t=>t.completedAt&&filterFn(t))].sort((a,b)=>b.completedAt-a.completedAt).slice(0,20);
+
+  const cardProps={onAccept:handleAccept,onComplete:handleComplete,onPause:handlePause,onResume:handleResume,onDelete:handleDelete,onComment:setCommentTask,tick,fontSize:settings.fontSize||14,user};
+
+  if(restoring||(!user&&config?.accessToken))return <div className={settings.theme||'theme-e'}><AuthScreen onSignIn={handleSignIn} restoring={true}/></div>;
+  if(!user)return <div className={settings.theme||'theme-e'}><AuthScreen onSignIn={handleSignIn} restoring={false}/></div>;
+  if(loading)return(
     <div className={settings.theme||'theme-e'} style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',background:'var(--bg)',flexDirection:'column',gap:'16px'}}>
       <div className="spinner" style={{width:'28px',height:'28px',borderWidth:'3px'}}/>
       <div style={{fontSize:'13px',fontFamily:'DM Mono,monospace',color:'var(--text2)'}}>Loading tasks from Sheets...</div>
     </div>
   );
 
-  return (
+  const NAV=[{k:'board',icon:'⊞',label:'Board'},{k:'log',icon:'📋',label:'History'},{k:'scores',icon:'🏆',label:'Scores'},{k:'settings',icon:'⚙️',label:'Settings'}];
+
+  return(
     <div className={`app ${settings.theme||'theme-e'}`} onClick={()=>showMenu&&setShowMenu(false)}>
+      {/* TOPBAR */}
       <div className="topbar">
         <div className="tb-badge">BV</div>
         <span className="tb-logo">Bagavagabonds</span>
         <div className="tb-sep"/>
         <span className="tb-sub">Warehouse Ops</span>
         <div className="tb-right">
-          {syncing
-            ? <div className="sync-row"><div className="spinner"/><span>syncing</span></div>
-            : config?.sheetId ? <div className="sync-row"><div className="sync-dot"/><span>synced</span></div> : null}
-          {[
-            {k:'board',  label:'Board'},
-            {k:'log',    label:'History'},
-            ...(adminUnlocked ? [{k:'scores', label:'Scores 🏆'}] : []),
-            {k:'settings',label:'⚙️ Settings'},
-          ].map(v=>(
-            <button key={v.k} className={`tb-tab${view===v.k?' active':''}`} onClick={()=>setView(v.k)}>{v.label}</button>
-          ))}
+          {syncing?<div className="sync-row"><div className="spinner"/><span>syncing</span></div>:config?.sheetId?<div className="sync-row"><div className="sync-dot"/><span>synced</span></div>:null}
+          {NAV.map(v=>(<button key={v.k} className={`tb-tab${view===v.k?' active':''}`} onClick={()=>setView(v.k)}>{v.icon} {v.label}</button>))}
           <button className="new-btn" onClick={()=>setShowNew(true)}>+ New task</button>
-          <div className="tb-av" onClick={e=>{ e.stopPropagation(); setShowMenu(!showMenu); }}>
+          <div className="tb-av" onClick={e=>{e.stopPropagation();setShowMenu(!showMenu);}}>
             {initials(user.name)}
-            {showMenu && (
+            {showMenu&&(
               <div className="user-menu" onClick={e=>e.stopPropagation()}>
-                <div className="user-info">
-                  <div className="user-name">{user.name}</div>
-                  <div className="user-email">{user.email}</div>
-                  <span className="user-role">manager</span>
-                </div>
+                <div className="user-info"><div className="user-name">{user.name}</div><div className="user-email">{user.email}</div><span className="user-role">crew</span></div>
                 <button className="menu-item danger" onClick={handleSignOut}>Sign out</button>
               </div>
             )}
@@ -1368,156 +1152,92 @@ function App() {
         </div>
       </div>
 
-      {view==='board' && (
-        <div className="body-layout" style={{flexDirection:'column'}}>
-          <div style={{display:'flex',flex:1,overflow:'hidden'}}>
-            <Sidebar tasks={tasks}/>
-            <div style={{flex:1,display:'flex',flexDirection:'column',overflow:'hidden'}}>
-              <div className="board-toolbar">
-                <div className="view-toggle">
-                  <button className={`vt-btn${!listView?' active':''}`} onClick={()=>setListView(false)}>⊞ Cards</button>
-                  <button className={`vt-btn${listView?' active':''}`} onClick={()=>setListView(true)}>≡ List</button>
-                </div>
-                <div className="view-toggle" style={{marginLeft:'auto'}}>
-                  <button className={`vt-btn${!showMine?' active':''}`} onClick={()=>setShowMine(false)}>All</button>
-                  <button className={`vt-btn${showMine?' active':''}`} onClick={()=>setShowMine(true)}>Mine</button>
-                </div>
+      {/* BOARD VIEW */}
+      {view==='board'&&(
+        <div className="body-layout">
+          <Sidebar tasks={tasks}/>
+          <div style={{flex:1,display:'flex',flexDirection:'column',overflow:'hidden',minHeight:0}}>
+            {/* VIEW CONTROLS */}
+            <div className="view-controls">
+              <div className="toggle-group">
+                <button className={`toggle-btn${viewMode==='cards'?' active':''}`} onClick={()=>setViewMode('cards')}>⊞ Cards</button>
+                <button className={`toggle-btn${viewMode==='list'?' active':''}`} onClick={()=>setViewMode('list')}>≡ List</button>
               </div>
-              {!listView ? (
+              <div className="vc-sep"/>
+              <div className="toggle-group">
+                <button className={`toggle-btn${!filterMine?' active':''}`} onClick={()=>setFilterMine(false)}>All</button>
+                <button className={`toggle-btn mine${filterMine?' active mine':''}`} onClick={()=>setFilterMine(true)}>Mine</button>
+              </div>
+              <div style={{marginLeft:'auto',fontSize:'9px',fontFamily:'DM Mono,monospace',color:'var(--text3)'}}>
+                {filterMine?`Showing your tasks`:`${tasks.length} tasks total`}
+              </div>
+            </div>
+
+            {/* CARDS MODE */}
+            {viewMode==='cards'&&(
+              <div className="board-wrap">
                 <div className="board">
                   {[
-                    {k:'open',   label:'Open',       color:'#7a1c1c', items:open},
-                    {k:'inprog', label:'In Progress', color:'#9a6200', items:inProg},
-                    {k:'done',   label:'Done',        color:'#285014', items:done},
+                    {k:'open',  label:'Open',       color:'#7a1c1c',items:openTasks},
+                    {k:'inprog',label:'In Progress', color:'#9a6200',items:inProgTasks},
+                    {k:'done',  label:'Done',        color:'#285014',items:doneTasks},
                   ].map(col=>(
-                    <div key={col.k}
-                      className={`col-wrap${dragOver===col.k?' drag-over':''}`}
-                      onDragOver={e=>{ e.preventDefault(); setDragOver(col.k); }}
-                      onDragLeave={e=>{ if(!e.currentTarget.contains(e.relatedTarget)){setDragOver(null);setDropTarget(null);} }}
-                      onDrop={e=>handleDrop(e,col.k)}>
-                      <div className="col-head">
-                        <div className="cdot" style={{background:col.color}}/>
-                        <span className="clabel">{col.label}</span>
-                        <span className="ccount">{col.items.length}</span>
-                        {col.k==='done'&&done.length>0&&(
-                          confirmClearDone
-                            ? <span style={{marginLeft:'auto',display:'flex',gap:'5px',alignItems:'center'}}>
-                                <span style={{fontSize:'9px',color:'var(--text3)',fontFamily:'DM Mono,monospace'}}>Clear all?</span>
-                                <button className="nbtn danger" style={{fontSize:'9px'}} onClick={handleClearDone}>Yes</button>
-                                <button className="nbtn" style={{fontSize:'9px'}} onClick={()=>setConfirmClearDone(false)}>No</button>
-                              </span>
-                            : <button className="nbtn danger" style={{marginLeft:'auto',fontSize:'9px'}} onClick={()=>setConfirmClearDone(true)}>🗑️ Clear</button>
-                        )}
-                      </div>
+                    <div key={col.k} className={`col-wrap${dragOver===col.k?' drag-over':''}`}
+                      onDragOver={e=>{e.preventDefault();setDragOver(col.k);}} onDragLeave={()=>setDragOver(null)} onDrop={e=>handleDrop(e,col.k)}>
+                      <div className="col-head"><div className="cdot" style={{background:col.color}}/><span className="clabel">{col.label}</span><span className="ccount">{col.items.length}</span></div>
                       <div className="col-body">
-                        {col.items.length===0 && <div className="col-empty">{col.k==='done'?'nothing done yet':col.k==='inprog'?'nothing active':'all clear'}</div>}
-                        {col.items.map(t=>(
-                          <div key={t.id}
-                            className={dropTarget?.taskId===t.id?`drop-${dropTarget.pos}`:''}
-                            onDragOver={e=>{ e.preventDefault(); e.stopPropagation(); const r=e.currentTarget.getBoundingClientRect(); setDropTarget({taskId:t.id,pos:e.clientY<r.top+r.height/2?'before':'after'}); }}>
-                            <TaskCard key={t.id} task={t} tick={tick} fontSize={settings.fontSize||14}
-                              onAccept={handleAccept} onComplete={handleComplete}
-                              onPause={handlePause} onResume={handleResume}
-                              onDelete={handleDelete} onEdit={setEditTask}/>
-                          </div>
-                        ))}
+                        {col.items.length===0&&<div className="col-empty">{col.k==='done'?'nothing done yet':col.k==='inprog'?'nothing active':'all clear'}</div>}
+                        {col.items.map(t=><TaskCard key={t.id} task={t} {...cardProps}/>)}
                       </div>
                     </div>
                   ))}
                 </div>
-              ) : (
-                <div className="board-list">
+              </div>
+            )}
+
+            {/* LIST MODE */}
+            {viewMode==='list'&&(
+              <div className="board-wrap">
+                <div className="list-view">
                   {[
-                    {k:'open',   label:'Open',       color:'#c43030', bg:'rgba(196,48,48,0.08)',  items:open},
-                    {k:'inprog', label:'In Progress', color:'#c48830', bg:'rgba(196,136,48,0.08)', items:inProg},
-                    {k:'done',   label:'Done',        color:'#408050', bg:'rgba(64,128,80,0.08)',  items:done},
+                    {k:'open',  label:'Open',       color:'#cc3333',items:openTasks},
+                    {k:'inprog',label:'In Progress', color:'#c4682a',items:inProgTasks},
+                    {k:'done',  label:'Done',        color:'#4a8a4a',items:doneTasks},
                   ].map(col=>(
-                    <div key={col.k} className="list-col">
-                      <div className="list-col-head">
-                        <div className="cdot" style={{background:col.color}}/>
-                        <span className="clabel">{col.label}</span>
-                        <span className="ccount">{col.items.length}</span>
-                        {col.k==='done'&&done.length>0&&(
-                          confirmClearDone
-                            ? <span style={{marginLeft:'auto',display:'flex',gap:'5px',alignItems:'center'}}>
-                                <span style={{fontSize:'9px',color:'var(--text3)',fontFamily:'DM Mono,monospace'}}>Clear all?</span>
-                                <button className="lr-btn danger" onClick={handleClearDone}>Yes</button>
-                                <button className="lr-btn" onClick={()=>setConfirmClearDone(false)}>No</button>
-                              </span>
-                            : <button className="lr-btn danger" style={{marginLeft:'auto'}} onClick={()=>setConfirmClearDone(true)}>🗑️ Clear</button>
-                        )}
+                    <div key={col.k}>
+                      <div className="list-section-head">
+                        <div className="list-section-dot" style={{background:col.color}}/>
+                        <span className="list-section-label">{col.label}</span>
+                        <span className="list-section-count">{col.items.length}</span>
                       </div>
-                      {col.items.length===0 && <div className="col-empty">{col.k==='done'?'nothing done yet':col.k==='inprog'?'nothing active':'all clear'}</div>}
-                      {col.items.map(t=>{
-                        const isActive=t.acceptedAt&&!t.completedAt&&!t.pausedAt;
-                        const isPaused=t.acceptedAt&&!t.completedAt&&!!t.pausedAt;
-                        const prio=t.priority==='high'?'#c43030':t.priority==='med'?'#c48830':'#508050';
-                        const isOpen=expandedId===t.id;
-                        return (
-                          <div key={t.id}>
-                            <div className={`list-row${t.completedAt?' is-done':''}`}
-                              style={{borderRadius:isOpen?'6px 6px 0 0':'6px', borderBottomColor:isOpen?'transparent':'var(--border)'}}
-                              onClick={()=>setExpandedId(isOpen?null:t.id)}>
-                              <div className="lr-dot" style={{background:prio}}/>
-                              <span className="lr-title" style={{flex:1}}>{t.title}</span>
-                              <span className="lr-meta">
-                                {t.client&&t.client!=='General / Internal'&&<span>{t.client}</span>}
-                                {t.assignedTo&&<span>{t.assignedTo}</span>}
-                                {t.deadline&&<span>📅 {t.deadline}</span>}
-                                {isActive&&<span style={{color:'var(--amber)'}}>▶</span>}
-                                {isPaused&&<span>⏸</span>}
-                              </span>
-                              <span style={{fontSize:'9px',color:'var(--text3)',marginLeft:'4px'}}>{isOpen?'▲':'▼'}</span>
-                            </div>
-                            {isOpen&&(
-                              <div className="lr-expanded" style={{background:col.bg, borderColor:'var(--border)'}}>
-                                {t.desc&&<div style={{fontSize:'12px',color:'var(--text2)',marginBottom:'8px',lineHeight:'1.5'}}>{t.desc}</div>}
-                                <div style={{fontSize:'10px',fontFamily:'DM Mono,monospace',color:'var(--text3)',marginBottom:'10px',display:'flex',gap:'14px',flexWrap:'wrap'}}>
-                                  <span>{CATS.find(c=>c.id===t.category)?.label||t.category}</span>
-                                  <span style={{textTransform:'capitalize'}}>{t.priority} priority</span>
-                                  {t.editedAt&&<span>✏️ {fmtAgo(t.editedAt)}</span>}
-                                  {t.completedAt&&t.duration&&<span>✓ {fmtDur(t.duration)} · +{t.points||0} pts</span>}
-                                </div>
-                                <div style={{display:'flex',gap:'5px',flexWrap:'wrap'}}>
-                                  {!t.acceptedAt&&!t.completedAt&&<button className="lr-btn" onClick={e=>{e.stopPropagation();handleAccept(t);}}>▶ Accept</button>}
-                                  {isActive&&<button className="lr-btn" onClick={e=>{e.stopPropagation();handlePause(t);}}>⏸ Pause</button>}
-                                  {isPaused&&<button className="lr-btn" onClick={e=>{e.stopPropagation();handleResume(t);}}>▶ Resume</button>}
-                                  {(isActive||isPaused)&&<button className="lr-btn" onClick={e=>{e.stopPropagation();handleComplete(t);}}>✓ Done</button>}
-                                  {!t.completedAt&&<button className="lr-btn" onClick={e=>{e.stopPropagation();setEditTask(t);}}>✏️ Edit</button>}
-                                  <button className="lr-btn danger" onClick={e=>{e.stopPropagation();handleDelete(t.id);}}>✕ Delete</button>
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
+                      {col.items.length===0&&<div style={{fontSize:'11px',color:'var(--text3)',fontFamily:'DM Mono,monospace',padding:'8px 4px 16px',fontStyle:'italic'}}>{col.k==='done'?'nothing done yet':col.k==='inprog'?'nothing active':'all clear'}</div>}
+                      {col.items.map(t=><ListRow key={t.id} task={t} {...cardProps}/>)}
                     </div>
                   ))}
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
       )}
 
-      {view==='log'      && <LogView tasks={tasks} config={config}/>}
-      {view==='scores'   && <ScoresView tasks={tasks} manualBadges={manualBadges} demerits={demerits}/>}
-      {view==='settings' && <SettingsView
-        settings={settings} onSettings={setSettings}
-        onSave={s=>{ setSettings(s); showToast('Settings saved ✓','success'); }}
-        onClearTasks={handleClearTasks}
-        manualBadges={manualBadges} onManualBadges={setManualBadges}
-        demerits={demerits} onDemerits={setDemerits}
-        showToast={showToast}
-        adminUnlocked={adminUnlocked}
-        onAdminUnlock={()=>setAdminUnlocked(true)}
-        onAdminLock={()=>{ setAdminUnlocked(false); if(view==='scores') setView('board'); }}/>}
+      {view==='log'&&<div style={{flex:1,overflowY:'auto'}}><LogView tasks={tasks} config={config}/></div>}
+      {view==='scores'&&<div style={{flex:1,overflowY:'auto'}}><ScoresView tasks={tasks} manualBadges={manualBadges} demerits={demerits}/></div>}
+      {view==='settings'&&<div style={{flex:1,overflowY:'auto'}}><SettingsView settings={settings} onSettings={setSettings} onSave={s=>{setSettings(s);showToast('Settings saved ✓','success');}} onClearTasks={handleClearTasks} manualBadges={manualBadges} onManualBadges={setManualBadges} demerits={demerits} onDemerits={setDemerits} showToast={showToast}/></div>}
 
-      {showNew && <NewTaskModal currentUser={user} onClose={()=>setShowNew(false)} onSave={handleNewTask}/>}
-      {editTask && <NewTaskModal currentUser={user} editTask={editTask} onClose={()=>setEditTask(null)} onSave={handleEditSave}/>}
-      {pendingDelete && <DeleteConfirmModal task={pendingDelete} onConfirm={confirmDelete} onCancel={()=>setPendingDelete(null)}/>}
-      {toast && <Toast msg={toast.msg} type={toast.type} onDone={()=>setToast(null)}/>}
-      {chaChing && <ChaChing onDone={()=>setChaChing(false)}/>}
+      {/* MOBILE NAV */}
+      <nav className="mobile-nav">
+        {NAV.map(v=>(<button key={v.k} className={`mobile-nav-btn${view===v.k?' active':''}`} onClick={()=>setView(v.k)}><span className="mobile-nav-icon">{v.icon}</span><span className="mobile-nav-label">{v.label}</span></button>))}
+      </nav>
+
+      {/* MOBILE FAB */}
+      <button className="mobile-fab" onClick={()=>setShowNew(true)}>+</button>
+
+      {/* MODALS / OVERLAYS */}
+      {showNew&&<NewTaskModal currentUser={user} onClose={()=>setShowNew(false)} onSave={handleNewTask}/>}
+      {commentTask&&<CommentDrawer task={commentTask} user={user} onClose={()=>setCommentTask(null)} onAddComment={handleAddComment}/>}
+      {toast&&<Toast msg={toast.msg} type={toast.type} onDone={()=>setToast(null)}/>}
+      {chaChing&&<ChaChing onDone={()=>setChaChing(false)}/>}
     </div>
   );
 }
