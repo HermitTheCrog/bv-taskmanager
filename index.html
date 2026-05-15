@@ -553,7 +553,7 @@ async function sheetUpdate(cfg,task){
 }
 async function sheetRewrite(cfg,tasks){
   await ensureHeaders(cfg);
-  await sheetsReq(cfg,'POST','/values/Tasks!A2:P10000:clear',null);
+  await sheetsReq(cfg,'POST','/values/Tasks!A2:P10000:clear',{});
   const statusOrder=t=>t.completedAt?2:t.acceptedAt?1:0;
   const sorted=[...tasks].sort((a,b)=>statusOrder(a)-statusOrder(b)||(b.createdAt||0)-(a.createdAt||0));
   if(!sorted.length)return;
