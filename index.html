@@ -670,8 +670,14 @@ function CommentDrawer({task, user, onClose, onAddComment}){
 }
 
 // ── NEW TASK MODAL ─────────────────────────────────────────────────────────
-function NewTaskModal({currentUser,onClose,onSave,managedClients,managedCats,projects,onSaveClients,onSaveCats,onSaveProjects,allTeam}){
-  const [form,setForm]=useState({title:'',desc:'',category:'other',priority:'med',deadline:'',assignedToEmail:'',client:'General / Internal',project:'',noteColor:''});
+function NewTaskModal({currentUser,onClose,onSave,managedClients,managedCats,projects,onSaveClients,onSaveCats,onSaveProjects,allTeam,initialTask}){
+  const isEdit=!!initialTask;
+  const [form,setForm]=useState(isEdit?{
+    title:initialTask.title||'',desc:initialTask.desc||'',category:initialTask.category||'other',
+    priority:initialTask.priority||'med',deadline:initialTask.deadline||'',
+    assignedToEmail:initialTask.assignedToEmail||'',client:initialTask.client||'General / Internal',
+    project:initialTask.project||'',noteColor:initialTask.noteColor||'',
+  }:{title:'',desc:'',category:'other',priority:'med',deadline:'',assignedToEmail:'',client:'General / Internal',project:'',noteColor:''});
   const [editMode,setEditMode]=useState(null); // null | 'clients' | 'cats' | 'projects'
   const colorInputRef=useRef(null);
   const hasEyeDropper=typeof EyeDropper!=='undefined';
@@ -682,10 +688,14 @@ function NewTaskModal({currentUser,onClose,onSave,managedClients,managedCats,pro
 
   const save=()=>{
     if(!form.title.trim())return;
-    onSave({id:'task_'+Date.now(),...form,title:form.title.trim(),desc:form.desc.trim(),
-      assignedTo:member?.name||(form.assignedToEmail?form.assignedToEmail.split('@')[0]:''),
-      createdBy:currentUser.name,createdByEmail:currentUser.email,createdAt:Date.now(),
-      acceptedAt:null,completedAt:null,duration:null,pausedAt:null,accumulatedMs:0,points:null,comments:[]});
+    const assignedTo=member?.name||(form.assignedToEmail?form.assignedToEmail.split('@')[0]:'');
+    if(isEdit){
+      onSave({...initialTask,...form,title:form.title.trim(),desc:form.desc.trim(),assignedTo});
+    }else{
+      onSave({id:'task_'+Date.now(),...form,title:form.title.trim(),desc:form.desc.trim(),assignedTo,
+        createdBy:currentUser.name,createdByEmail:currentUser.email,createdAt:Date.now(),
+        acceptedAt:null,completedAt:null,duration:null,pausedAt:null,accumulatedMs:0,points:null,comments:[]});
+    }
   };
 
   const editBtnStyle={background:'none',border:'none',cursor:'pointer',fontSize:'10px',color:'var(--text3)',fontFamily:'DM Mono,monospace',padding:'0 0 0 6px',textDecoration:'underline',flexShrink:0};
@@ -724,7 +734,7 @@ function NewTaskModal({currentUser,onClose,onSave,managedClients,managedCats,pro
   return(
     <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&onClose()}>
       <div className="modal">
-        <div className="modal-title">Post a <span>task</span></div>
+        <div className="modal-title">{isEdit?<>Edit <span>task</span></>:<>Post a <span>task</span></>}</div>
         <div className="field"><label>Title *</label><input value={form.title} onChange={e=>set('title',e.target.value)} placeholder="Build production kit for event" autoFocus/></div>
         <div className="field"><label>Details / instructions</label><textarea value={form.desc} onChange={e=>set('desc',e.target.value)} placeholder="Notes for the crew..."/></div>
 
@@ -801,7 +811,7 @@ function NewTaskModal({currentUser,onClose,onSave,managedClients,managedCats,pro
         <EmailField value={form.assignedToEmail} onChange={v=>set('assignedToEmail',v)} team={allTeam}/>
         <div className="modal-actions">
           <button className="btn-cancel" onClick={onClose}>Cancel</button>
-          <button className="btn-post" onClick={save} disabled={!form.title.trim()}>Post task</button>
+          <button className="btn-post" onClick={save} disabled={!form.title.trim()}>{isEdit?'Save changes':'Post task'}</button>
         </div>
       </div>
     </div>
@@ -809,7 +819,7 @@ function NewTaskModal({currentUser,onClose,onSave,managedClients,managedCats,pro
 }
 
 // ── TASK CARD ──────────────────────────────────────────────────────────────
-function TaskCard({task,onAccept,onComplete,onPause,onResume,onDelete,onComment,tick,fontSize,allCats}){
+function TaskCard({task,onAccept,onComplete,onPause,onResume,onDelete,onComment,onEdit,tick,fontSize,allCats}){
   const {col,hex,rot}=noteStyle(task.id,task.priority,task.noteColor);
   const prioClass=task.priority==='high'?' prio-high':task.priority==='low'?' prio-low':'';
   const isDone=!!task.completedAt;
@@ -841,6 +851,7 @@ function TaskCard({task,onAccept,onComplete,onPause,onResume,onDelete,onComment,
         {isPaused&&<button className="nbtn" style={{fontSize:(fs*0.64)+'px'}} onClick={()=>onResume(task)}>▶ Resume</button>}
         {(isActive||isPaused)&&<button className="nbtn" style={{fontSize:(fs*0.64)+'px'}} onClick={()=>onComplete(task)}>✓ Done</button>}
         <button className="nbtn comment" style={{fontSize:(fs*0.64)+'px'}} onClick={()=>onComment(task)}>💬{commentCount>0?` ${commentCount}`:''}</button>
+        {!isDone&&<button className="nbtn" style={{fontSize:(fs*0.64)+'px'}} onClick={()=>onEdit(task)}>✎</button>}
         <button className="nbtn danger" style={{fontSize:(fs*0.64)+'px'}} onClick={()=>onDelete(task.id)}>✕</button>
       </div>
       <div className="by-line" style={{fontSize:(fs*0.64)+'px'}}>{task.assignedTo&&!isDone?`→ ${task.assignedTo} · `:''}{task.createdBy} · {fmtTime(task.createdAt)}</div>
@@ -849,7 +860,7 @@ function TaskCard({task,onAccept,onComplete,onPause,onResume,onDelete,onComment,
 }
 
 // ── LIST ROW ───────────────────────────────────────────────────────────────
-function ListRow({task,onAccept,onComplete,onPause,onResume,onDelete,onComment,tick,user,allCats}){
+function ListRow({task,onAccept,onComplete,onPause,onResume,onDelete,onComment,onEdit,tick,user,allCats}){
   const [open,setOpen]=useState(false);
   const isDone=!!task.completedAt;
   const isActive=task.acceptedAt&&!task.completedAt&&!task.pausedAt;
@@ -895,6 +906,7 @@ function ListRow({task,onAccept,onComplete,onPause,onResume,onDelete,onComment,t
             {isPaused&&<button className="lrd-btn primary" onClick={()=>onResume(task)}>▶ Resume</button>}
             {(isActive||isPaused)&&<button className="lrd-btn primary" onClick={()=>onComplete(task)}>✓ Done</button>}
             <button className="lrd-btn" onClick={()=>onComment(task)}>💬 Comments{commentCount>0?` (${commentCount})`:''}</button>
+            {!task.completedAt&&<button className="lrd-btn" onClick={()=>onEdit(task)}>✎ Edit</button>}
             <button className="lrd-btn danger" onClick={()=>onDelete(task.id)}>✕ Remove</button>
           </div>
         </div>
@@ -1261,6 +1273,7 @@ function App(){
   const [dragOver,setDragOver]=useState(null);
   const [tick,setTick]=useState(0);
   const [commentTask,setCommentTask]=useState(null);
+  const [editTask,setEditTask]=useState(null);
   const [sortBy,setSortBy]=useState('date');
   const [statusFilter,setStatusFilter]=useState('all');
   const [managedCats,setManagedCats]=useState(()=>getSaved(MANAGED_CATS_KEY)||[...CATS]);
@@ -1420,6 +1433,11 @@ function App(){
     try{await sheetRewrite(config,tasks);showToast('Sheet rewritten cleanly ✓','success');}
     catch{showToast('Rewrite failed','error');}
   };
+  const handleEditSave=async updated=>{
+    setTasks(prev=>prev.map(t=>t.id===updated.id?updated:t));
+    setEditTask(null);
+    await syncTask(updated);
+  };
   const handleSaveClients=list=>setManagedClients(list);
   const handleSaveCats=list=>setManagedCats(list);
   const handleSaveProjects=(client,list)=>setProjects(prev=>({...prev,[client]:list}));
@@ -1488,7 +1506,7 @@ function App(){
   const inProgTasks=sortTasks(tasks.filter(t=>t.acceptedAt&&!t.completedAt&&filterFn(t)),sortBy);
   const doneTasks=sortTasks(tasks.filter(t=>t.completedAt&&filterFn(t)),sortBy==='date'?'date':sortBy).slice(0,20);
 
-  const cardProps={onAccept:handleAccept,onComplete:handleComplete,onPause:handlePause,onResume:handleResume,onDelete:handleDelete,onComment:setCommentTask,tick,fontSize:settings.fontSize||14,user,allCats:managedCats};
+  const cardProps={onAccept:handleAccept,onComplete:handleComplete,onPause:handlePause,onResume:handleResume,onDelete:handleDelete,onComment:setCommentTask,onEdit:setEditTask,tick,fontSize:settings.fontSize||14,user,allCats:managedCats};
 
   if(restoring||(!user&&config?.accessToken))return <div className={settings.theme||'theme-e'}><AuthScreen onSignIn={handleSignIn} restoring={true}/></div>;
   if(!user)return <div className={settings.theme||'theme-e'}><AuthScreen onSignIn={handleSignIn} restoring={false}/></div>;
@@ -1630,6 +1648,7 @@ function App(){
 
       {/* MODALS / OVERLAYS */}
       {showNew&&<NewTaskModal currentUser={user} onClose={()=>setShowNew(false)} onSave={handleNewTask} managedClients={managedClients} managedCats={managedCats} projects={projects} onSaveClients={handleSaveClients} onSaveCats={handleSaveCats} onSaveProjects={handleSaveProjects} allTeam={allTeam}/>}
+      {editTask&&<NewTaskModal currentUser={user} onClose={()=>setEditTask(null)} onSave={handleEditSave} managedClients={managedClients} managedCats={managedCats} projects={projects} onSaveClients={handleSaveClients} onSaveCats={handleSaveCats} onSaveProjects={handleSaveProjects} allTeam={allTeam} initialTask={editTask}/>}
       {commentTask&&<CommentDrawer task={commentTask} user={user} onClose={()=>setCommentTask(null)} onAddComment={handleAddComment}/>}
       {toast&&<Toast msg={toast.msg} type={toast.type} onDone={()=>setToast(null)}/>}
       {chaChing&&<ChaChing onDone={()=>setChaChing(false)}/>}
