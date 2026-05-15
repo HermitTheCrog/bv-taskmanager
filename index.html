@@ -325,7 +325,12 @@ body{color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;line-heigh
   .modal{border-radius:20px 20px 0 0;max-height:88vh;padding:22px 20px;}
   .log-stats{grid-template-columns:repeat(2,1fr);}
   .theme-grid{grid-template-columns:repeat(2,1fr);}
-  .view-controls{padding:8px 12px 4px;}
+  .view-controls{padding:6px 12px 4px;flex-wrap:wrap;gap:5px;}
+  .vc-sep{display:none;}
+  .sort-select{display:none;}
+  .vc-status{order:10;flex:1 0 100%;}
+  .vc-status .toggle-btn{flex:1;text-align:center;}
+  .vc-count{display:none;}
   .list-view{padding:4px 12px 80px;}
 }
 @media (min-width:768px){
@@ -415,9 +420,10 @@ const BADGES_DEF = [
 const NOTE_COLS = ['n-y','n-o','n-g','n-b','n-pk','n-pu'];
 const ROTS = ['r1','r2','r3','r4','r2','r3'];
 
-function noteStyle(id) {
+function noteStyle(id,priority){
   const h=(id||'').split('').reduce((a,c)=>a+c.charCodeAt(0),0);
-  return {col:NOTE_COLS[h%NOTE_COLS.length],rot:ROTS[h%ROTS.length]};
+  const cols=priority==='high'?['n-o','n-pk']:priority==='med'?['n-y','n-pu']:['n-g','n-b'];
+  return{col:cols[h%cols.length],rot:ROTS[h%ROTS.length]};
 }
 function initials(n){return(n||'?').split(' ').map(p=>p[0]).join('').slice(0,2).toUpperCase();}
 function fmtDur(ms){if(!ms||ms<0)return'—';const s=Math.floor(ms/1000),h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60;if(h>0)return`${h}h ${m}m`;if(m>0)return`${m}m ${sec}s`;return`${sec}s`;}
@@ -729,7 +735,7 @@ function NewTaskModal({currentUser,onClose,onSave,customCats,onAddCustomCat,allC
 
 // ── TASK CARD ──────────────────────────────────────────────────────────────
 function TaskCard({task,onAccept,onComplete,onPause,onResume,onDelete,onComment,tick,fontSize}){
-  const {col,rot}=noteStyle(task.id);
+  const {col,rot}=noteStyle(task.id,task.priority);
   const isDone=!!task.completedAt;
   const isActive=task.acceptedAt&&!task.completedAt&&!task.pausedAt;
   const isPaused=task.acceptedAt&&!task.completedAt&&!!task.pausedAt;
@@ -779,6 +785,7 @@ function ListRow({task,onAccept,onComplete,onPause,onResume,onDelete,onComment,t
   if(isPaused)elapsed=fmtDur(task.accumulatedMs||0);
 
   const priColor=task.priority==='high'?'#cc3333':task.priority==='med'?'#c4682a':'#4a8a4a';
+  const dotColor=task.priority==='high'?'#cc3333':task.priority==='med'?'#c4682a':'rgba(255,255,255,0.28)';
   const statusColor=isDone?'#4a8a4a':isActive?'#c4682a':isPaused?'#9a6200':'rgba(255,255,255,0.2)';
 
   // display name: show assigned if set, otherwise show "unassigned"
@@ -787,7 +794,7 @@ function ListRow({task,onAccept,onComplete,onPause,onResume,onDelete,onComment,t
   return(
     <div className="list-row">
       <div className="list-row-main" onClick={()=>setOpen(o=>!o)}>
-        <div className="lr-dot" style={{background:statusColor}}/>
+        <div className="lr-dot" style={{background:dotColor}}/>
         <div className={`lr-title${isDone?' is-done':''}`}>{task.title}</div>
         {displayName&&<div className="lr-assignee">{displayName}</div>}
         {commentCount>0&&<div className="lr-comment-badge">💬{commentCount}</div>}
@@ -1130,6 +1137,8 @@ function App(){
   const [refreshing,setRefreshing]=useState(false);
   const tokenRef=useRef(null);
   const pollRef=useRef(null);
+  const configRef=useRef(config);
+  useEffect(()=>{configRef.current=config;},[config]);
 
   const allClients=[...CLIENTS,...customClients];
   const allTeam=[...TEAM,...customTeam];
@@ -1278,7 +1287,7 @@ function App(){
   // 2-minute background poll
   useEffect(()=>{
     if(!config?.accessToken)return;
-    pollRef.current=setInterval(()=>doRefresh(config,true),120000);
+    pollRef.current=setInterval(()=>doRefresh(configRef.current,true),120000);
     return()=>clearInterval(pollRef.current);
   },[config?.accessToken]);
 
@@ -1364,8 +1373,7 @@ function App(){
                 <button className={`toggle-btn${!filterMine?' active':''}`} onClick={()=>setFilterMine(false)}>All</button>
                 <button className={`toggle-btn mine${filterMine?' active mine':''}`} onClick={()=>setFilterMine(true)}>Mine</button>
               </div>
-              <div className="vc-sep"/>
-              <div className="toggle-group">
+              <div className="toggle-group vc-status">
                 <button className={`toggle-btn${statusFilter==='all'?' active':''}`} onClick={()=>setStatusFilter('all')}>All</button>
                 <button className={`toggle-btn${statusFilter==='open'?' active':''}`} onClick={()=>setStatusFilter('open')}>Open</button>
                 <button className={`toggle-btn${statusFilter==='inprog'?' active':''}`} onClick={()=>setStatusFilter('inprog')}>Active</button>
@@ -1381,7 +1389,7 @@ function App(){
               <button className="refresh-btn" onClick={()=>doRefresh(config)} disabled={refreshing}>
                 {refreshing?<div className="spinner" style={{width:'10px',height:'10px',borderWidth:'1.5px'}}/>:'↻'} Refresh
               </button>
-              <div style={{marginLeft:'auto',fontSize:'9px',fontFamily:'DM Mono,monospace',color:'var(--text3)'}}>
+              <div className="vc-count" style={{marginLeft:'auto',fontSize:'9px',fontFamily:'DM Mono,monospace',color:'var(--text3)'}}>
                 {filterMine?`Showing your tasks`:`${tasks.length} tasks total`}
               </div>
             </div>
