@@ -819,7 +819,7 @@ function NewTaskModal({currentUser,onClose,onSave,managedClients,managedCats,pro
 }
 
 // ── TASK CARD ──────────────────────────────────────────────────────────────
-function TaskCard({task,onAccept,onComplete,onPause,onResume,onDelete,onComment,onEdit,tick,fontSize,allCats}){
+function TaskCard({task,onAccept,onComplete,onPause,onResume,onDelete,onComment,onEdit,fontSize,allCats}){
   const {col,hex,rot}=noteStyle(task.id,task.priority,task.noteColor);
   const prioClass=task.priority==='high'?' prio-high':task.priority==='low'?' prio-low':'';
   const isDone=!!task.completedAt;
@@ -860,7 +860,7 @@ function TaskCard({task,onAccept,onComplete,onPause,onResume,onDelete,onComment,
 }
 
 // ── LIST ROW ───────────────────────────────────────────────────────────────
-function ListRow({task,onAccept,onComplete,onPause,onResume,onDelete,onComment,onEdit,tick,user,allCats}){
+function ListRow({task,onAccept,onComplete,onPause,onResume,onDelete,onComment,onEdit,allCats}){
   const [open,setOpen]=useState(false);
   const isDone=!!task.completedAt;
   const isActive=task.acceptedAt&&!task.completedAt&&!task.pausedAt;
@@ -1171,7 +1171,7 @@ function SettingsView({settings,onSettings,onSave,onClearTasks,manualBadges,onMa
                 <button className="clear-btn" style={{padding:'9px 14px',fontSize:'12px'}} onClick={issueDemerit}>Issue</button>
               </div>
               {demerits.length>0?(<div style={{background:'var(--bg3)',borderRadius:'7px',overflow:'hidden',border:'1px solid var(--border)'}}>
-                {[...demerits].sort((a,b)=>b.issuedAt-a.issuedAt).map(d=>(<div key={d.id} className="demerit-row"><span className="demerit-pts">-{d.pts}</span><span className="demerit-who">{d.member}</span><span className="demerit-reason">{d.reason}</span><span className="demerit-time">{fmtTime(d.issuedAt)}</span><button className="demerit-del" onClick={()=>onDemerits(demerits.filter(x=>x.id!==d.id))}>✕</button></div>))}
+                {[...demerits].sort((a,b)=>b.issuedAt-a.issuedAt).map(d=>(<div key={d.id} className="demerit-row"><span className="demerit-pts">-{d.pts}</span><span className="demerit-who">{d.member}</span><span className="demerit-reason">{d.reason}</span><span className="demerit-time">{fmtTime(d.issuedAt)}</span><button className="demerit-del" onClick={()=>{if(window.confirm(`Remove ${d.pts}pt demerit from ${d.member}?`))onDemerits(demerits.filter(x=>x.id!==d.id));}}>✕</button></div>))}
               </div>):(<div style={{fontSize:'11px',color:'var(--text3)',fontFamily:'DM Mono,monospace',fontStyle:'italic'}}>No demerits issued</div>)}
             </div>
             <div className="admin-subsection">
@@ -1271,7 +1271,7 @@ function App(){
   const [showMenu,setShowMenu]=useState(false);
   const [chaChing,setChaChing]=useState(false);
   const [dragOver,setDragOver]=useState(null);
-  const [tick,setTick]=useState(0);
+
   const [commentTask,setCommentTask]=useState(null);
   const [editTask,setEditTask]=useState(null);
   const [sortBy,setSortBy]=useState('date');
@@ -1291,7 +1291,6 @@ function App(){
 
   const allTeam=[...TEAM,...customTeam];
 
-  useEffect(()=>{const id=setInterval(()=>setTick(t=>t+1),1000);return()=>clearInterval(id);},[]);
   useEffect(()=>{localStorage.setItem(TASKS_KEY,JSON.stringify(tasks));},[tasks]);
   useEffect(()=>{localStorage.setItem(SETTINGS_KEY,JSON.stringify({...settings,viewMode}));},[settings,viewMode]);
   useEffect(()=>{localStorage.setItem(BADGES_KEY,JSON.stringify(manualBadges));},[manualBadges]);
@@ -1380,7 +1379,7 @@ function App(){
     setShowNew(false);setTasks(prev=>[task,...prev]);
     playSound('post');showToast('Task posted! 🎯','success');
     await syncTask(task,true);
-    if(task.assignedToEmail&&config?.accessToken)await sendEmail(config,task);
+    if(task.assignedToEmail&&config?.accessToken){try{await sendEmail(config,task);}catch(e){showToast('Email failed — task still posted','');}}
   };
 
   const handleAccept=async task=>{
@@ -1392,7 +1391,7 @@ function App(){
 
   const handlePause=async task=>{
     const now=Date.now();const elapsed=(task.accumulatedMs||0)+(now-task.acceptedAt);
-    const updated=tasks.map(t=>t.id===task.id?{...t,pausedAt:now,accumulatedMs:elapsed,acceptedAt:now}:t);
+    const updated=tasks.map(t=>t.id===task.id?{...t,pausedAt:now,accumulatedMs:elapsed}:t);
     setTasks(updated);showToast('Task paused ⏸','');
   };
 
@@ -1504,9 +1503,9 @@ function App(){
 
   const openTasks=sortTasks(tasks.filter(t=>!t.acceptedAt&&!t.completedAt&&filterFn(t)),sortBy);
   const inProgTasks=sortTasks(tasks.filter(t=>t.acceptedAt&&!t.completedAt&&filterFn(t)),sortBy);
-  const doneTasks=sortTasks(tasks.filter(t=>t.completedAt&&filterFn(t)),sortBy==='date'?'date':sortBy).slice(0,20);
+  const doneTasks=sortTasks(tasks.filter(t=>t.completedAt&&filterFn(t)),sortBy==='date'?'date':sortBy);
 
-  const cardProps={onAccept:handleAccept,onComplete:handleComplete,onPause:handlePause,onResume:handleResume,onDelete:handleDelete,onComment:setCommentTask,onEdit:setEditTask,tick,fontSize:settings.fontSize||14,user,allCats:managedCats};
+  const cardProps={onAccept:handleAccept,onComplete:handleComplete,onPause:handlePause,onResume:handleResume,onDelete:handleDelete,onComment:setCommentTask,onEdit:setEditTask,fontSize:settings.fontSize||14,allCats:managedCats};
 
   if(restoring||(!user&&config?.accessToken))return <div className={settings.theme||'theme-e'}><AuthScreen onSignIn={handleSignIn} restoring={true}/></div>;
   if(!user)return <div className={settings.theme||'theme-e'}><AuthScreen onSignIn={handleSignIn} restoring={false}/></div>;
