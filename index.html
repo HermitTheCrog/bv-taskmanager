@@ -546,7 +546,7 @@ async function sheetUpdate(cfg,task){
     const d=await sheetsReq(cfg,'GET','/values/Tasks!A:A');
     if(!d.values)return;
     const i=d.values.findIndex(r=>r[0]===task.id);
-    if(i<1){await sheetAppend(cfg,task);return;}
+    if(i<1)return; // row not found — skip, never duplicate via update path
     const row=i+1;
     await sheetsReq(cfg,'PUT',`/values/Tasks!A${row}:P${row}?valueInputOption=RAW`,{values:[taskRow(task)]});
   }catch(e){console.warn('sheet update',e);}
