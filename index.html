@@ -343,6 +343,31 @@ body{color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;line-heigh
 .refresh-btn{display:flex;align-items:center;gap:4px;background:transparent;border:1px solid var(--border2);border-radius:5px;color:var(--text3);font-family:'DM Mono',monospace;font-size:9px;padding:5px 9px;cursor:pointer;transition:all 0.12s;}
 .refresh-btn:hover{color:var(--text);border-color:var(--amber);}
 .refresh-btn:disabled{opacity:0.5;cursor:default;}
+
+/* ── PRIORITY INTENSITY FILTERS ── */
+.note.prio-high{filter:saturate(2.0) brightness(0.84);}
+.note.prio-low{filter:saturate(0.38) brightness(1.20);}
+
+/* ── COLOR PICKER ── */
+.color-picker-row{display:flex;gap:8px;flex-wrap:wrap;padding:2px 0;}
+.color-swatch{width:26px;height:26px;border-radius:50%;border:2px solid transparent;cursor:pointer;transition:all 0.12s;outline:none;box-shadow:0 1px 4px rgba(0,0,0,0.25);}
+.color-swatch.selected{border-color:var(--text);transform:scale(1.18);box-shadow:0 2px 8px rgba(0,0,0,0.4);}
+.color-swatch:hover:not(.selected){transform:scale(1.1);}
+
+/* ── LIST EDITOR ── */
+.le-wrap{border:1px solid var(--border2);border-radius:7px;overflow:hidden;margin-top:4px;max-height:220px;overflow-y:auto;}
+.le-row{display:flex;align-items:center;gap:6px;padding:8px 11px;border-bottom:1px solid var(--border);}
+.le-row:last-child{border-bottom:none;}
+.le-label{flex:1;font-size:12px;color:var(--text);}
+.le-icon{background:none;border:none;cursor:pointer;font-size:12px;color:var(--text3);padding:2px 4px;border-radius:3px;transition:color 0.1s;}
+.le-icon:hover{color:var(--text);}
+.le-icon.del:hover{color:#f08080;}
+.le-add{display:flex;gap:6px;margin-top:7px;}
+.le-edit-lbl{display:flex;align-items:center;gap:6px;}
+.le-edit-btn{background:none;border:none;cursor:pointer;font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;padding:0;text-decoration:underline;white-space:nowrap;}
+.le-edit-btn:hover{color:var(--amber);}
+.le-back{background:none;border:none;cursor:pointer;font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;margin-bottom:14px;display:flex;align-items:center;gap:4px;}
+.le-back:hover{color:var(--text);}
 </style>
 </head>
 <body>
@@ -360,7 +385,18 @@ const CUSTOM_CATS_KEY    = 'bvb_custom_cats_v1';
 const PROJECTS_KEY       = 'bvb_projects_v1';
 const CUSTOM_CLIENTS_KEY = 'bvb_custom_clients_v1';
 const CUSTOM_TEAM_KEY    = 'bvb_custom_team_v1';
+const MANAGED_CLIENTS_KEY= 'bvb_clients_v2';
+const MANAGED_CATS_KEY   = 'bvb_cats_v2';
 const DEFAULT_PIN        = '1234';
+
+const NOTE_COLOR_OPTIONS = [
+  {id:'n-y', hex:'#f2e49a', label:'Yellow'},
+  {id:'n-o', hex:'#f5cc90', label:'Peach'},
+  {id:'n-g', hex:'#c2e098', label:'Green'},
+  {id:'n-b', hex:'#a2cff0', label:'Blue'},
+  {id:'n-pk',hex:'#f0b0c8', label:'Pink'},
+  {id:'n-pu',hex:'#cab8f2', label:'Purple'},
+];
 
 const HARDCODED_CONFIG = {
   clientId: '630423801494-aetvklr9sjscvscpe4tlcrlpuh5j7ccm.apps.googleusercontent.com',
@@ -420,10 +456,10 @@ const BADGES_DEF = [
 const NOTE_COLS = ['n-y','n-o','n-g','n-b','n-pk','n-pu'];
 const ROTS = ['r1','r2','r3','r4','r2','r3'];
 
-function noteStyle(id,priority){
+function noteStyle(id,priority,noteColor){
   const h=(id||'').split('').reduce((a,c)=>a+c.charCodeAt(0),0);
-  const cols=priority==='high'?['n-o','n-pk']:priority==='med'?['n-y','n-pu']:['n-g','n-b'];
-  return{col:cols[h%cols.length],rot:ROTS[h%ROTS.length]};
+  const col=noteColor||(priority==='high'?['n-o','n-pk']:priority==='med'?['n-y','n-pu']:['n-g','n-b'])[h%2];
+  return{col,rot:ROTS[h%ROTS.length]};
 }
 function initials(n){return(n||'?').split(' ').map(p=>p[0]).join('').slice(0,2).toUpperCase();}
 function fmtDur(ms){if(!ms||ms<0)return'—';const s=Math.floor(ms/1000),h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60;if(h>0)return`${h}h ${m}m`;if(m>0)return`${m}m ${sec}s`;return`${sec}s`;}
@@ -617,108 +653,111 @@ function CommentDrawer({task, user, onClose, onAddComment}){
 }
 
 // ── NEW TASK MODAL ─────────────────────────────────────────────────────────
-function NewTaskModal({currentUser,onClose,onSave,customCats,onAddCustomCat,allClients,projects,onAddClient,onAddProject,allTeam}){
-  const [form,setForm]=useState({title:'',desc:'',category:'other',priority:'med',deadline:'',assignedToEmail:'',client:'General / Internal',project:''});
-  const [customCatInput,setCustomCatInput]=useState('');
-  const [newClientInput,setNewClientInput]=useState('');
-  const [newProjectInput,setNewProjectInput]=useState('');
+function NewTaskModal({currentUser,onClose,onSave,managedClients,managedCats,projects,onSaveClients,onSaveCats,onSaveProjects,allTeam}){
+  const [form,setForm]=useState({title:'',desc:'',category:'other',priority:'med',deadline:'',assignedToEmail:'',client:'General / Internal',project:'',noteColor:''});
+  const [editMode,setEditMode]=useState(null); // null | 'clients' | 'cats' | 'projects'
   const set=(k,v)=>setForm(f=>({...f,[k]:v}));
   const member=allTeam.find(t=>t.email===form.assignedToEmail);
 
-  const handleCatChange=v=>{
-    if(v==='__add__'){set('category','__add__');setCustomCatInput('');}
-    else set('category',v);
-  };
-  const confirmCustomCat=()=>{
-    const label=customCatInput.trim();if(!label)return;
-    onAddCustomCat(label);set('category',label);setCustomCatInput('');
-  };
-
-  const handleClientChange=v=>{
-    if(v==='__addclient__'){set('client','__addclient__');set('project','');setNewClientInput('');}
-    else{set('client',v);set('project','');}
-  };
-  const confirmNewClient=()=>{
-    const name=newClientInput.trim();if(!name)return;
-    onAddClient(name);set('client',name);set('project','');setNewClientInput('');
-  };
-
   const clientProjects=projects[form.client]||[];
-  const handleProjectChange=v=>{
-    if(v==='__addproject__'){set('project','__addproject__');setNewProjectInput('');}
-    else set('project',v);
-  };
-  const confirmNewProject=()=>{
-    const name=newProjectInput.trim();if(!name)return;
-    onAddProject(form.client,name);set('project',name);setNewProjectInput('');
-  };
-
-  const allCats=[...CATS,...(customCats||[]).map(l=>({id:l,label:l})),{id:'__add__',label:'+ Add custom...'}];
 
   const save=()=>{
     if(!form.title.trim())return;
-    const cat=form.category==='__add__'?'other':form.category;
-    const proj=form.project==='__addproject__'?'':form.project;
-    onSave({id:'task_'+Date.now(),...form,category:cat,project:proj,title:form.title.trim(),desc:form.desc.trim(),
+    onSave({id:'task_'+Date.now(),...form,title:form.title.trim(),desc:form.desc.trim(),
       assignedTo:member?.name||(form.assignedToEmail?form.assignedToEmail.split('@')[0]:''),
       createdBy:currentUser.name,createdByEmail:currentUser.email,createdAt:Date.now(),
       acceptedAt:null,completedAt:null,duration:null,pausedAt:null,accumulatedMs:0,points:null,comments:[]});
   };
 
-  const inlineInputStyle={flex:1,background:'var(--bg3)',border:'1px solid var(--border2)',borderRadius:'5px',color:'var(--text)',fontFamily:'Syne,sans-serif',fontSize:'12px',padding:'7px 10px',outline:'none'};
+  const editBtnStyle={background:'none',border:'none',cursor:'pointer',fontSize:'10px',color:'var(--text3)',fontFamily:'DM Mono,monospace',padding:'0 0 0 6px',textDecoration:'underline',flexShrink:0};
+
+  if(editMode==='clients'){
+    return(
+      <div className="modal-overlay">
+        <div className="modal">
+          <div className="modal-title">Edit <span>Clients</span></div>
+          <ListEditor items={managedClients} addPlaceholder="Client name…" onSave={list=>{onSaveClients(list);setEditMode(null);}}/>
+        </div>
+      </div>
+    );
+  }
+  if(editMode==='cats'){
+    return(
+      <div className="modal-overlay">
+        <div className="modal">
+          <div className="modal-title">Edit <span>Categories</span></div>
+          <ListEditor items={managedCats} addPlaceholder="Category name…" asObjects={true} onSave={list=>{onSaveCats(list);setEditMode(null);if(!list.find(c=>c.id===form.category))set('category','other');}}/>
+        </div>
+      </div>
+    );
+  }
+  if(editMode==='projects'){
+    return(
+      <div className="modal-overlay">
+        <div className="modal">
+          <div className="modal-title">Edit <span>Projects</span> <span style={{fontSize:13,fontWeight:400,color:'var(--text3)'}}>· {form.client}</span></div>
+          <ListEditor items={clientProjects} addPlaceholder="Project name…" onSave={list=>{onSaveProjects(form.client,list);setEditMode(null);if(!list.includes(form.project))set('project','');}}/>
+        </div>
+      </div>
+    );
+  }
 
   return(
     <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&onClose()}>
       <div className="modal">
         <div className="modal-title">Post a <span>task</span></div>
-        <div className="field"><label>Title *</label><input value={form.title} onChange={e=>set('title',e.target.value)} placeholder="e.g. Move pallet 3 to bay 4" autoFocus/></div>
+        <div className="field"><label>Title *</label><input value={form.title} onChange={e=>set('title',e.target.value)} placeholder="Build production kit for event" autoFocus/></div>
         <div className="field"><label>Details / instructions</label><textarea value={form.desc} onChange={e=>set('desc',e.target.value)} placeholder="Notes for the crew..."/></div>
+
+        {/* NOTE COLOR */}
+        <div className="field">
+          <label>Note Color <span style={{fontWeight:400,color:'var(--text3)'}}>(priority controls intensity)</span></label>
+          <div className="color-picker-row">
+            {NOTE_COLOR_OPTIONS.map(opt=>(
+              <button key={opt.id} className={`color-swatch${form.noteColor===opt.id?' selected':''}`}
+                style={{background:opt.hex}} title={opt.label}
+                onClick={()=>set('noteColor',form.noteColor===opt.id?'':opt.id)}/>
+            ))}
+            <span style={{fontSize:10,color:'var(--text3)',fontFamily:'DM Mono,monospace',alignSelf:'center',marginLeft:2}}>
+              {form.noteColor?(NOTE_COLOR_OPTIONS.find(o=>o.id===form.noteColor)?.label||''):'auto'}
+            </span>
+          </div>
+        </div>
 
         {/* CLIENT */}
         <div className="field">
-          <label>Client</label>
-          <select value={form.client} onChange={e=>handleClientChange(e.target.value)}>
-            {allClients.map(c=><option key={c} value={c}>{c}</option>)}
-            <option value="__addclient__">+ Add new client…</option>
+          <label style={{display:'flex',alignItems:'center'}}>
+            Client
+            <button style={editBtnStyle} onClick={()=>setEditMode('clients')}>✎ edit list</button>
+          </label>
+          <select value={form.client} onChange={e=>{set('client',e.target.value);set('project','');}}>
+            {managedClients.map(c=><option key={c} value={c}>{c}</option>)}
           </select>
-          {form.client==='__addclient__'&&(
-            <div style={{display:'flex',gap:'6px',marginTop:'6px'}}>
-              <input value={newClientInput} onChange={e=>setNewClientInput(e.target.value)} onKeyDown={e=>e.key==='Enter'&&confirmNewClient()} placeholder="Client name…" style={inlineInputStyle}/>
-              <button onClick={confirmNewClient} className="btn-post" style={{padding:'7px 12px',fontSize:'11px'}}>Add</button>
-            </div>
-          )}
         </div>
 
-        {/* PROJECT (only when a real client is selected) */}
-        {form.client&&form.client!=='__addclient__'&&(
+        {/* PROJECT */}
+        {form.client&&(
           <div className="field">
-            <label>Project <span style={{fontWeight:400,color:'var(--text3)'}}>(optional)</span></label>
-            <select value={form.project} onChange={e=>handleProjectChange(e.target.value)}>
+            <label style={{display:'flex',alignItems:'center'}}>
+              Project <span style={{fontWeight:400,color:'var(--text3)',marginLeft:4}}>(optional)</span>
+              <button style={editBtnStyle} onClick={()=>setEditMode('projects')}>✎ edit list</button>
+            </label>
+            <select value={form.project} onChange={e=>set('project',e.target.value)}>
               <option value="">— None —</option>
               {clientProjects.map(p=><option key={p} value={p}>{p}</option>)}
-              <option value="__addproject__">+ Add new project…</option>
             </select>
-            {form.project==='__addproject__'&&(
-              <div style={{display:'flex',gap:'6px',marginTop:'6px'}}>
-                <input value={newProjectInput} onChange={e=>setNewProjectInput(e.target.value)} onKeyDown={e=>e.key==='Enter'&&confirmNewProject()} placeholder="Project name…" style={inlineInputStyle}/>
-                <button onClick={confirmNewProject} className="btn-post" style={{padding:'7px 12px',fontSize:'11px'}}>Add</button>
-              </div>
-            )}
           </div>
         )}
 
         <div className="field-row">
           <div className="field">
-            <label>Category</label>
-            <select value={form.category} onChange={e=>handleCatChange(e.target.value)}>
-              {allCats.map(c=><option key={c.id} value={c.id}>{c.label}</option>)}
+            <label style={{display:'flex',alignItems:'center'}}>
+              Category
+              <button style={editBtnStyle} onClick={()=>setEditMode('cats')}>✎ edit list</button>
+            </label>
+            <select value={form.category} onChange={e=>set('category',e.target.value)}>
+              {managedCats.map(c=><option key={c.id} value={c.id}>{c.label}</option>)}
             </select>
-            {form.category==='__add__'&&(
-              <div style={{display:'flex',gap:'6px',marginTop:'6px'}}>
-                <input value={customCatInput} onChange={e=>setCustomCatInput(e.target.value)} onKeyDown={e=>e.key==='Enter'&&confirmCustomCat()} placeholder="Category name…" style={inlineInputStyle}/>
-                <button onClick={confirmCustomCat} className="btn-post" style={{padding:'7px 12px',fontSize:'11px'}}>Add</button>
-              </div>
-            )}
           </div>
           <div className="field"><label>Priority</label><select value={form.priority} onChange={e=>set('priority',e.target.value)}><option value="high">High</option><option value="med">Medium</option><option value="low">Low</option></select></div>
         </div>
@@ -734,8 +773,9 @@ function NewTaskModal({currentUser,onClose,onSave,customCats,onAddCustomCat,allC
 }
 
 // ── TASK CARD ──────────────────────────────────────────────────────────────
-function TaskCard({task,onAccept,onComplete,onPause,onResume,onDelete,onComment,tick,fontSize}){
-  const {col,rot}=noteStyle(task.id,task.priority);
+function TaskCard({task,onAccept,onComplete,onPause,onResume,onDelete,onComment,tick,fontSize,allCats}){
+  const {col,rot}=noteStyle(task.id,task.priority,task.noteColor);
+  const prioClass=task.priority==='high'?' prio-high':task.priority==='low'?' prio-low':'';
   const isDone=!!task.completedAt;
   const isActive=task.acceptedAt&&!task.completedAt&&!task.pausedAt;
   const isPaused=task.acceptedAt&&!task.completedAt&&!!task.pausedAt;
@@ -745,11 +785,12 @@ function TaskCard({task,onAccept,onComplete,onPause,onResume,onDelete,onComment,
   if(isActive)elapsed=fmtDur((task.accumulatedMs||0)+(Date.now()-task.acceptedAt));
   if(isPaused)elapsed=fmtDur(task.accumulatedMs||0);
   const commentCount=(task.comments||[]).length;
+  const cats=allCats||CATS;
   return(
-    <div className={`note ${col} ${rot}${isDone?' is-done':''}`} style={{fontSize:fs+'px'}}
+    <div className={`note ${col} ${rot}${prioClass}${isDone?' is-done':''}`} style={{fontSize:fs+'px'}}
       draggable={!isDone}
       onDragStart={e=>{e.dataTransfer.setData('taskId',task.id);e.dataTransfer.effectAllowed='move';}}>
-      <div className="ncat" style={{fontSize:(fs*0.57)+'px'}}>{CATS.find(c=>c.id===task.category)?.label||task.category}{task.client&&task.client!=='General / Internal'?` · ${task.client}`+( task.project?` › ${task.project}`:''):''}</div>
+      <div className="ncat" style={{fontSize:(fs*0.57)+'px'}}>{cats.find(c=>c.id===task.category)?.label||task.category}{task.client&&task.client!=='General / Internal'?` · ${task.client}`+(task.project?` › ${task.project}`:''):''}</div>
       <span className={`nprio-badge ${task.priority==='high'?'nph':task.priority==='med'?'npm':'npl'}`} style={{fontSize:(fs*0.57)+'px'}}>{task.priority}</span>
       <div className="ntitle" style={{fontSize:(fs*1)+'px'}}>{task.title}</div>
       {task.desc&&<div className="ndesc" style={{fontSize:(fs*0.82)+'px'}}>{task.desc}</div>}
@@ -772,7 +813,7 @@ function TaskCard({task,onAccept,onComplete,onPause,onResume,onDelete,onComment,
 }
 
 // ── LIST ROW ───────────────────────────────────────────────────────────────
-function ListRow({task,onAccept,onComplete,onPause,onResume,onDelete,onComment,tick,user}){
+function ListRow({task,onAccept,onComplete,onPause,onResume,onDelete,onComment,tick,user,allCats}){
   const [open,setOpen]=useState(false);
   const isDone=!!task.completedAt;
   const isActive=task.acceptedAt&&!task.completedAt&&!task.pausedAt;
@@ -805,7 +846,7 @@ function ListRow({task,onAccept,onComplete,onPause,onResume,onDelete,onComment,t
           {(isActive||isPaused)&&<div className="lrd-timer">{isActive?<><span style={{width:6,height:6,borderRadius:'50%',background:'var(--amber)',display:'inline-block',animation:'pp 1.2s infinite'}}/>Running: {elapsed}</>:<>⏸ Paused: {elapsed}</>}</div>}
           {task.desc&&<div className="lrd-desc">{task.desc}</div>}
           <div className="lrd-meta">
-            <span className="lrd-tag">{CATS.find(c=>c.id===task.category)?.label||task.category}</span>
+            <span className="lrd-tag">{(allCats||CATS).find(c=>c.id===task.category)?.label||task.category}</span>
             {task.client&&task.client!=='General / Internal'&&<span className="lrd-tag">{task.client}{task.project?` › ${task.project}`:''}</span>}
             <span className="lrd-tag" style={{color:priColor}}>{task.priority} priority</span>
             {task.deadline&&<span className="lrd-tag" style={{color:overdue?'#f08080':'inherit'}}>{overdue?'⚠ ':''}{task.deadline}</span>}
@@ -822,6 +863,62 @@ function ListRow({task,onAccept,onComplete,onPause,onResume,onDelete,onComment,t
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+// ── LIST EDITOR ────────────────────────────────────────────────────────────
+function ListEditor({items,onSave,addPlaceholder,asObjects}){
+  // items: string[] (clients/projects) or {id,label}[] (cats, when asObjects=true)
+  const toStr=item=>asObjects?item.label:item;
+  const [list,setList]=useState(items);
+  const [editIdx,setEditIdx]=useState(null);
+  const [editVal,setEditVal]=useState('');
+  const [newVal,setNewVal]=useState('');
+  const inStyle={flex:1,background:'var(--bg3)',border:'1px solid var(--border2)',borderRadius:'4px',color:'var(--text)',fontFamily:'DM Mono,monospace',fontSize:'12px',padding:'5px 8px',outline:'none'};
+  const startEdit=i=>{setEditIdx(i);setEditVal(toStr(list[i]));};
+  const commitEdit=()=>{
+    const v=editVal.trim();if(!v){setEditIdx(null);return;}
+    setList(prev=>prev.map((item,i)=>{
+      if(i!==editIdx)return item;
+      return asObjects?{...item,label:v}:v;
+    }));
+    setEditIdx(null);
+  };
+  const removeItem=i=>setList(prev=>prev.filter((_,j)=>j!==i));
+  const addItem=()=>{
+    const v=newVal.trim();if(!v)return;
+    const already=list.some(item=>toStr(item).toLowerCase()===v.toLowerCase());
+    if(already){setNewVal('');return;}
+    const newItem=asObjects?{id:'cat_'+Date.now(),label:v}:v;
+    setList(prev=>[...prev,newItem]);
+    setNewVal('');
+  };
+  return(
+    <div>
+      <button className="le-back" onClick={()=>onSave(list)}>← Back to form</button>
+      <div className="le-wrap">
+        {list.length===0&&<div className="le-row"><span className="le-label" style={{color:'var(--text3)'}}>No items yet</span></div>}
+        {list.map((item,i)=>(
+          <div className="le-row" key={i}>
+            {editIdx===i?(
+              <input value={editVal} onChange={e=>setEditVal(e.target.value)} onKeyDown={e=>{if(e.key==='Enter')commitEdit();if(e.key==='Escape')setEditIdx(null);}} autoFocus style={inStyle}/>
+            ):(
+              <span className="le-label">{toStr(item)}</span>
+            )}
+            {editIdx===i?(
+              <button className="le-icon" onClick={commitEdit}>✓</button>
+            ):(
+              <button className="le-icon" onClick={()=>startEdit(i)}>✎</button>
+            )}
+            <button className="le-icon del" onClick={()=>removeItem(i)}>✕</button>
+          </div>
+        ))}
+      </div>
+      <div className="le-add">
+        <input value={newVal} onChange={e=>setNewVal(e.target.value)} onKeyDown={e=>e.key==='Enter'&&addItem()} placeholder={addPlaceholder||'Add new…'} style={inStyle}/>
+        <button onClick={addItem} className="btn-post" style={{padding:'6px 12px',fontSize:'11px'}}>Add</button>
+      </div>
     </div>
   );
 }
@@ -1130,9 +1227,9 @@ function App(){
   const [commentTask,setCommentTask]=useState(null);
   const [sortBy,setSortBy]=useState('date');
   const [statusFilter,setStatusFilter]=useState('all');
-  const [customCats,setCustomCats]=useState(()=>getSaved(CUSTOM_CATS_KEY)||[]);
+  const [managedCats,setManagedCats]=useState(()=>getSaved(MANAGED_CATS_KEY)||[...CATS]);
   const [projects,setProjects]=useState(()=>getSaved(PROJECTS_KEY)||{});
-  const [customClients,setCustomClients]=useState(()=>getSaved(CUSTOM_CLIENTS_KEY)||[]);
+  const [managedClients,setManagedClients]=useState(()=>getSaved(MANAGED_CLIENTS_KEY)||[...CLIENTS]);
   const [customTeam,setCustomTeam]=useState(()=>getSaved(CUSTOM_TEAM_KEY)||[]);
   const [refreshing,setRefreshing]=useState(false);
   const tokenRef=useRef(null);
@@ -1140,7 +1237,6 @@ function App(){
   const configRef=useRef(config);
   useEffect(()=>{configRef.current=config;},[config]);
 
-  const allClients=[...CLIENTS,...customClients];
   const allTeam=[...TEAM,...customTeam];
 
   useEffect(()=>{const id=setInterval(()=>setTick(t=>t+1),1000);return()=>clearInterval(id);},[]);
@@ -1148,9 +1244,9 @@ function App(){
   useEffect(()=>{localStorage.setItem(SETTINGS_KEY,JSON.stringify({...settings,viewMode}));},[settings,viewMode]);
   useEffect(()=>{localStorage.setItem(BADGES_KEY,JSON.stringify(manualBadges));},[manualBadges]);
   useEffect(()=>{localStorage.setItem(DEMERITS_KEY,JSON.stringify(demerits));},[demerits]);
-  useEffect(()=>{localStorage.setItem(CUSTOM_CATS_KEY,JSON.stringify(customCats));},[customCats]);
+  useEffect(()=>{localStorage.setItem(MANAGED_CATS_KEY,JSON.stringify(managedCats));},[managedCats]);
   useEffect(()=>{localStorage.setItem(PROJECTS_KEY,JSON.stringify(projects));},[projects]);
-  useEffect(()=>{localStorage.setItem(CUSTOM_CLIENTS_KEY,JSON.stringify(customClients));},[customClients]);
+  useEffect(()=>{localStorage.setItem(MANAGED_CLIENTS_KEY,JSON.stringify(managedClients));},[managedClients]);
   useEffect(()=>{localStorage.setItem(CUSTOM_TEAM_KEY,JSON.stringify(customTeam));},[customTeam]);
   useEffect(()=>{const h=document.documentElement;THEMES.forEach(t=>h.classList.remove(t.id));h.classList.add(settings.theme||'theme-e');},[settings.theme]);
 
@@ -1273,9 +1369,9 @@ function App(){
     try{await sheetRewrite(config,tasks);showToast('Sheet rewritten cleanly ✓','success');}
     catch{showToast('Rewrite failed','error');}
   };
-  const handleAddCustomCat=label=>{if(!customCats.includes(label))setCustomCats(prev=>[...prev,label]);};
-  const handleAddClient=name=>{if(!allClients.includes(name))setCustomClients(prev=>[...prev,name]);};
-  const handleAddProject=(client,proj)=>{setProjects(prev=>{const existing=prev[client]||[];if(existing.includes(proj))return prev;return{...prev,[client]:[...existing,proj]};});};
+  const handleSaveClients=list=>setManagedClients(list);
+  const handleSaveCats=list=>setManagedCats(list);
+  const handleSaveProjects=(client,list)=>setProjects(prev=>({...prev,[client]:list}));
   const handleAddUser=(name,email)=>{if(!allTeam.find(t=>t.email===email))setCustomTeam(prev=>[...prev,{name,email}]);};
 
   const doRefresh=async(cfg,silent=false)=>{
@@ -1342,7 +1438,7 @@ function App(){
   const inProgTasks=sortTasks(tasks.filter(t=>t.acceptedAt&&!t.completedAt&&filterFn(t)),sortBy);
   const doneTasks=sortTasks(tasks.filter(t=>t.completedAt&&filterFn(t)),sortBy==='date'?'date':sortBy).slice(0,20);
 
-  const cardProps={onAccept:handleAccept,onComplete:handleComplete,onPause:handlePause,onResume:handleResume,onDelete:handleDelete,onComment:setCommentTask,tick,fontSize:settings.fontSize||14,user};
+  const cardProps={onAccept:handleAccept,onComplete:handleComplete,onPause:handlePause,onResume:handleResume,onDelete:handleDelete,onComment:setCommentTask,tick,fontSize:settings.fontSize||14,user,allCats:managedCats};
 
   if(restoring||(!user&&config?.accessToken))return <div className={settings.theme||'theme-e'}><AuthScreen onSignIn={handleSignIn} restoring={true}/></div>;
   if(!user)return <div className={settings.theme||'theme-e'}><AuthScreen onSignIn={handleSignIn} restoring={false}/></div>;
@@ -1483,7 +1579,7 @@ function App(){
       <button className="mobile-fab" onClick={()=>setShowNew(true)}>+</button>
 
       {/* MODALS / OVERLAYS */}
-      {showNew&&<NewTaskModal currentUser={user} onClose={()=>setShowNew(false)} onSave={handleNewTask} customCats={customCats} onAddCustomCat={handleAddCustomCat} allClients={allClients} projects={projects} onAddClient={handleAddClient} onAddProject={handleAddProject} allTeam={allTeam}/>}
+      {showNew&&<NewTaskModal currentUser={user} onClose={()=>setShowNew(false)} onSave={handleNewTask} managedClients={managedClients} managedCats={managedCats} projects={projects} onSaveClients={handleSaveClients} onSaveCats={handleSaveCats} onSaveProjects={handleSaveProjects} allTeam={allTeam}/>}
       {commentTask&&<CommentDrawer task={commentTask} user={user} onClose={()=>setCommentTask(null)} onAddComment={handleAddComment}/>}
       {toast&&<Toast msg={toast.msg} type={toast.type} onDone={()=>setToast(null)}/>}
       {chaChing&&<ChaChing onDone={()=>setChaChing(false)}/>}
