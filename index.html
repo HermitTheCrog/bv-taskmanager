@@ -1212,10 +1212,18 @@ function App(){
   const showToast=(msg,type='')=>setToast({msg,type});
 
   const syncTask=async(task,isNew=false)=>{
-    if(!config?.accessToken||!config?.sheetId)return;
+    if(!configRef.current?.accessToken||!configRef.current?.sheetId)return;
     setSyncing(true);
-    try{isNew?await sheetAppend(config,task):await sheetUpdate(config,task);}
-    catch{showToast('Sheets sync failed — saved locally','error');}
+    let ok=false;
+    for(let i=0;i<3&&!ok;i++){
+      try{
+        if(i>0)await new Promise(r=>setTimeout(r,i*1500));
+        isNew?await sheetAppend(configRef.current,task):await sheetUpdate(configRef.current,task);
+        ok=true;
+      }catch(e){
+        if(i===2)showToast('Sync failed — task saved locally ⚠️','error');
+      }
+    }
     setSyncing(false);
   };
 
@@ -1276,10 +1284,24 @@ function App(){
     try{
       const sheetTasks=await sheetLoad(cfg);
       if(sheetTasks.length>0){
-        setTasks(sheetTasks);
-        localStorage.setItem(TASKS_KEY,JSON.stringify(sheetTasks));
+        setTasks(local=>{
+          const sheetMap=new Map(sheetTasks.map(t=>[t.id,t]));
+          // Keep local tasks not yet in the sheet (pending sync)
+          const localOnly=local.filter(t=>!sheetMap.has(t.id));
+          // For tasks in both: preserve local if timer is actively running
+          const merged=sheetTasks.map(st=>{
+            const lt=local.find(t=>t.id===st.id);
+            if(!lt)return st;
+            const activeTimer=lt.acceptedAt&&!lt.completedAt&&!lt.pausedAt;
+            return activeTimer?lt:st;
+          });
+          return[...merged,...localOnly];
+        });
         if(!silent)showToast(`Refreshed — ${sheetTasks.length} tasks`,'success');
-      }else if(!silent){showToast('Sheet is empty','');}
+      }else{
+        // Sheet returned empty — don't wipe local; could be a read error
+        if(!silent)showToast('Sheet appears empty — keeping local data','');
+      }
     }catch{if(!silent)showToast('Refresh failed','error');}
     if(!silent)setRefreshing(false);
   };
