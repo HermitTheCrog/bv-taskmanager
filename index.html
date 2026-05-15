@@ -11,12 +11,27 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 
-/* ── THEMES — bumped text2/text3 opacity for better mobile readability ── */
-.theme-e{--bg:#1c1410;--bg2:#141010;--bg3:#201810;--bg4:#2a1e16;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);--text:#e8ddd0;--text2:rgba(232,221,208,0.72);--text3:rgba(232,221,208,0.42);--crimson:#7a1c1c;--crimson2:#5e1515;--crimson-dim:rgba(122,28,28,0.35);--amber:#c4682a;--amber-dim:rgba(196,104,42,0.2);--board-bg:radial-gradient(rgba(255,255,255,0.018) 1px,transparent 1px);--board-size:20px 20px;}
-.theme-c{--bg:#0e0e0e;--bg2:#161616;--bg3:#1e1e1e;--bg4:#252525;--border:rgba(255,255,255,0.09);--border2:rgba(255,255,255,0.15);--text:#f0ede8;--text2:rgba(240,237,232,0.72);--text3:rgba(240,237,232,0.42);--crimson:#1D9E75;--crimson2:#158060;--crimson-dim:rgba(29,158,117,0.2);--amber:#d4f060;--amber-dim:rgba(212,240,96,0.1);--board-bg:radial-gradient(rgba(255,255,255,0.02) 1px,transparent 1px);--board-size:20px 20px;}
-.theme-cork{--bg:#c8a870;--bg2:#1a1210;--bg3:#251a12;--bg4:#30221a;--border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.13);--text:#e8ddd0;--text2:rgba(232,221,208,0.72);--text3:rgba(232,221,208,0.42);--crimson:#8b2020;--crimson2:#6a1818;--crimson-dim:rgba(139,32,32,0.35);--amber:#e8833a;--amber-dim:rgba(232,131,58,0.2);--board-bg:repeating-linear-gradient(0deg,rgba(0,0,0,0.03) 0,rgba(0,0,0,0.03) 1px,transparent 1px,transparent 28px),repeating-linear-gradient(90deg,rgba(0,0,0,0.03) 0,rgba(0,0,0,0.03) 1px,transparent 1px,transparent 28px);--board-size:28px 28px;}
-.theme-cream{--bg:#e8d9bc;--bg2:#dccfa8;--bg3:#e2d3b0;--bg4:#d3c098;--border:rgba(26,10,10,0.15);--border2:rgba(26,10,10,0.28);--text:#1a0e0e;--text2:rgba(26,14,14,0.72);--text3:rgba(26,14,14,0.45);--crimson:#8b2020;--crimson2:#6a1818;--crimson-dim:rgba(139,32,32,0.12);--amber:#c4682a;--amber-dim:rgba(196,104,42,0.15);--board-bg:radial-gradient(rgba(0,0,0,0.06) 1px,transparent 1px);--board-size:20px 20px;}
-.theme-fern{--bg:#1a2a18;--bg2:#112010;--bg3:#1f301c;--bg4:#253c22;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);--text:#d4e8c2;--text2:rgba(212,232,194,0.72);--text3:rgba(212,232,194,0.42);--crimson:#3d7038;--crimson2:#2d5429;--crimson-dim:rgba(61,112,56,0.35);--amber:#a8d464;--amber-dim:rgba(168,212,100,0.2);--board-bg:radial-gradient(rgba(255,255,255,0.018) 1px,transparent 1px);--board-size:20px 20px;}
+/* ── THEMES ── */
+/* Panther — smoky jazz, coral salmon + molten gold */
+.theme-e{--bg:#110808;--bg2:#1a0d0a;--bg3:#231210;--bg4:#2e1812;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.12);--text:#f0dcc8;--text2:rgba(240,220,200,0.72);--text3:rgba(240,220,200,0.42);--crimson:#a83828;--crimson2:#862818;--crimson-dim:rgba(168,56,40,0.32);--amber:#d4a820;--amber-dim:rgba(212,168,32,0.18);--board-bg:radial-gradient(rgba(255,255,255,0.018) 1px,transparent 1px);--board-size:20px 20px;}
+/* Dusk — deep navy/indigo, single amber leaf, still + moody */
+.theme-c{--bg:#131320;--bg2:#0e0e1a;--bg3:#181828;--bg4:#202034;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);--text:#d8d8f0;--text2:rgba(216,216,240,0.72);--text3:rgba(216,216,240,0.42);--crimson:#383898;--crimson2:#282878;--crimson-dim:rgba(56,56,152,0.28);--amber:#d49038;--amber-dim:rgba(212,144,56,0.16);--board-bg:radial-gradient(rgba(255,255,255,0.02) 1px,transparent 1px);--board-size:20px 20px;}
+/* Barrio — dark terracotta warmth, cerulean sky accent */
+.theme-cork{--bg:#180e08;--bg2:#201208;--bg3:#28160a;--bg4:#341c10;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);--text:#f0e0d0;--text2:rgba(240,224,208,0.72);--text3:rgba(240,224,208,0.42);--crimson:#b84030;--crimson2:#902e22;--crimson-dim:rgba(184,64,48,0.32);--amber:#4a9ac0;--amber-dim:rgba(74,154,192,0.16);--board-bg:repeating-linear-gradient(0deg,rgba(0,0,0,0.04) 0,rgba(0,0,0,0.04) 1px,transparent 1px,transparent 28px),repeating-linear-gradient(90deg,rgba(0,0,0,0.04) 0,rgba(0,0,0,0.04) 1px,transparent 1px,transparent 28px);--board-size:28px 28px;}
+/* Candy — light seafoam mint, hot pink + mauve, playful */
+.theme-cream{--bg:#c8f0e0;--bg2:#b8e8d4;--bg3:#c4ecd8;--bg4:#aadfc8;--border:rgba(20,10,30,0.13);--border2:rgba(20,10,30,0.24);--text:#1a0820;--text2:rgba(26,8,32,0.70);--text3:rgba(26,8,32,0.42);--crimson:#c03060;--crimson2:#a02050;--crimson-dim:rgba(192,48,96,0.12);--amber:#7040a0;--amber-dim:rgba(112,64,160,0.13);--board-bg:radial-gradient(rgba(0,0,0,0.05) 1px,transparent 1px);--board-size:20px 20px;}
+/* Grief — pitch dark teal, blood-red cliffs, warm parchment */
+.theme-fern{--bg:#060e0e;--bg2:#0a1614;--bg3:#0e1c1a;--bg4:#142622;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.12);--text:#c8dcd4;--text2:rgba(200,220,212,0.72);--text3:rgba(200,220,212,0.42);--crimson:#8a1818;--crimson2:#6a1010;--crimson-dim:rgba(138,24,24,0.38);--amber:#d4a870;--amber-dim:rgba(212,168,112,0.18);--board-bg:radial-gradient(rgba(255,255,255,0.016) 1px,transparent 1px);--board-size:20px 20px;}
+/* Jaguar — deep jungle, amber fur, primal shadow */
+.theme-jaguar{--bg:#090f08;--bg2:#0d1610;--bg3:#121c14;--bg4:#1a2a1c;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.12);--text:#d0e4c0;--text2:rgba(208,228,192,0.72);--text3:rgba(208,228,192,0.42);--crimson:#3a6c28;--crimson2:#2c5420;--crimson-dim:rgba(58,108,40,0.32);--amber:#c4843a;--amber-dim:rgba(196,132,58,0.16);--board-bg:radial-gradient(rgba(255,255,255,0.018) 1px,transparent 1px);--board-size:20px 20px;}
+/* Sunfield — midnight blue sky, golden sunflower, warm pixel glow */
+.theme-sunfield{--bg:#0c1824;--bg2:#10202e;--bg3:#142838;--bg4:#1a3044;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);--text:#f8f0d8;--text2:rgba(248,240,216,0.72);--text3:rgba(248,240,216,0.42);--crimson:#4878b8;--crimson2:#386098;--crimson-dim:rgba(72,120,184,0.28);--amber:#e8a830;--amber-dim:rgba(232,168,48,0.16);--board-bg:radial-gradient(rgba(255,255,255,0.022) 1px,transparent 1px);--board-size:20px 20px;}
+/* Cottage — warm walnut + autumn gold, cozy pixel hearth */
+.theme-cottage{--bg:#140c04;--bg2:#1c1008;--bg3:#24140a;--bg4:#301c0e;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);--text:#f0dfc0;--text2:rgba(240,223,192,0.72);--text3:rgba(240,223,192,0.42);--crimson:#8a4018;--crimson2:#6a3010;--crimson-dim:rgba(138,64,24,0.32);--amber:#d4a030;--amber-dim:rgba(212,160,48,0.16);--board-bg:repeating-linear-gradient(0deg,rgba(0,0,0,0.035) 0,rgba(0,0,0,0.035) 1px,transparent 1px,transparent 28px),repeating-linear-gradient(90deg,rgba(0,0,0,0.035) 0,rgba(0,0,0,0.035) 1px,transparent 1px,transparent 28px);--board-size:28px 28px;}
+/* Atelier — hunter teal walls, warm bamboo wood, artisan craft */
+.theme-atelier{--bg:#081412;--bg2:#0c1c18;--bg3:#10221e;--bg4:#162c28;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);--text:#d4e8e0;--text2:rgba(212,232,224,0.72);--text3:rgba(212,232,224,0.42);--crimson:#2a6050;--crimson2:#1e4840;--crimson-dim:rgba(42,96,80,0.32);--amber:#c8a870;--amber-dim:rgba(200,168,112,0.16);--board-bg:radial-gradient(rgba(255,255,255,0.018) 1px,transparent 1px);--board-size:20px 20px;}
+/* Greenfich — charcoal black, burnished bronze, dusty patina teal */
+.theme-foundry{--bg:#0a0c0c;--bg2:#101414;--bg3:#141a1a;--bg4:#1c2222;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);--text:#d4c8b0;--text2:rgba(212,200,176,0.72);--text3:rgba(212,200,176,0.42);--crimson:#4a7878;--crimson2:#385e5e;--crimson-dim:rgba(74,120,120,0.28);--amber:#a06838;--amber-dim:rgba(160,104,56,0.16);--board-bg:radial-gradient(rgba(255,255,255,0.016) 1px,transparent 1px);--board-size:20px 20px;}
 
 html,body{background:var(--bg);transition:background 0.3s;}
 body{color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;line-height:1.5;overflow-x:hidden;}
@@ -433,11 +448,16 @@ const CATS = [
 ];
 
 const THEMES = [
-  {id:'theme-e',    label:'Espresso', bg:'#1c1410', accent:'#c4682a'},
-  {id:'theme-c',    label:'Neon',     bg:'#0e0e0e', accent:'#d4f060'},
-  {id:'theme-cork', label:'Cork',     bg:'#c8a870', accent:'#e8833a'},
-  {id:'theme-cream',label:'Cream',    bg:'#e8d9bc', accent:'#c4682a'},
-  {id:'theme-fern', label:'Fern',     bg:'#1a2a18', accent:'#a8d464'},
+  {id:'theme-e',        label:'Panther',   bg:'#110808', accent:'#d4a820'},
+  {id:'theme-c',        label:'Dusk',      bg:'#131320', accent:'#d49038'},
+  {id:'theme-cork',     label:'Barrio',    bg:'#180e08', accent:'#4a9ac0'},
+  {id:'theme-cream',    label:'Candy',     bg:'#c8f0e0', accent:'#7040a0'},
+  {id:'theme-fern',     label:'Grief',     bg:'#060e0e', accent:'#d4a870'},
+  {id:'theme-jaguar',   label:'Jaguar',    bg:'#090f08', accent:'#c4843a'},
+  {id:'theme-sunfield', label:'Sunfield',  bg:'#0c1824', accent:'#e8a830'},
+  {id:'theme-cottage',  label:'Cottage',   bg:'#140c04', accent:'#d4a030'},
+  {id:'theme-atelier',  label:'Atelier',   bg:'#081412', accent:'#c8a870'},
+  {id:'theme-foundry',label:'Greenfich', bg:'#0a0c0c', accent:'#a06838'},
 ];
 
 const BADGES_DEF = [
@@ -458,8 +478,9 @@ const ROTS = ['r1','r2','r3','r4','r2','r3'];
 
 function noteStyle(id,priority,noteColor){
   const h=(id||'').split('').reduce((a,c)=>a+c.charCodeAt(0),0);
+  if(noteColor&&noteColor.startsWith('#'))return{col:'',hex:noteColor,rot:ROTS[h%ROTS.length]};
   const col=noteColor||(priority==='high'?['n-o','n-pk']:priority==='med'?['n-y','n-pu']:['n-g','n-b'])[h%2];
-  return{col,rot:ROTS[h%ROTS.length]};
+  return{col,hex:null,rot:ROTS[h%ROTS.length]};
 }
 function initials(n){return(n||'?').split(' ').map(p=>p[0]).join('').slice(0,2).toUpperCase();}
 function fmtDur(ms){if(!ms||ms<0)return'—';const s=Math.floor(ms/1000),h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60;if(h>0)return`${h}h ${m}m`;if(m>0)return`${m}m ${sec}s`;return`${sec}s`;}
@@ -656,6 +677,8 @@ function CommentDrawer({task, user, onClose, onAddComment}){
 function NewTaskModal({currentUser,onClose,onSave,managedClients,managedCats,projects,onSaveClients,onSaveCats,onSaveProjects,allTeam}){
   const [form,setForm]=useState({title:'',desc:'',category:'other',priority:'med',deadline:'',assignedToEmail:'',client:'General / Internal',project:'',noteColor:''});
   const [editMode,setEditMode]=useState(null); // null | 'clients' | 'cats' | 'projects'
+  const colorInputRef=useRef(null);
+  const hasEyeDropper=typeof EyeDropper!=='undefined';
   const set=(k,v)=>setForm(f=>({...f,[k]:v}));
   const member=allTeam.find(t=>t.email===form.assignedToEmail);
 
@@ -718,8 +741,25 @@ function NewTaskModal({currentUser,onClose,onSave,managedClients,managedCats,pro
                 style={{background:opt.hex}} title={opt.label}
                 onClick={()=>set('noteColor',form.noteColor===opt.id?'':opt.id)}/>
             ))}
+            {/* Color wheel — opens native OS color picker */}
+            <button className={`color-swatch${form.noteColor&&form.noteColor.startsWith('#')?' selected':''}`}
+              style={{background:'conic-gradient(red,#ff8c00,yellow,#00c800,#0080ff,#8000ff,red)',border: form.noteColor&&form.noteColor.startsWith('#')?'2px solid var(--text)':'2px solid transparent'}}
+              title="Custom color" onClick={()=>colorInputRef.current?.click()}/>
+            <input ref={colorInputRef} type="color" style={{display:'none'}}
+              value={form.noteColor&&form.noteColor.startsWith('#')?form.noteColor:'#f5cc90'}
+              onChange={e=>set('noteColor',e.target.value)}/>
+            {/* Eyedropper — pick any color from screen */}
+            {hasEyeDropper&&(
+              <button className="color-swatch" title="Pick color from screen"
+                style={{background:'var(--bg4)',border:'2px dashed var(--border2)',fontSize:'12px',display:'flex',alignItems:'center',justifyContent:'center',lineHeight:1}}
+                onClick={async()=>{try{const r=await new EyeDropper().open();set('noteColor',r.sRGBHex);}catch{}}}>
+                ⊕
+              </button>
+            )}
             <span style={{fontSize:10,color:'var(--text3)',fontFamily:'DM Mono,monospace',alignSelf:'center',marginLeft:2}}>
-              {form.noteColor?(NOTE_COLOR_OPTIONS.find(o=>o.id===form.noteColor)?.label||''):'auto'}
+              {form.noteColor
+                ? (form.noteColor.startsWith('#') ? form.noteColor : (NOTE_COLOR_OPTIONS.find(o=>o.id===form.noteColor)?.label||''))
+                : 'auto'}
             </span>
           </div>
         </div>
@@ -774,7 +814,7 @@ function NewTaskModal({currentUser,onClose,onSave,managedClients,managedCats,pro
 
 // ── TASK CARD ──────────────────────────────────────────────────────────────
 function TaskCard({task,onAccept,onComplete,onPause,onResume,onDelete,onComment,tick,fontSize,allCats}){
-  const {col,rot}=noteStyle(task.id,task.priority,task.noteColor);
+  const {col,hex,rot}=noteStyle(task.id,task.priority,task.noteColor);
   const prioClass=task.priority==='high'?' prio-high':task.priority==='low'?' prio-low':'';
   const isDone=!!task.completedAt;
   const isActive=task.acceptedAt&&!task.completedAt&&!task.pausedAt;
@@ -787,7 +827,7 @@ function TaskCard({task,onAccept,onComplete,onPause,onResume,onDelete,onComment,
   const commentCount=(task.comments||[]).length;
   const cats=allCats||CATS;
   return(
-    <div className={`note ${col} ${rot}${prioClass}${isDone?' is-done':''}`} style={{fontSize:fs+'px'}}
+    <div className={`note ${col} ${rot}${prioClass}${isDone?' is-done':''}`} style={{fontSize:fs+'px',...(hex?{background:hex}:{})}}
       draggable={!isDone}
       onDragStart={e=>{e.dataTransfer.setData('taskId',task.id);e.dataTransfer.effectAllowed='move';}}>
       <div className="ncat" style={{fontSize:(fs*0.57)+'px'}}>{cats.find(c=>c.id===task.category)?.label||task.category}{task.client&&task.client!=='General / Internal'?` · ${task.client}`+(task.project?` › ${task.project}`:''):''}</div>
